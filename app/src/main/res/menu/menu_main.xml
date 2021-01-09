@@ -1,0 +1,26 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="fr.cjpapps.gumski.MainActivity">
+    <item
+        android:id="@+id/help"
+        android:orderInCategory="1"
+        android:title="@string/help"
+        android:icon="@drawable/ic_action_help_svg"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/new_item"
+        android:orderInCategory="3"
+        android:title="@string/new_item"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/new_user"
+        android:orderInCategory="4"
+        android:title="@string/new_user"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/settings"
+        app:showAsAction="never" />
+</menu>

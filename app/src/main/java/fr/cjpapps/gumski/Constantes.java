@@ -15,9 +15,10 @@ public class Constantes {
     final static String JOOMLA_RESOURCE_LOGIN = "login";
 // *****************************************************************
 // définir ci-dessous les ressources à utiliser par l'appli (plugins de com_api)
-    final static String JOOMLA_APP = "gblo";
-    final static String JOOMLA_RESOURCE_1 = "infos_sortie_blo";
-    final static String JOOMLA_RESOURCE_2 = "infos_sorties_blo";
+    final static String JOOMLA_APP = "gski";
+    final static String JOOMLA_RESOURCE_1 = "paramsortie";
+    final static String JOOMLA_RESOURCE_2 = "inscrits";
+
 
     private Constantes(){}
 

@@ -7,13 +7,15 @@ public enum Attributs {
 *   Voir l'usage dans GetInfosItem.java. Nom des champs et hint sont utilisés dans les formulaires de CreateItem
 *   et ModifItem.*/
 
-    ATTR01("nomlieu", "Nom du Lieu", "Nom"),
-    ATTR02("parking", "Parking", "Itinéraire vers parking"),
-    ATTR03("latpk", "Latitude P", "48.632"),
-    ATTR04("lonpk", "Longitude P", "2.457"),
-    ATTR05("rendezvous", "Rendez-vous", "Itinéraire vers rendez-vous"),
-    ATTR06("latrv", "Latitude RdV", "48.643"),
-    ATTR07("lonrv", "Longitude RdV", "2.468");
+// en vrai ceci ne sert pas parce qu'on édite pasces paramètres on a pas besoin d'un objet. on s'en servira quand on aur
+// la logistique
+    ATTR01("date_bdh", "Dates sortie", "Sam 1 -Dim 2 mai 2021"),
+    ATTR02("id", "Id sortie", "162"),
+    ATTR03("titre", "Titre", "Névache"),
+    ATTR04("date", "Date début", "2021-05-01"),
+    ATTR05("jours", "Durée", "2"),
+    ATTR06("publier_groupes", "Groupes", "2"),
+    ATTR07("responsable", "Responsable", "Pierre TRUC");
 
     private String champ = "";
     private String nomChamp = "";

@@ -4,6 +4,8 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -13,9 +15,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.Objects;
+
+import static java.lang.Integer.parseInt;
 
 public class Aux {
 
@@ -59,13 +69,66 @@ public class Aux {
             JSONObject jsonGums = new JSONObject(jsListe);
             JSONArray arrayGums = jsonGums.getJSONArray("data");
             for (int i = 0; i < arrayGums.length(); i++) {
-                JSONArray unArray = arrayGums.getJSONArray(i);
+//                JSONArray unArray = arrayGums.getJSONArray(i);
+                JSONObject unObjet = arrayGums.getJSONObject(i);
                 HashMap<String,String> unItem = new HashMap<>();
-                unItem.put("id", unArray.getString(0));
-                unItem.put("nomitem", unArray.getString(1));
+//                unItem.put("id", unArray.getString(0));
+//                unItem.put("nomitem", unArray.getString(1));
+//                unObjet.optString("groupe");
+                unItem.put("groupe", unObjet.optString("groupe"));
+//                if (unObjet.optString("id")!=null) {
+                unItem.put("id", unObjet.optString("id"));
+//                if (unObjet.optString("name")!=null) {
+                    unItem.put("name", unObjet.optString("name"));
+//                if (unObjet.optString("statut")!=null) {
+                    unItem.put("statut", unObjet.optString("statut"));
+//                if (unObjet.optString("responsabilite")!=null) {
+                    unItem.put("responsabilite", unObjet.optString("responsabilite"));
+//                if (unObjet.optString("peage")!=null) {
+                    unItem.put("peage", unObjet.optString("peage"));
+//                if (unObjet.optString("autonome")!=null) {
+                    unItem.put("autonome", unObjet.optString("autonome"));
+//                if (unObjet.optString("tel")!=null) {
+                    unItem.put("tel", unObjet.optString("tel"));
+//                if (unObjet.optString("email")!=null) {
+                    unItem.put("email", unObjet.optString("email"));
                 listeItems.add(i, unItem);
             }
             return  listeItems;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // pour remplir la listedes paramètres de la sortie en décodant le jsonParams
+    static HashMap<String,String> getListeParams (String jsParams) {
+        HashMap<String,String> params = new HashMap<>();
+        try {
+            JSONObject jsonGums = new JSONObject(jsParams);
+            JSONObject jsonData = jsonGums.getJSONObject("data");
+//            if (jsonData.optString("date_bdh") != null) {
+                params.put("date_bdh",jsonData.optString("date_bdh"));
+//            }
+//            if (jsonData.optString("id") != null) {
+                params.put("id",jsonData.optString("id"));
+//            }
+//            if (jsonData.optString("titre") != null) {
+                params.put("titre",jsonData.optString("titre"));
+//            }
+//            if (jsonData.optString("date") != null) {
+                params.put("date",jsonData.optString("date"));
+ //           }
+//            if (jsonData.optString("jours") != null) {
+                params.put("jours",jsonData.optString("jours"));
+//            }
+//            if (jsonData.optString("publier_groupes") != null) {
+                params.put("publier_groupes",jsonData.optString("publier_groupes"));
+//            }
+//            if (jsonData.optString("responsable") != null) {
+                params.put("responsable",jsonData.optString("responsable"));
+//            }
+            return  params;
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -77,13 +140,37 @@ public class Aux {
         ArrayList<String> liste = new ArrayList<>();
         for (HashMap<String,String> temp :items) {
             try {
-                liste.add(temp.get("nomitem"));
+                liste.add(temp.get("name"));
             }catch(NullPointerException e) {
                 e.printStackTrace();
             }
         }
         if (liste.isEmpty()){
             Log.i("SECUSERV", "la liste d'items est vide");
+        }
+        return liste;
+    }
+
+    ArrayList<String> faitListeGroupes(ArrayList<HashMap<String,String>> items) {
+        ArrayList<String> liste = new ArrayList<>();
+//        ArrayList<ArrayList<HashMap<String,String>>> composition = new ArrayList<>();
+        int numGroupe = 0;
+        for (HashMap<String,String> temp :items) {
+            try {
+                if (parseInt(Objects.requireNonNull(temp.get("groupe"))) != numGroupe) {
+                    numGroupe = parseInt(Objects.requireNonNull(temp.get("groupe")));
+                    if ("Res".equals(temp.get("responsabilite"))) {
+                        String titreGroupe = numGroupe + ":  " + temp.get("name");
+                        Log.i("SECUSERV titre groupe", titreGroupe);
+                        liste.add(titreGroupe);
+                    }
+                }
+            }catch(NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
+        if (liste.isEmpty()){
+            Log.i("SECUSERV", "la liste des groupes est vide");
         }
         return liste;
     }
@@ -125,5 +212,38 @@ public class Aux {
         }
         Log.i("SECUSERV", "request = "+sbParams.toString());
         return sbParams.toString();
+    }
+
+    @SuppressWarnings("deprecation")
+    static Spanned fromHtml(String source) {
+        if (Build.VERSION.SDK_INT >= 24) {
+            return Html.fromHtml(source, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            return Html.fromHtml(source);
+        }
+    }
+
+    // return true si uneDate est antérieure à la date du jour diminuée de ageMax (en jours)
+    static boolean datePast(String uneDate, int ageMax) {
+        Date date1 = null;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            date1 = sdf.parse(uneDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        final Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, (ageMax * -1));
+        Date date2 = c.getTime();
+        try {
+            if (BuildConfig.DEBUG){
+                Log.i("GUMSKI", "date info = "+uneDate);
+                Log.i("GUMSKI", "date2/date1 = "+date2.compareTo(date1));
+                Log.i("GUMSKI", "date jour = "+date2);}
+            return (date2.compareTo(date1) >= 0);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 }

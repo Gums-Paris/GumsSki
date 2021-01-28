@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     Aux auxMethods;
     static final String DATELISTE = "dateliste";
     boolean testAuth;
+    ArrayList<ArrayList<HashMap<String,String>>> compositionGroupes = new ArrayList<>();
 
 /*  Appli quasi générique au sens où pour faire des opérations de création, modification ou suppression sur les lignes d'une
 *   basesur un site Joomla distant, il n'y a qu'à rentrer les infos concernant le site et la base dans trois classes :
@@ -46,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 *       - urlsApiApp.java pour donner l'URL d'accès à l'API du site joomla sous le forme particulière qui suit
 *   https :// etc./index.php?option=com_api&   (com_api étant supposé installé sur le site et le plugin correspondant à la
 *   ressource désirée étant en état de marche)
-*       - Constantes.java où onplace les noms de l'app et des resources du plugin de com_api
+*       - Constantes.java où on place les noms de l'app et des resources du plugin de com_api
 *   */
 
 /*  Notes   1. Pare-feu de OVH
@@ -85,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         patience = findViewById(R.id.indeterminateBar);
 
 //        Variables.urlActive = urlsGblo.API_LOCAL.getUrl();
-        Variables.urlActive = urlsApiApp.API_SITE.getUrl();
+        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
 
         mesPrefs = MyHelper.getInstance(getApplicationContext()).recupPrefs();
         editeur = mesPrefs.edit();
@@ -97,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
 
         auxMethods = new Aux();
         getSystemService(CONNECTIVITY_SERVICE);
-
         auxMethods.watchNetwork();
 // Faut patienter un peu jusqu'à ce que le réseau soit disponible
         patience.setVisibility(View.VISIBLE);
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 // auth si nécessaire. Une fois auth réalisée, authOK, auth et userId se trouvent en sharedPrefs et on lance une
-// recup de la liste
+// recup des données
 // noter que on passe authOK à false dans onDestroy() pour obliger une nouvelle identification après une fermeture
 // complète. Jusque là le jeton "auth" restera disponible dans les sharedPrefs.
 // une fois authentifié on récupère la liste d'items (voir onActivityResult tout en bas ; en cas de
@@ -134,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 // flagListe est false si on n'a pas récupéré de réponse du serveur ou si on n'a pas décodé le json ;
-// flagliste est géré par GetInfosListe
+// flagliste est géré par GetInfosListe et par GetParamSortie
         final Observer<Boolean> flagListeObserver = new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean retour) {
@@ -163,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }, 200); // délai 0.2 sec
                 } else {
-                    modelListe.recupListe();
+                    modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_2,"");
                 }
             }
         };
@@ -175,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
             public void onChanged(Boolean retour) {
                 Log.i("SECUSERV", "flagSuppress " + retour);
                 if (retour) {
-                    modelListe.recupListe();
+                    modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_2, "");
                 } else {
                     alerte("4");
                 }
@@ -191,12 +192,18 @@ public class MainActivity extends AppCompatActivity {
                 if (items != null) {
                     listeDesItems = items;
                     Log.i("SECUSERV Main", "taille = " + listeDesItems.size());
-                    nomsItems = auxMethods.faitListeNoms(listeDesItems);
+                    nomsItems = auxMethods.faitListeGroupes(listeDesItems);
+//                    nomsItems = auxMethods.faitListeNoms(listeDesItems);
                     if (nomsItems != null) {
                         RecyclerViewClickListener listener = new RecyclerViewClickListener() {
                             @Override
                             public void onClick(View view, final int position) {
-                                PopupMenu popup = new PopupMenu(view.getContext(), view);
+                                String element = nomsItems.get(position);
+                                String numGroup = element.substring(0, element.indexOf(':'));
+                                FragmentManager fm = getSupportFragmentManager();
+                                FirstFragment partFrag = FirstFragment.newInstance(element, numGroup);
+                                partFrag.show(fm, "participants");
+/*                                PopupMenu popup = new PopupMenu(view.getContext(), view);
                                 popup.inflate(R.menu.edit_context_menu);
                                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                                     @Override
@@ -219,22 +226,40 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                     }
                                 });
-                                popup.show();
+                                popup.show(); */
                             }
                         };
                         monAdapter = new RecyclerViewGenericAdapter(recyclerView.getContext(), nomsItems, listener);
                         recyclerView.setAdapter(monAdapter);
                     } else {
-                        pourInfo = "pas de liste de noms";
+                        pourInfo = "pas de liste de groupes";
                     }
                 } else {
                     pourInfo = "yavait rien à voir";
                 }
-                Log.i("SECUSERV", "date today =  "+mesPrefs.getString(DATELISTE, "2020-01-01"));
-                affichage.setText(mesPrefs.getString(DATELISTE, "2020-01-01"));
+//                Log.i("SECUSERV", "date today =  "+mesPrefs.getString(DATELISTE, "2020-01-01"));
+//                affichage.setText(mesPrefs.getString(DATELISTE, "2020-01-01"));
             }
         };
         modelListe.getListeDesItems().observe(MainActivity.this, listeItemsObserver);
+
+// Observateur d'arrivée des paramètres de la sortie
+        final Observer<HashMap<String,String>> paramSortieObserver = new Observer<HashMap<String,String>>() {
+            String infos = "";
+            @Override
+            public void onChanged(HashMap<String, String> infoSortie) {
+                if (infoSortie != null) {
+                    infos = infoSortie.get("date_bdh")+"\n"+
+                            infoSortie.get("titre")+"\n"+
+                            infoSortie.get("responsable");
+                    modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_2, infoSortie.get("id"));
+                }else{
+                    infos = "Y a rien à voir";
+                }
+                affichage.setText(infos);
+            }
+        };
+        modelListe.getParamSortie().observe(this, paramSortieObserver);
 
     }
 
@@ -274,14 +299,23 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.help) {
             return true;
         }
+        if (id == R.id.logistique) {
+            return true;
+        }
+        if (id == R.id.meteo) {
+            return true;
+        }
+        if (id == R.id.secours) {
+            return true;
+        }
         if (id == R.id.action_settings) {
              return true;
         }
-        if (id == R.id.new_item) {
+ /*       if (id == R.id.new_item) {
             Intent newItem = new Intent(MainActivity.this, CreateItem.class);
             startActivityForResult(newItem, Constantes.CREATE_REQUEST);
             return true;
-        }
+        } */
         if (id == R.id.new_user) {
             editeur.putBoolean("authOK", false);
             editeur.putString("auth", "");
@@ -304,7 +338,7 @@ public class MainActivity extends AppCompatActivity {
                 message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
                 break;
             case "2" :
-                message = "liste indisponible\n"+mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
+                message = "données indisponible\n"+mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
                 break;
             case "3" :
                 message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
@@ -328,7 +362,11 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
             if (resultCode == RESULT_OK) {
-                modelListe.recupListe();
+//                modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_2);
+                if (mesPrefs.getString("date",null) == null ||
+              Aux.datePast(mesPrefs.getString("date",null), Integer.parseInt(mesPrefs.getString("jours","2")))) {
+                    modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
+                }
             }
         }
         if (requestCode == Constantes.AUTH_CHANGE) {
@@ -354,6 +392,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
 }

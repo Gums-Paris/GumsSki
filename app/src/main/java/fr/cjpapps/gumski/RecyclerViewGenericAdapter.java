@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class RecyclerViewGenericAdapter extends RecyclerView.Adapter<RecyclerViewGenericAdapter.MyViewHolder> {
 
-/*  adapter transformé pour devenir générique grâce au custom clicklistener qui permet de sortir le travail à faire
+    /*  adapter transformé pour devenir générique grâce au custom clicklistener qui permet de sortir le travail à faire
     lors du clic
     Exemple d'utilisation, la  recyclerView ayant été déjà créée :
                         RecyclerViewClickListener listener = new RecyclerViewClickListener() {
@@ -26,9 +26,9 @@ public class RecyclerViewGenericAdapter extends RecyclerView.Adapter<RecyclerVie
                         recyclerView.setAdapter(monAdapter);
    */
 
-    private final ArrayList<String> mesData;
-    private final LayoutInflater mInflater;
-    private final RecyclerViewClickListener listener;
+    final ArrayList<String> mesData;
+    final LayoutInflater mInflater;
+    final RecyclerViewClickListener listener;
 
 /*  C'est l'utilisation du RecyclerViewClickListener (portant la position de l'item) passé en paramètre à l'adapteur
     et par lui au ViewHolder  qui permet de sortir de l'adapteur tout le travail à faire sur le click et ainsi

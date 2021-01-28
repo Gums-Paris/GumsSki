@@ -1,45 +1,34 @@
 package fr.cjpapps.gumski;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 
-import static fr.cjpapps.gumski.MainActivity.DATELISTE;
 
-public class GetInfosListe extends GetInfosGums {
+public class GetParamSortie extends GetInfosGums{
 
     @Override
     protected void onPostExecute (String result) {
 
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
         SharedPreferences.Editor  editeur = mesPrefs.edit();
-        ArrayList<HashMap<String,String>> listeBidule;
+        HashMap<String,String> params;
         try {
             JSONObject jsonGums = new JSONObject(result);
             String errMsg = jsonGums.optString("err_msg");
             String errCode = jsonGums.optString("err_code");
             if ("".equals(errCode)) {
-                editeur.putString("jsonListe", result);
+                editeur.putString("jsonParams", result);
                 editeur.apply();
-/*                try {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    Date today = Calendar.getInstance().getTime();
-                    editeur.putString(DATELISTE, sdf.format(today));
-                    editeur.apply();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }  */
-                listeBidule = Aux.getListeItems(result);
-                if(listeBidule != null){
-                    ModelListeItems.listeDesItems.setValue(listeBidule);
+
+                params = Aux.getListeParams(result);
+                Log.i("SECUSERV", "get params & setValue ");
+                if (params != null) {
+                    ModelListeItems.paramSortie.setValue(params);
                     ModelListeItems.flagListe.setValue(true);
                 }else{
                     ModelListeItems.flagListe.setValue(false);
@@ -54,5 +43,4 @@ public class GetInfosListe extends GetInfosGums {
             e.printStackTrace();
         }
     }
-
 }

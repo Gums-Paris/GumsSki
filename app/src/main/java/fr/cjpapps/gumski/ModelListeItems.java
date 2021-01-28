@@ -19,6 +19,9 @@ public class ModelListeItems extends AndroidViewModel {
     static MutableLiveData<Boolean> flagModif = new MutableLiveData<>();
     static MutableLiveData<Boolean> flagSuppress = new MutableLiveData<>();
     static MutableLiveData<Boolean> flagAuthFrag = new MutableLiveData<>();
+    static MutableLiveData<HashMap<String,String>> paramSortie = new MutableLiveData<>();
+    static MutableLiveData<ArrayList<ArrayList<HashMap<String,String>>>> compositionGroupes = new MutableLiveData<>();
+//    static MutableLiveData<Boolean> flagParams = new MutableLiveData<>();
 
     SharedPreferences mesPrefs;
     Resources mesResources;  // sens différent de API resource
@@ -30,6 +33,9 @@ public class ModelListeItems extends AndroidViewModel {
     MutableLiveData<Boolean> getFlagSuppress() {return flagSuppress;}
     MutableLiveData<Boolean> getFlagAuth() { return flagAuth; }
     MutableLiveData<Boolean> getFlagAuthFrag() { return flagAuthFrag; }
+    MutableLiveData<HashMap<String,String>> getParamSortie() {return paramSortie;}
+    MutableLiveData<ArrayList<ArrayList<HashMap<String,String>>>> getCompositionGroupes() {return compositionGroupes;}
+//    MutableLiveData<Boolean> getFlagParams() { return flagParams; }
 
     private final HashMap<String, String> requestParams = new HashMap<>();
     private final String[] taskParams = new String[6];
@@ -42,15 +48,21 @@ public class ModelListeItems extends AndroidViewModel {
         mesResources = MyHelper.getInstance().recupResources();
         Log.i("SECUSERV", "model auth ? "+mesPrefs.getBoolean("authOK", false));
         if (mesPrefs.getBoolean("authOK", false)) {
-                        recupListe();
+//                        recupListe();
+            if (mesPrefs.getString("date",null) == null ||
+             Aux.datePast(mesPrefs.getString("date",null), Integer.parseInt(mesPrefs.getString("jours","2")))) {
+                recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
             }
+        }
     }
 
-    void recupListe () {
+ //   void recupListe () {  // devenu recupInfo pour généraliser à plusieurs resources
+     void recupInfo (String uneResource, String uneSortie) {
         String stringRequest;
         requestParams.put("app", Constantes.JOOMLA_APP);
-        requestParams.put("resource", Constantes.JOOMLA_RESOURCE_2);
+        requestParams.put("resource", uneResource);
         requestParams.put("format", "json");
+        requestParams.put("sortieid", uneSortie);
         stringRequest = Aux.buildRequest(requestParams);
         taskParams[0] = Variables.urlActive;
         taskParams[1] = stringRequest;
@@ -60,7 +72,14 @@ public class ModelListeItems extends AndroidViewModel {
         taskParams[5] = "Bearer "+ mesPrefs.getString("auth", "");
         Log.i("SECUSERV", "network ? "+Variables.isNetworkConnected);
         if (Variables.isNetworkConnected)  {
-            new GetInfosListe().execute(taskParams);
+            switch(uneResource) {
+                case Constantes.JOOMLA_RESOURCE_1 :
+                    new GetParamSortie().execute(taskParams);
+                    break;
+                case Constantes.JOOMLA_RESOURCE_2 :
+                    new GetInfosListe().execute(taskParams);
+            }
+//            new GetInfosListe().execute(taskParams);
         }
     }
 }

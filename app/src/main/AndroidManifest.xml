@@ -14,11 +14,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name="fr.cjpapps.gumski.AuthActivity"
-            android:label="@string/title_activity_authentifier">
-        </activity>
+            android:name=".AuthActivity"
+            android:label="@string/title_activity_authentifier" />
         <activity
-            android:name="fr.cjpapps.gumski.DeleteItem"
+            android:name=".DeleteItem"
             android:label="@string/title_activity_delete_item"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -26,7 +25,7 @@
                 android:value="fr.cjpapps.gumski.MainActivity" />
         </activity>
         <activity
-            android:name="fr.cjpapps.gumski.CreateItem"
+            android:name=".CreateItem"
             android:label="@string/title_activity_create_item"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -34,7 +33,7 @@
                 android:value="fr.cjpapps.gumski.MainActivity" />
         </activity>
         <activity
-            android:name="fr.cjpapps.gumski.ModifItem"
+            android:name=".ModifItem"
             android:label="@string/title_activity_modif_item"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -42,7 +41,7 @@
                 android:value="fr.cjpapps.gumski.MainActivity" />
         </activity>
         <activity
-            android:name="fr.cjpapps.gumski.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

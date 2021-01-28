@@ -17,8 +17,12 @@
     <string name="title_activity_create_item">CreateItem</string>
     <string name="help">Aide</string>
     <string name="new_item">Nouvel item</string>
+    <string name="logistique">Logistique</string>
+    <string name="meteo">Météo</string>
+    <string name="secours">Secours</string>
     <string name="settings">Préférences</string>
     <string name="new_user">Changer d\'usager</string>
     <string name="title_activity_delete_item">DeleteItem</string>
+    <string name="title_activity_groupe">Détails du Groupe</string>
 
 </resources>

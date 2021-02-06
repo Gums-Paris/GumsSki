@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,10 +41,18 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences.Editor editeur;
     Aux auxMethods;
     static final String DATELISTE = "dateliste";
-    boolean testAuth;
+    boolean testAuth = false;
+    String stringAuth = "";
     ArrayList<ArrayList<HashMap<String,String>>> compositionGroupes = new ArrayList<>();
 
-/*  Appli quasi générique au sens où pour faire des opérations de création, modification ou suppression sur les lignes d'une
+/* TODO
+*   alerte si mauvaise url site marche pas
+*   fait groupes ne laisse pas les recalés de côté
+*   */
+
+// dérivé de AccessAuth mais avec pas mal de modifs
+/*  AccessAuth
+*   est une appli quasi générique au sens où pour faire des opérations de création, modification ou suppression sur les lignes d'une
 *   basesur un site Joomla distant, il n'y a qu'à rentrer les infos concernant le site et la base dans trois classes :
 *       - Attributs.java où il faut fournir les lignes ATTR01 à ATTRnn qui décrivent les champs de la base
 *       - urlsApiApp.java pour donner l'URL d'accès à l'API du site joomla sous le forme particulière qui suit
@@ -51,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
 *       - Constantes.java où on place les noms de l'app et des resources du plugin de com_api
 *   */
 
-/*  Notes   1. Pare-feu de OVH
+/*  Notes sur AccessAuth
+            1. Pare-feu de OVH
              OVH utilise Apache mod_security, qui refuse DELETE (paramétrage standard) et le corps de POST en Json
              (ça c'est plus sévère que le paramétrage standard). On peut mettre le corps dePOST en form-data ce qui est assez
              laborieux à coder, ou en url-encoded ce qui n'est pas plus pénible à coder que le json. Je choisis
@@ -86,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
         affichage.setText(R.string.white_screen);
         patience = findViewById(R.id.indeterminateBar);
 
-//        Variables.urlActive = urlsGblo.API_LOCAL.getUrl();
         Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
+//        Variables.urlActive = urlsApiApp.API_SITE.getUrl();
 
         mesPrefs = MyHelper.getInstance(getApplicationContext()).recupPrefs();
         editeur = mesPrefs.edit();
@@ -115,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         }
-        patience.setVisibility(View.GONE);
+//        patience.setVisibility(View.GONE);
 
         modelListe = new ViewModelProvider(this).get(ModelListeItems.class);
         recyclerView = findViewById(R.id.listechoix);
@@ -127,9 +138,9 @@ public class MainActivity extends AppCompatActivity {
 // complète. Jusque là le jeton "auth" restera disponible dans les sharedPrefs.
 // une fois authentifié on récupère la liste d'items (voir onActivityResult tout en bas ; en cas de
 // démarrage avec auth valide c'est la création demodelListe qui déclenche le chargement
-        testAuth = mesPrefs.getBoolean("authOK", false);
-        Log.i("SECUSERV start authOK", String.valueOf(testAuth));
-        if ( !testAuth) {
+//        testAuth = mesPrefs.getBoolean("authOK", false);
+        if ( !mesPrefs.getBoolean("authOK", false)) {
+        Log.i("SECUSERV main start auth", "true");
             Intent auth = new Intent(this, AuthActivity.class);
             startActivityForResult(auth, Constantes.AUTH_ACTIV);
         }
@@ -184,56 +195,35 @@ public class MainActivity extends AppCompatActivity {
         };
         modelListe.getFlagSuppress().observe(MainActivity.this, flagSuppressObserver);
 
-// observateur d'arrivée de la liste
+// observateur d'arrivée de la liste 
         final Observer<ArrayList<HashMap<String,String>>> listeItemsObserver = new Observer<ArrayList<HashMap<String,String>>>() {
             String pourInfo = "";
             @Override
             public void onChanged(ArrayList<HashMap<String,String>> items) {
+                String infoSortie = mesPrefs.getString("infoSortie","");
+                affichage.setText(infoSortie);
                 if (items != null) {
-                    listeDesItems = items;
-                    Log.i("SECUSERV Main", "taille = " + listeDesItems.size());
-                    nomsItems = auxMethods.faitListeGroupes(listeDesItems);
+                        listeDesItems = items;
+                        patience.setVisibility(View.GONE);
+                        Log.i("SECUSERV Main", "taille = " + listeDesItems.size());
+                        nomsItems = auxMethods.faitListeGroupes(listeDesItems);
 //                    nomsItems = auxMethods.faitListeNoms(listeDesItems);
-                    if (nomsItems != null) {
-                        RecyclerViewClickListener listener = new RecyclerViewClickListener() {
-                            @Override
-                            public void onClick(View view, final int position) {
-                                String element = nomsItems.get(position);
-                                String numGroup = element.substring(0, element.indexOf(':'));
-                                FragmentManager fm = getSupportFragmentManager();
-                                FirstFragment partFrag = FirstFragment.newInstance(element, numGroup);
-                                partFrag.show(fm, "participants");
-/*                                PopupMenu popup = new PopupMenu(view.getContext(), view);
-                                popup.inflate(R.menu.edit_context_menu);
-                                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                                    @Override
-                                    public boolean onMenuItemClick(MenuItem item) {
-                                        String element = nomsItems.get(position);
-                                        String idItem = Aux.getIdItem(listeDesItems, element);
-                                        int menuItemId = item.getItemId();
-                                        if (menuItemId == R.id.modif) {
-                                            Intent choisi = new Intent(MainActivity.this, ModifItem.class);
-                                            choisi.putExtra("itemChoisi", idItem);
-                                            startActivityForResult(choisi, Constantes.MODIF_REQUEST);
-                                            return true;
-                                        }else if (menuItemId == R.id.suppr) {
-                                            Intent choix = new Intent(MainActivity.this, DeleteItem.class);
-                                            choix.putExtra("itemChoisi", idItem);
-                                            startActivityForResult(choix, Constantes.SUPPR_REQUEST);
-                                            return true;
-                                        } else {
-                                            return false;
-                                        }
-                                    }
-                                });
-                                popup.show(); */
-                            }
-                        };
-                        monAdapter = new RecyclerViewGenericAdapter(recyclerView.getContext(), nomsItems, listener);
-                        recyclerView.setAdapter(monAdapter);
-                    } else {
-                        pourInfo = "pas de liste de groupes";
-                    }
+                        if (nomsItems != null) {
+                            RecyclerViewClickListener listener = new RecyclerViewClickListener() {
+                                @Override
+                                public void onClick(View view, final int position) {
+                                    String element = nomsItems.get(position);
+                                    String numGroup = element.substring(0, element.indexOf(':'));
+                                    FragmentManager fm = getSupportFragmentManager();
+                                    FirstFragment partFrag = FirstFragment.newInstance(element, numGroup);
+                                    partFrag.show(fm, "participants");
+                                }
+                            };
+                            monAdapter = new RecyclerViewGenericAdapter(recyclerView.getContext(), nomsItems, listener);
+                            recyclerView.setAdapter(monAdapter);
+                        } else {
+                            pourInfo = "pas de liste de groupes";
+                        }
                 } else {
                     pourInfo = "yavait rien à voir";
                 }
@@ -249,37 +239,39 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(HashMap<String, String> infoSortie) {
                 if (infoSortie != null) {
-                    infos = infoSortie.get("date_bdh")+"\n"+
-                            infoSortie.get("titre")+"\n"+
-                            infoSortie.get("responsable");
+                    infos = infoSortie.get("date_bdh") + "\n" +
+                                infoSortie.get("titre") + "\n" +
+                                infoSortie.get("responsable");
+                    editeur.putString("date", infoSortie.get("date"));
+                    editeur.putString("jours", infoSortie.get("jours"));
+                    editeur.putString("infoSortie", infos);
+                    editeur.apply();
+                    Log.i("SECUSERV Main", "params sortie, on appelle liste ");
                     modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_2, infoSortie.get("id"));
                 }else{
                     infos = "Y a rien à voir";
                 }
-                affichage.setText(infos);
+//                affichage.setText(infos);
             }
         };
         modelListe.getParamSortie().observe(this, paramSortieObserver);
 
     }
-
+    
     @Override
-    protected void onStop() {
-        super.onStop();
-        Log.i("SECUSERV", "onStop ");
+    protected void onDestroy() {
+        Log.i("SECUSERV destroy", "fin "+isFinishing());
+        Log.i("SECUSERV destroy", "chg "+isChangingConfigurations());
+        super.onDestroy();
+        if (isFinishing()  && !isChangingConfigurations()) {
+        }
     }
 
     @Override
-    protected void onDestroy() {
-        Log.i("SECUSERV", "onDestroy ");
-        if (isFinishing()  && !isChangingConfigurations()) {
-            Log.i("SECUSERV", "clear model main ");
-            getViewModelStore().clear();
-            editeur.putBoolean("authOK", false);
-            editeur.putString("auth", "");
-            editeur.apply();
-            super.onDestroy();
-        }
+    public void onBackPressed() {
+        String message = "Quitter GumsSki ?";
+        DialogQuestion finAppli = DialogQuestion.newInstance(message);
+        finAppli.show(getSupportFragmentManager(), "questionSortie");
     }
 
     @Override
@@ -297,6 +289,8 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.help) {
+            Intent lireAide = new Intent(MainActivity.this, Aide.class);
+            startActivity(lireAide);
             return true;
         }
         if (id == R.id.logistique) {
@@ -317,10 +311,10 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } */
         if (id == R.id.new_user) {
-            editeur.putBoolean("authOK", false);
+/*            editeur.putBoolean("authOK", false);
             editeur.putString("auth", "");
             editeur.putString("userId", "");
-            editeur.commit();
+            editeur.commit(); */
 
             Intent newUser = new Intent(this, AuthActivity.class);
             startActivityForResult(newUser, Constantes.AUTH_CHANGE);
@@ -362,17 +356,28 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
             if (resultCode == RESULT_OK) {
-//                modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_2);
-                if (mesPrefs.getString("date",null) == null ||
-              Aux.datePast(mesPrefs.getString("date",null), Integer.parseInt(mesPrefs.getString("jours","2")))) {
-                    modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
+                String dateWE = mesPrefs.getString("date", null);
+                Log.i("SECUSERV Main", "on auth activ result OK");
+ /*               if (mesPrefs.getString("date",null) == null ||
+                        Aux.datePast(dateWE, Integer.parseInt(Objects.requireNonNull(mesPrefs.getString("jours", "2"))))) {
+                    if(!dateWE.equals(mesPrefs.getString("dateData", null))) {
+                        modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
+                    }  */
+                    if ( dateWE == null){
+                        modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
+                    }else if ( Aux.datePast(dateWE, Integer.parseInt(Objects.requireNonNull(mesPrefs.getString("jours", "2"))))
+                            || !dateWE.equals(mesPrefs.getString("dateData", null))) {
+                        modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
+                    }else{
+                        modelListe.getInfosFromPrefs();
+                    }
                 }
             }
-        }
+
         if (requestCode == Constantes.AUTH_CHANGE) {
             if (resultCode == RESULT_CANCELED) {
                 Log.i("SECUSERV Main", "on auth change result pas OK");
-                finish();
+//                finish();
             }
             if (resultCode == RESULT_OK) {
                 Log.i("SECUSERV Main", "on auth change result OK");

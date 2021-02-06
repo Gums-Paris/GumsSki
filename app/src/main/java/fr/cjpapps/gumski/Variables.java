@@ -11,4 +11,7 @@ public class Variables {
     // retours de connexion
     public static String errMsg = "";
     public static String errCode = "";
+
+    // liste participants déjà chargée
+    public static boolean isListeAvailable = false;
 }

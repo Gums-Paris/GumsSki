@@ -1,6 +1,7 @@
 package fr.cjpapps.gumski;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -9,6 +10,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,7 +41,12 @@ public class AuthActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_auth);
+        setContentView(R.layout.activity_login);
+        Toolbar toolbar = findViewById(R.id.login_toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         counter = 3;
         mesPrefs = MyHelper.getInstance().recupPrefs();
@@ -125,5 +132,19 @@ public class AuthActivity extends AppCompatActivity {
         DialogAlertes infoUtilisateur = DialogAlertes.newInstance(message);
         infoUtilisateur.show(getSupportFragmentManager(), "infoutilisateur");
     }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.home) {
+            setResult(RESULT_OK, result);
+//            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
 }

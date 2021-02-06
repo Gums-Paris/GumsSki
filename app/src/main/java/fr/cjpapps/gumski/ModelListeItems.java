@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class ModelListeItems extends AndroidViewModel {
 
@@ -46,14 +47,19 @@ public class ModelListeItems extends AndroidViewModel {
         super(application);
         mesPrefs = MyHelper.getInstance().recupPrefs();
         mesResources = MyHelper.getInstance().recupResources();
-        Log.i("SECUSERV", "model auth ? "+mesPrefs.getBoolean("authOK", false));
+        Log.i("SECUSERV", "main model auth ? "+mesPrefs.getBoolean("authOK", false));
         if (mesPrefs.getBoolean("authOK", false)) {
-//                        recupListe();
-            if (mesPrefs.getString("date",null) == null ||
-             Aux.datePast(mesPrefs.getString("date",null), Integer.parseInt(mesPrefs.getString("jours","2")))) {
-                recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
-            }
+                String dateWE = mesPrefs.getString("date", null);
+                if ( dateWE == null){
+                    recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
+                }else if ( Aux.datePast(dateWE, Integer.parseInt(Objects.requireNonNull(mesPrefs.getString("jours", "2"))))
+                        || !dateWE.equals(mesPrefs.getString("dateData", null))) {
+                    recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
+                }else {
+                    getInfosFromPrefs();
+                }
         }
+
     }
 
  //   void recupListe () {  // devenu recupInfo pour généraliser à plusieurs resources
@@ -79,7 +85,19 @@ public class ModelListeItems extends AndroidViewModel {
                 case Constantes.JOOMLA_RESOURCE_2 :
                     new GetInfosListe().execute(taskParams);
             }
-//            new GetInfosListe().execute(taskParams);
         }
     }
+
+    void getInfosFromPrefs() {
+        ArrayList<HashMap<String,String>> listeBidule;
+        String jsliste = mesPrefs.getString("jsonListe", "");
+        listeBidule = Aux.getListeItems(jsliste);
+        if(listeBidule != null){
+            ModelListeItems.listeDesItems.setValue(listeBidule);
+            ModelListeItems.flagListe.setValue(true);
+        }else{
+            ModelListeItems.flagListe.setValue(false);
+        }
+    }
+
 }

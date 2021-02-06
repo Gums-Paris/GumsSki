@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:allowBackup="true"
@@ -15,7 +16,20 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".AuthActivity"
-            android:label="@string/title_activity_authentifier" />
+            android:label="@string/title_activity_authentifier"
+            android:theme="@style/AppTheme.NoActionBar">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="fr.cjpapps.gumski.MainActivity" />
+        </activity>
+        <activity
+            android:name=".Aide"
+            android:label="@string/title_activity_help"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fr.cjpapps.gumski.MainActivity" />
+        </activity>
         <activity
             android:name=".DeleteItem"
             android:label="@string/title_activity_delete_item"

@@ -41,6 +41,8 @@ public class GetInfosListe extends GetInfosGums {
                 if(listeBidule != null){
                     ModelListeItems.listeDesItems.setValue(listeBidule);
                     ModelListeItems.flagListe.setValue(true);
+                    editeur.putString("dateData", mesPrefs.getString("date", null));
+                    editeur.apply();
                 }else{
                     ModelListeItems.flagListe.setValue(false);
                 }

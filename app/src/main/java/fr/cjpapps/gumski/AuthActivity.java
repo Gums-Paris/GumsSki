@@ -22,7 +22,6 @@ import java.util.HashMap;
 public class AuthActivity extends AppCompatActivity {
 
 //  recueillir unsername et password et poster la demande de auth  pour récupérer auth et userId
-//  private SharedPreferences mesPrefs;
     private EditText ed1, ed2;
     private String user;
     private String password;
@@ -33,6 +32,7 @@ public class AuthActivity extends AppCompatActivity {
 // on met dimension 6 pour taskparams bien que 4 suffisent ici. C'est pour pouvoir utliser PostInfosGums à la fois
 // ici et pour poster les paramètres d'un item dans edit et create
     ModelAuth model = null;
+// nombre d'essais autorisés pour login
     int counter = 3;
     Button envoyer = null;
     SharedPreferences mesPrefs;

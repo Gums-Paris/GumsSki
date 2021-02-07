@@ -71,26 +71,16 @@ public class Aux {
             for (int i = 0; i < arrayGums.length(); i++) {
 //                JSONArray unArray = arrayGums.getJSONArray(i);
                 JSONObject unObjet = arrayGums.getJSONObject(i);
+                if (!("3".equals(unObjet.optString("statut")))) { continue;}
                 HashMap<String,String> unItem = new HashMap<>();
-//                unItem.put("id", unArray.getString(0));
-//                unItem.put("nomitem", unArray.getString(1));
-//                unObjet.optString("groupe");
                 unItem.put("groupe", unObjet.optString("groupe"));
-//                if (unObjet.optString("id")!=null) {
                 unItem.put("id", unObjet.optString("id"));
-//                if (unObjet.optString("name")!=null) {
                     unItem.put("name", unObjet.optString("name"));
-//                if (unObjet.optString("statut")!=null) {
                     unItem.put("statut", unObjet.optString("statut"));
-//                if (unObjet.optString("responsabilite")!=null) {
                     unItem.put("responsabilite", unObjet.optString("responsabilite"));
-//                if (unObjet.optString("peage")!=null) {
                     unItem.put("peage", unObjet.optString("peage"));
-//                if (unObjet.optString("autonome")!=null) {
                     unItem.put("autonome", unObjet.optString("autonome"));
-//                if (unObjet.optString("tel")!=null) {
                     unItem.put("tel", unObjet.optString("tel"));
-//                if (unObjet.optString("email")!=null) {
                     unItem.put("email", unObjet.optString("email"));
                 listeItems.add(i, unItem);
             }
@@ -107,25 +97,12 @@ public class Aux {
         try {
             JSONObject jsonGums = new JSONObject(jsParams);
             JSONObject jsonData = jsonGums.getJSONObject("data");
-//            if (jsonData.optString("date_bdh") != null) {
                 params.put("date_bdh",jsonData.optString("date_bdh"));
-//            }
-//            if (jsonData.optString("id") != null) {
                 params.put("id",jsonData.optString("id"));
-//            }
-//            if (jsonData.optString("titre") != null) {
                 params.put("titre",jsonData.optString("titre"));
-//            }
-//            if (jsonData.optString("date") != null) {
                 params.put("date",jsonData.optString("date"));
- //           }
-//            if (jsonData.optString("jours") != null) {
                 params.put("jours",jsonData.optString("jours"));
-//            }
-//            if (jsonData.optString("publier_groupes") != null) {
                 params.put("publier_groupes",jsonData.optString("publier_groupes"));
-//            }
-//            if (jsonData.optString("responsable") != null) {
                 params.put("responsable",jsonData.optString("responsable"));
 //            }
             return  params;
@@ -152,8 +129,8 @@ public class Aux {
     }
 
     ArrayList<String> faitListeGroupes(ArrayList<HashMap<String,String>> items) {
+// pour fabriquer la liste des noms de groupe à donner à la recyclerView
         ArrayList<String> liste = new ArrayList<>();
-//        ArrayList<ArrayList<HashMap<String,String>>> composition = new ArrayList<>();
         int numGroupe = 0;
         for (HashMap<String,String> temp :items) {
             try {

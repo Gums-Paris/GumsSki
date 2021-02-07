@@ -58,4 +58,9 @@ public class GetInfosGums extends AsyncTask<String,Void,String> {
         Log.i("SECUSERV", "get liste "+resultat);
         return resultat;
     }
+
+    protected void onPostExecute (String resultat) {
+// le traitement dépend de l'url accédée
+    }
+
 }

@@ -36,11 +36,14 @@ import java.util.Objects;
 
 public class FirstFragment extends DialogFragment {
 
+/* Ce fragment sert à l'affichage des membres d'un goupe plus leur tph et email
+*  Il partage le modèle ModelListeItems avec MainActivity ce qui lui donne accès à la liste des participants à partir
+*  de laquelle il nourrit sa recyclerView */
+
     private static ModelListeItems model = null;
 //    private ArrayList<String> lesData;
     private ArrayList<String> lesParticipants;
     private ArrayList<HashMap<String,String>> lesItems;
-    private Aux methodesAux;
     private RecyclerView mRecyclerView;
     private TextView affichage;
     int MY_PERMISSIONS_PHONE_CALL;
@@ -61,7 +64,6 @@ public class FirstFragment extends DialogFragment {
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-        methodesAux = new Aux();
         model = new ViewModelProvider(requireActivity()).get(ModelListeItems.class);
         View v = inflater.inflate(R.layout.fragment_first, container, false);
         affichage = v.findViewById(R.id.nom_groupe);
@@ -117,6 +119,7 @@ public class FirstFragment extends DialogFragment {
                                 Log.i("SECUSERV frag 1 onclick", num1);
                                 Intent phone = new Intent(Intent.ACTION_CALL);
 //                                phone.setData(Uri.parse("tel:+33"+num1));
+// pour le développement on remplace les num de téléphone et les emails par des valeurs bidon
                                 phone.setData(Uri.parse("tel:"+"+33612345678"));
                                 if (phone.resolveActivity(requireActivity().getPackageManager()) != null) {
                                          startActivity(phone);
@@ -137,7 +140,7 @@ public class FirstFragment extends DialogFragment {
                                     Toast.makeText(getActivity(), "Appli email non disponible", Toast.LENGTH_LONG).show();
                                 }
                             }
-//                            dismiss();
+//                            dismiss(); // finalement on garde le fragment ouvert ; il faudra l'éliminer avec le backbutton
                         }
                     };
                     ParticipantsAdapter mAdapter = new ParticipantsAdapter(getActivity(), lesParticipants, listener);

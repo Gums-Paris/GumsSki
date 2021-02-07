@@ -22,7 +22,6 @@ public class ModelListeItems extends AndroidViewModel {
     static MutableLiveData<Boolean> flagAuthFrag = new MutableLiveData<>();
     static MutableLiveData<HashMap<String,String>> paramSortie = new MutableLiveData<>();
     static MutableLiveData<ArrayList<ArrayList<HashMap<String,String>>>> compositionGroupes = new MutableLiveData<>();
-//    static MutableLiveData<Boolean> flagParams = new MutableLiveData<>();
 
     SharedPreferences mesPrefs;
     Resources mesResources;  // sens différent de API resource
@@ -36,12 +35,11 @@ public class ModelListeItems extends AndroidViewModel {
     MutableLiveData<Boolean> getFlagAuthFrag() { return flagAuthFrag; }
     MutableLiveData<HashMap<String,String>> getParamSortie() {return paramSortie;}
     MutableLiveData<ArrayList<ArrayList<HashMap<String,String>>>> getCompositionGroupes() {return compositionGroupes;}
-//    MutableLiveData<Boolean> getFlagParams() { return flagParams; }
 
     private final HashMap<String, String> requestParams = new HashMap<>();
     private final String[] taskParams = new String[6];
 
-//  Constructeur du modèle ; si on a déjà l'auth on récupère les items ici (sinon c'est l'observateur de auth
+//  Constructeur du modèle ; si on a déjà l'auth on récupère les items ici (sinon c'est le retour de AuthActivity
 //  dans Main qui s'en chargera).
     public ModelListeItems(final Application application) {
         super(application);
@@ -49,7 +47,9 @@ public class ModelListeItems extends AndroidViewModel {
         mesResources = MyHelper.getInstance().recupResources();
         Log.i("SECUSERV", "main model auth ? "+mesPrefs.getBoolean("authOK", false));
         if (mesPrefs.getBoolean("authOK", false)) {
-                String dateWE = mesPrefs.getString("date", null);
+/*  Si date du WE est vide ou si les infos sont périmées par rapport à la date du jour ou si la date des infos ne colle pas
+*   avec la date du WE, on va chercher l'info sur gumsparis. Sinon on la récupère en sharedPreferences */
+            String dateWE = mesPrefs.getString("date", null);
                 if ( dateWE == null){
                     recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
                 }else if ( Aux.datePast(dateWE, Integer.parseInt(Objects.requireNonNull(mesPrefs.getString("jours", "2"))))

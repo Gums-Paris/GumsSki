@@ -46,8 +46,6 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<ArrayList<HashMap<String,String>>> compositionGroupes = new ArrayList<>();
 
 /* TODO
-*   alerte si mauvaise url site marche pas
-*   fait groupes ne laisse pas les recalés de côté
 *   */
 
 // dérivé de AccessAuth mais avec pas mal de modifs
@@ -97,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
         affichage.setText(R.string.white_screen);
         patience = findViewById(R.id.indeterminateBar);
 
-        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
-//        Variables.urlActive = urlsApiApp.API_SITE.getUrl();
+//        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
+        Variables.urlActive = urlsApiApp.API_SITE.getUrl();
 
         mesPrefs = MyHelper.getInstance(getApplicationContext()).recupPrefs();
         editeur = mesPrefs.edit();
@@ -126,19 +124,19 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         }
-//        patience.setVisibility(View.GONE);
 
+// création ou récupération du modèle ; ne pas oublier que le constructeur du model s'exécute immédiatement
         modelListe = new ViewModelProvider(this).get(ModelListeItems.class);
         recyclerView = findViewById(R.id.listechoix);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 // auth si nécessaire. Une fois auth réalisée, authOK, auth et userId se trouvent en sharedPrefs et on lance une
 // recup des données
-// noter que on passe authOK à false dans onDestroy() pour obliger une nouvelle identification après une fermeture
-// complète. Jusque là le jeton "auth" restera disponible dans les sharedPrefs.
-// une fois authentifié on récupère la liste d'items (voir onActivityResult tout en bas ; en cas de
+// noter que on passe authOK à false et auth à "" si à l'occasion de onBackPressed l'utilisateur décide de fermer l'appli
+// pour obliger une nouvelle identification après une telle fermeture complète.
+// Jusque là le jeton "auth" restera disponible dans les sharedPrefs.
+// une fois authentifié on récupère la liste d'items (voir onActivityResult pour AUTH_ACTIV tout en bas) ; en cas de
 // démarrage avec auth valide c'est la création demodelListe qui déclenche le chargement
-//        testAuth = mesPrefs.getBoolean("authOK", false);
         if ( !mesPrefs.getBoolean("authOK", false)) {
         Log.i("SECUSERV main start auth", "true");
             Intent auth = new Intent(this, AuthActivity.class);
@@ -201,13 +199,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(ArrayList<HashMap<String,String>> items) {
                 String infoSortie = mesPrefs.getString("infoSortie","");
-                affichage.setText(infoSortie);
+                affichage.setText(infoSortie);  // infoSortie a été fabriqué par observateur de paramSortie
                 if (items != null) {
                         listeDesItems = items;
                         patience.setVisibility(View.GONE);
                         Log.i("SECUSERV Main", "taille = " + listeDesItems.size());
                         nomsItems = auxMethods.faitListeGroupes(listeDesItems);
-//                    nomsItems = auxMethods.faitListeNoms(listeDesItems);
                         if (nomsItems != null) {
                             RecyclerViewClickListener listener = new RecyclerViewClickListener() {
                                 @Override
@@ -227,8 +224,6 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     pourInfo = "yavait rien à voir";
                 }
-//                Log.i("SECUSERV", "date today =  "+mesPrefs.getString(DATELISTE, "2020-01-01"));
-//                affichage.setText(mesPrefs.getString(DATELISTE, "2020-01-01"));
             }
         };
         modelListe.getListeDesItems().observe(MainActivity.this, listeItemsObserver);
@@ -257,9 +252,11 @@ public class MainActivity extends AppCompatActivity {
         modelListe.getParamSortie().observe(this, paramSortieObserver);
 
     }
-    
+
     @Override
     protected void onDestroy() {
+//  onDestroy a failli servir ; laissée là par paresse au cas où pour retrouver facilement le
+//  "isFinishing()  && !isChangingConfigurations()" qui ne s'invente pas facilement
         Log.i("SECUSERV destroy", "fin "+isFinishing());
         Log.i("SECUSERV destroy", "chg "+isChangingConfigurations());
         super.onDestroy();
@@ -269,6 +266,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+// si l'usager  presse le bouton retour arrière quend on est sur la page d'accueil (liste des groupes) on luo demande s'il vaut ou
+// non fermer l'appli ce qui a pour conséqience d'effacer l'authentification
         String message = "Quitter GumsSki ?";
         DialogQuestion finAppli = DialogQuestion.newInstance(message);
         finAppli.show(getSupportFragmentManager(), "questionSortie");
@@ -356,23 +355,20 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
             if (resultCode == RESULT_OK) {
+/*  Si date du WE est vide ou si les infos sont périmées par rapport à la date du jour ou si la date des infos ne colle pas
+*   avec la date du WE, on va chercher l'info sur gumsparis. Sinon on la récupère en sharedPreferences */
                 String dateWE = mesPrefs.getString("date", null);
                 Log.i("SECUSERV Main", "on auth activ result OK");
- /*               if (mesPrefs.getString("date",null) == null ||
-                        Aux.datePast(dateWE, Integer.parseInt(Objects.requireNonNull(mesPrefs.getString("jours", "2"))))) {
-                    if(!dateWE.equals(mesPrefs.getString("dateData", null))) {
-                        modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
-                    }  */
-                    if ( dateWE == null){
-                        modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
-                    }else if ( Aux.datePast(dateWE, Integer.parseInt(Objects.requireNonNull(mesPrefs.getString("jours", "2"))))
-                            || !dateWE.equals(mesPrefs.getString("dateData", null))) {
-                        modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
-                    }else{
-                        modelListe.getInfosFromPrefs();
-                    }
+                if ( dateWE == null){
+                    modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
+                }else if ( Aux.datePast(dateWE, Integer.parseInt(Objects.requireNonNull(mesPrefs.getString("jours", "2"))))
+                        || !dateWE.equals(mesPrefs.getString("dateData", null))) {
+                    modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
+                }else{
+                    modelListe.getInfosFromPrefs();
                 }
             }
+        }
 
         if (requestCode == Constantes.AUTH_CHANGE) {
             if (resultCode == RESULT_CANCELED) {

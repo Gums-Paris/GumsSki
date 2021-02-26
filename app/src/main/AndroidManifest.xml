@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="fr.cjpapps.gumski">
+    package="fr.cjpapps.gumsski">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -15,47 +15,47 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".AuthActivity"
+            android:name="fr.cjpapps.gumsski.AuthActivity"
             android:label="@string/title_activity_authentifier"
             android:theme="@style/AppTheme.NoActionBar">
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
-            android:value="fr.cjpapps.gumski.MainActivity" />
+            android:value="fr.cjpapps.gumsski.MainActivity" />
         </activity>
         <activity
-            android:name=".Aide"
+            android:name="fr.cjpapps.gumsski.Aide"
             android:label="@string/title_activity_help"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="fr.cjpapps.gumski.MainActivity" />
+                android:value="fr.cjpapps.gumsski.MainActivity" />
         </activity>
         <activity
-            android:name=".DeleteItem"
+            android:name="fr.cjpapps.gumsski.DeleteItem"
             android:label="@string/title_activity_delete_item"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="fr.cjpapps.gumski.MainActivity" />
+                android:value="fr.cjpapps.gumsski.MainActivity" />
         </activity>
         <activity
-            android:name=".CreateItem"
+            android:name="fr.cjpapps.gumsski.CreateItem"
             android:label="@string/title_activity_create_item"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="fr.cjpapps.gumski.MainActivity" />
+                android:value="fr.cjpapps.gumsski.MainActivity" />
         </activity>
         <activity
-            android:name=".ModifItem"
+            android:name="fr.cjpapps.gumsski.ModifItem"
             android:label="@string/title_activity_modif_item"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="fr.cjpapps.gumski.MainActivity" />
+                android:value="fr.cjpapps.gumsski.MainActivity" />
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="fr.cjpapps.gumsski.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

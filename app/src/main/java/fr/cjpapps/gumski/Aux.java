@@ -223,4 +223,12 @@ public class Aux {
         }
         return true;
     }
+
+    // met un numerode téléphone sous la forme internationale +33612345678
+    static String numInter (String num){
+        if ("".equals(num)) {return "";}
+        String num1 = num.replaceAll("\\s", "");
+        num1 = num1.startsWith("0") ? num1.substring(1) : num1;
+        return "+33"+num1;
+    }
 }

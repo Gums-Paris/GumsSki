@@ -17,25 +17,47 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/phone_button"
+    <TextView
+        android:id="@+id/detail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Phone"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="15dp"
+        android:textSize="20sp"
+        android:text=""
+        android:textStyle="bold"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintLeft_toRightOf="@id/un_participant"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/phone_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/phone_vert_rond_36"
         android:layout_marginStart="25dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/un_participant"
-        />
+        android:contentDescription="Phone" />
 
-    <Button
+    <ImageButton
         android:id="@+id/email_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Email"
-        android:layout_marginStart="5dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/mail_bleu_rond_36"
+        android:layout_marginStart="25dp"
         app:layout_constraintLeft_toRightOf="@id/phone_button"
         app:layout_constraintTop_toTopOf="@id/phone_button"
-        />
+        android:contentDescription="Email" />
 
+    <ImageButton
+        android:id="@+id/sms_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/message_jaune_rond_36"
+        android:layout_marginStart="25dp"
+        app:layout_constraintLeft_toRightOf="@id/email_button"
+        app:layout_constraintTop_toTopOf="@id/phone_button"
+        android:contentDescription="Message" />
 </androidx.constraintlayout.widget.ConstraintLayout>

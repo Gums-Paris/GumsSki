@@ -25,6 +25,7 @@
     <string name="title_activity_delete_item">DeleteItem</string>
     <string name="title_activity_groupe">Détails du Groupe</string>
     <string name="title_activity_help">Aide</string>
-    <string name="helptext">T\'es pas aidé mon pov\' vieux !</string>
+    <string name="helptext">T\'es vraiment pas aidé mon pov\' vieux !</string>
+    <string name="details">  %1$s  %2$s</string>
 
 </resources>

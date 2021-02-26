@@ -17,16 +17,38 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/groupe_mail_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/mail_bleu_rond_36"
+        android:text=" Email\n groupe"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nom_groupe"
+        android:contentDescription="email groupe" />
+
+    <Button
+        android:id="@+id/groupe_sms_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/message_jaune_rond_36"
+        android:text=" SMS\n groupe"
+        android:layout_marginStart="5dp"
+        app:layout_constraintStart_toEndOf="@id/groupe_mail_button"
+        app:layout_constraintTop_toTopOf="@id/groupe_mail_button"
+        android:contentDescription="Message groupe" />
     <!-- A RecyclerView with some commonly used attributes -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listeparticipants"
         android:scrollbars="vertical"
-        android:layout_width="300dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="100dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nom_groupe"/>
+        app:layout_constraintTop_toBottomOf="@+id/groupe_mail_button"/>
  <!--   <Button
         android:id="@+id/button_first"
         android:layout_width="wrap_content"

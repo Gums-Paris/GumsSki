@@ -46,7 +46,15 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<ArrayList<HashMap<String,String>>> compositionGroupes = new ArrayList<>();
 
 /* TODO
-*   */
+    OK   assurer fonctionnement si pas autorisé à téléphoner
+    OK   envoi message (faire les 3 icones , menu à 3 items avec icones )
+    OK  faire icones rondes plus grandes : taille par width et height avec icone de la bonne taille 
+    OK  envoi email groupe par bouton sur la page du groupe
+    envoi sms groupe par bouton sur la page du groupe peut pas être fait simplement ; faut utiliser SMSManager et boucler sur
+     les destinataires. Gestion de permissions. Les réponses ne peuvent pas être "Pour tous", et j'espère qu'on n'est pas
+     obligés de gérer les réponses dans GumSki.  Passer immé à WhatsApp ou Signal ?
+    clic long sur participant deb, deniv, nivA, nivS
+    */
 
 // dérivé de AccessAuth mais avec pas mal de modifs
 /*  AccessAuth
@@ -193,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
         };
         modelListe.getFlagSuppress().observe(MainActivity.this, flagSuppressObserver);
 
-// observateur d'arrivée de la liste 
+// observateur d'arrivée de la liste des participants
         final Observer<ArrayList<HashMap<String,String>>> listeItemsObserver = new Observer<ArrayList<HashMap<String,String>>>() {
             String pourInfo = "";
             @Override

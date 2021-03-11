@@ -8,22 +8,54 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_gs"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher_gs_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name="fr.cjpapps.gumsski.AuthActivity"
-            android:label="@string/title_activity_authentifier"
+            android:name=".Preferences"
+            android:label="@string/title_activity_preferences"
             android:theme="@style/AppTheme.NoActionBar">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value="fr.cjpapps.gumsski.MainActivity" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fr.cjpapps.gumsski.MainActivity" />
         </activity>
         <activity
-            android:name="fr.cjpapps.gumsski.Aide"
+            android:name=".Secours"
+            android:label="@string/title_activity_secours"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fr.cjpapps.gumsski.MainActivity" />
+        </activity>
+        <activity
+            android:name=".Meteo"
+            android:label="@string/title_activity_meteo"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fr.cjpapps.gumsski.MainActivity" />
+        </activity>
+        <activity
+            android:name=".Logistique"
+            android:label="@string/title_activity_logistique"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fr.cjpapps.gumsski.MainActivity" />
+        </activity>
+        <activity
+            android:name=".AuthActivity"
+            android:label="@string/title_activity_authentifier"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fr.cjpapps.gumsski.MainActivity" />
+        </activity>
+        <activity
+            android:name=".Aide"
             android:label="@string/title_activity_help"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -31,7 +63,7 @@
                 android:value="fr.cjpapps.gumsski.MainActivity" />
         </activity>
         <activity
-            android:name="fr.cjpapps.gumsski.DeleteItem"
+            android:name=".DeleteItem"
             android:label="@string/title_activity_delete_item"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -39,7 +71,7 @@
                 android:value="fr.cjpapps.gumsski.MainActivity" />
         </activity>
         <activity
-            android:name="fr.cjpapps.gumsski.CreateItem"
+            android:name=".CreateItem"
             android:label="@string/title_activity_create_item"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -47,7 +79,7 @@
                 android:value="fr.cjpapps.gumsski.MainActivity" />
         </activity>
         <activity
-            android:name="fr.cjpapps.gumsski.ModifItem"
+            android:name=".ModifItem"
             android:label="@string/title_activity_modif_item"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -55,7 +87,7 @@
                 android:value="fr.cjpapps.gumsski.MainActivity" />
         </activity>
         <activity
-            android:name="fr.cjpapps.gumsski.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

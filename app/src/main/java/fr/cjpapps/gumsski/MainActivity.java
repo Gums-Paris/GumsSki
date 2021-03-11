@@ -48,10 +48,11 @@ public class MainActivity extends AppCompatActivity {
     OK   envoi message (faire les 3 icones , menu à 3 items avec icones )
     OK  faire icones rondes plus grandes : taille par width et height avec icone de la bonne taille 
     OK  envoi email groupe par bouton sur la page du groupe
-    envoi sms groupe par bouton sur la page du groupe peut pas être fait simplement ; faut utiliser SMSManager et boucler sur
-     les destinataires. Gestion de permissions. Les réponses ne peuvent pas être "Pour tous", et j'espère qu'on n'est pas
-     obligés de gérer les réponses dans GumSki.  Passer immé à WhatsApp ou Signal ?
+    envoi sms groupe par bouton sur la page du groupe peut pas être fait simplement ;   Passer immé à Signal ?
     clic long sur participant deb, deniv, nivA, nivS
+    avant distribution remettre les vrais tel et e-mail
+    corriger aide rajour mailto:
+    date peut-il être différent de datedata ?
     */
 
 // dérivé de AccessAuth mais avec pas mal de modifs
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         patience = findViewById(R.id.indeterminateBar);
 
 //        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
-        Variables.urlActive = urlsApiApp.API_SITE.getUrl();
+        Variables.urlActive = urlsApiApp.API_GUMS.getUrl();
 
         mesPrefs = MyHelper.getInstance(getApplicationContext()).recupPrefs();
         editeur = mesPrefs.edit();
@@ -299,15 +300,23 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         if (id == R.id.logistique) {
+            Intent logistic = new Intent(MainActivity.this, Logistique.class);
+            startActivity(logistic);
             return true;
         }
         if (id == R.id.meteo) {
+            Intent meteo = new Intent(MainActivity.this, Meteo.class);
+            startActivity(meteo);
             return true;
         }
         if (id == R.id.secours) {
+            Intent secours = new Intent(MainActivity.this, Secours.class);
+            startActivity(secours);
             return true;
         }
         if (id == R.id.action_settings) {
+            Intent choixPrefs = new Intent(MainActivity.this, Preferences.class);
+            startActivity(choixPrefs);
              return true;
         }
  /*       if (id == R.id.new_item) {
@@ -365,14 +374,14 @@ public class MainActivity extends AppCompatActivity {
 *   avec la date du WE, on va chercher l'info sur gumsparis. Sinon on la récupère en sharedPreferences */
                 String dateWE = mesPrefs.getString("date", null);
                 Log.i("SECUSERV Main", "on auth activ result OK");
-                if ( dateWE == null){
+/*                if ( dateWE == null){
                     modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
                 }else if ( Aux.datePast(dateWE, Integer.parseInt(Objects.requireNonNull(mesPrefs.getString("jours", "2"))))
-                        || !dateWE.equals(mesPrefs.getString("dateData", null))) {
+                        || !dateWE.equals(mesPrefs.getString("dateData", null))) { */
                     modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
-                }else{
+/*                }else{
                     modelListe.getInfosFromPrefs();
-                }
+                } */
             }
         }
 

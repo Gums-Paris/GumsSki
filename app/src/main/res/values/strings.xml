@@ -25,7 +25,19 @@
     <string name="title_activity_delete_item">DeleteItem</string>
     <string name="title_activity_groupe">Détails du Groupe</string>
     <string name="title_activity_help">Aide</string>
-    <string name="helptext">T\'es vraiment pas aidé mon pov\' vieux !</string>
+    <string name="helptext">  L\'appli s\'ouvre sur la liste des responsables des groupes du WE.&lt;br /&gt;
+        On ouvre la page du groupe en cliquant le nom du responsable. Les boutons (icônes) e-mail, téléphone,
+        SMS s\identifient facilement ;-)&lt;br /&gt;&lt;br /&gt;  Le bouton "Ouvrir Signal" fait - en principe - ce qu\'il dit.
+        Un groupe Signal a été créé pour chacun des groupes du WE. Tous les participants ont été invités à se
+        joindre au groupe Signal qui leur correspond. Pas d\'obligation, mais cela pourrait servir. Il est
+        facile ensuite pour chacun de quitter le groupe et de le supprimer de sa liste de contacts dans Signal.&lt;br /&gt;&lt;br /&gt;
+          Bon Week-end.</string>
+    <string name="prefs">  Actuellement il n\'y a rien à choisir</string>
+    <string name="pas_fait"> C\'est pas encore fait, patience …</string>
     <string name="details">  %1$s  %2$s</string>
+    <string name="title_activity_logistique">Logistique</string>
+    <string name="title_activity_meteo">Meteo</string>
+    <string name="title_activity_secours">Secours</string>
+    <string name="title_activity_preferences">Preferences</string>
 
 </resources>

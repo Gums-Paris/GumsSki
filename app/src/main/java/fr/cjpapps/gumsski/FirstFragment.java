@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 //import androidx.appcompat.widget.PopupMenu;
 //import androidx.appcompat.widget.PopupMenu.OnMenuItemClickListener;
+import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
@@ -26,7 +28,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class FirstFragment extends DialogFragment {
 
@@ -172,10 +176,30 @@ public class FirstFragment extends DialogFragment {
         });
 
         smsGroupe.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
+                Intent launchIntent = requireContext().getPackageManager().getLaunchIntentForPackage("org.thoughtcrime.securesms");
+                if (launchIntent != null) {
+                    startActivity(launchIntent);
+                } else {
+                    Toast.makeText(requireActivity(), "L'appli Signal n'est pas disponible", Toast.LENGTH_LONG).show();
+                }
+
+/*                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SENDTO);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
+//                sendIntent.setType("text/plain");
+                sendIntent.setPackage("org.thoughtcrime.securesms");
+                sendIntent.setData(Uri.parse("smsto:" + "ElleEtMoi"));
+                if (sendIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
+                    startActivity(sendIntent);
+                } else {
+                    Toast.makeText(getActivity(), "Appli Signal non disponible", Toast.LENGTH_LONG).show();
+                }  */
+
 // pour un envoi multiple faut faire une boucle
-                Toast.makeText(getActivity(), "Le bouton SMS GROUPE est factice", Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(), "Le bouton SMS GROUPE est factice", Toast.LENGTH_LONG).show();
             }
         });
     }

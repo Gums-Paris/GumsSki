@@ -48,7 +48,8 @@ public class ModelListeItems extends AndroidViewModel {
         Log.i("SECUSERV", "main model auth ? "+mesPrefs.getBoolean("authOK", false));
         if (mesPrefs.getBoolean("authOK", false)) {
 /*  Si date du WE est vide ou si les infos sont périmées par rapport à la date du jour ou si la date des infos ne colle pas
-*   avec la date du WE, on va chercher l'info sur gumsparis. Sinon on la récupère en sharedPreferences */
+*   avec la date du WE, on va chercher l'info sur gumsparis. Sinon on la récupère en sharedPreferences.
+*   dateData est mis égal à dateWE par getInfosListe ; a quoi ça sert ?*/
             String dateWE = mesPrefs.getString("date", null);
                 if ( dateWE == null){
                     recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
@@ -74,7 +75,7 @@ public class ModelListeItems extends AndroidViewModel {
         taskParams[1] = stringRequest;
         taskParams[2] = "Content-Type";
         taskParams[3] = "application/x-www-form-urlencoded";
-        taskParams[4] = "Authorization";
+        taskParams[4] = "X-Authorization";
         taskParams[5] = "Bearer "+ mesPrefs.getString("auth", "");
         Log.i("SECUSERV", "network ? "+Variables.isNetworkConnected);
         if (Variables.isNetworkConnected)  {

@@ -2,6 +2,7 @@ package fr.cjpapps.gumsski;
 
 import android.os.Bundle;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ public class Aide extends AppCompatActivity {
 
         affichage = findViewById(R.id.texthelp);
         affichage.setText(Html.fromHtml(getString(R.string.helptext), Html.FROM_HTML_MODE_LEGACY));
+        affichage.setMovementMethod(LinkMovementMethod.getInstance());
 
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

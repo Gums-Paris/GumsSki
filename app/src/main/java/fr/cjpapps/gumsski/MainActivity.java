@@ -48,11 +48,13 @@ public class MainActivity extends AppCompatActivity {
     OK   envoi message (faire les 3 icones , menu à 3 items avec icones )
     OK  faire icones rondes plus grandes : taille par width et height avec icone de la bonne taille 
     OK  envoi email groupe par bouton sur la page du groupe
-    envoi sms groupe par bouton sur la page du groupe peut pas être fait simplement ;   Passer immé à Signal ?
+    OK = NO ; envoi sms groupe par bouton sur la page du groupe peut pas être fait simplement ; Passer immé à Signal ?
+        on se contenera d'ouvrir Signal
+    OK  avant distribution remettre les vrais tel et e-mail
+    OK  corriger aide rajout mailto:
     clic long sur participant deb, deniv, nivA, nivS
-    avant distribution remettre les vrais tel et e-mail
-    corriger aide rajour mailto:
     date peut-il être différent de datedata ?
+    remplacer startActivityForResult
     */
 
 // dérivé de AccessAuth mais avec pas mal de modifs

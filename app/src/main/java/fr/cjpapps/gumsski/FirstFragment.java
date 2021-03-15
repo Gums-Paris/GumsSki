@@ -27,6 +27,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -45,7 +51,6 @@ public class FirstFragment extends DialogFragment {
     private Button smsGroupe;
     private Button emailGroupe;
     private Boolean okPhone = false;
-    private final ArrayList<String> groupeTel = new ArrayList<>();
     private final ArrayList<String> groupeEmail = new ArrayList<>();
 
     public FirstFragment(){}
@@ -95,7 +100,7 @@ public class FirstFragment extends DialogFragment {
         final Observer<ArrayList<HashMap<String,String>>> participObserver = new Observer<ArrayList<HashMap<String,String>>>() {
             @Override
             public void onChanged(ArrayList<HashMap<String,String>> items) {
-                if (items != null){
+                if (items != null) {
                     final ArrayList<MembreGroupe> membresGroupe = new ArrayList<>();
                     for (HashMap<String,String> temp :items) {
                         if (numGroupe.equals(temp.get("groupe"))) {
@@ -103,16 +108,16 @@ public class FirstFragment extends DialogFragment {
                                 MembreGroupe unMembre = new MembreGroupe();
                                 unMembre.setName(temp.get("name"));
                                 String numTel = Aux.numInter(temp.get("tel"));
-//                                unMembre.setTel(temp.get("tel"));
+// pour les essais
+//                                numTel = "+33688998191";
                                 unMembre.setTel(numTel);
                                 unMembre.setEmail(temp.get("email"));
+// pour les essais
+//                                unMembre.setEmail("claude_pastre@yahoo.fr");
                                 unMembre.setAutonome(temp.get("autonome"));
                                 unMembre.setPeage(temp.get("peage"));
                                 membresGroupe.add(unMembre);
-//                                groupeTel.add(numTel);
-                                groupeTel.add("+33612345678");
-//                                groupeEmail.add(temp.get("email"));
-                                groupeEmail.add("claude_pastre@yahoo.fr");
+                                groupeEmail.add(temp.get("email"));
                             } catch (NullPointerException e) {
                                 e.printStackTrace();
                             }
@@ -143,9 +148,8 @@ public class FirstFragment extends DialogFragment {
                             }
                             if (view.getId() == R.id.email_button) {
                                 Log.i("SECUSERV frag 1 onclick", unP.getEmail());
-//                                String[] adresses = {unP.getEmail()};
-                                String[] adresses = {"claude_pastre@yahoo.fr"};
-                                String subject = "J'te cause";
+                                String[] adresses = {unP.getEmail()};
+                                String subject = "juste un truc";
                                 String texte = "Je sais pas quoi te dire";
                                 composeEmail(adresses, subject, texte);
                             }
@@ -175,6 +179,7 @@ public class FirstFragment extends DialogFragment {
             }
         });
 
+// pas d'envoi sms au groupe ; ce bouton ouvre Signal
         smsGroupe.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
@@ -185,34 +190,24 @@ public class FirstFragment extends DialogFragment {
                 } else {
                     Toast.makeText(requireActivity(), "L'appli Signal n'est pas disponible", Toast.LENGTH_LONG).show();
                 }
-
-/*                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SENDTO);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
-//                sendIntent.setType("text/plain");
+   /*             Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_VIEW);
+                sendIntent.setData(Uri.parse("sgnl://signal.group?group_id=dqRJDMbLnldYWhKD3d9pxlHVhn3QkCk2P62xCCmYcPs="));
                 sendIntent.setPackage("org.thoughtcrime.securesms");
-                sendIntent.setData(Uri.parse("smsto:" + "ElleEtMoi"));
                 if (sendIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
                     startActivity(sendIntent);
                 } else {
                     Toast.makeText(getActivity(), "Appli Signal non disponible", Toast.LENGTH_LONG).show();
-                }  */
-
-// pour un envoi multiple faut faire une boucle
-//                Toast.makeText(getActivity(), "Le bouton SMS GROUPE est factice", Toast.LENGTH_LONG).show();
+                } */
             }
         });
     }
 
     void phoneCall(MembreGroupe unP){
-//        String num1 = unP.getTel().replaceAll("\\s", "");
-//        num1 = num1.startsWith("0") ? num1.substring(1) : num1;
         String numInt = unP.getTel();
         Log.i("SECUSERV frag 1 onclick", numInt);
         Intent phone = new Intent(Intent.ACTION_CALL);
-//                                phone.setData(Uri.parse("tel:"+numInt));
-// pour le développement on remplace les num de téléphone et les emails par des valeurs bidon
-        phone.setData(Uri.parse("tel:" + "+33612345678"));
+        phone.setData(Uri.parse("tel:"+numInt));
         if (phone.resolveActivity(requireActivity().getPackageManager()) != null) {
             startActivity(phone);
         } else {
@@ -233,13 +228,10 @@ public class FirstFragment extends DialogFragment {
         }
     }
     void envoiSMS(MembreGroupe unP){
-//        String num1 = unP.getTel().replaceAll("\\s", "");
-//        num1 = num1.startsWith("0") ? num1.substring(1) : num1;
         String numInt = unP.getTel();
         Intent sms = new Intent(Intent.ACTION_SENDTO)    ;
-//                                phone.setData(Uri.parse("smsto:"+num1));
-        sms.setData(Uri.parse("smsto:" + "+33688998191"));
-        sms.putExtra("sms_body", "salut mon pote");
+        sms.setData(Uri.parse("smsto:"+numInt));
+        sms.putExtra("sms_body", "salut !");
         if(sms.resolveActivity(requireActivity().getPackageManager()) != null) {
             startActivity(sms);
         } else {

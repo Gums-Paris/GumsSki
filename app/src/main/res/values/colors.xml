@@ -6,4 +6,6 @@
     <color name="colorBackground">#34E57B</color>
     <color name="bleuEmail">#33DAEE</color>
     <color name="jauneMessage">#FFEB3D</color>
+    <color name="bleuGums">#8899ee</color>
+    <color name="rougeGums">#aa0000</color>
 </resources>

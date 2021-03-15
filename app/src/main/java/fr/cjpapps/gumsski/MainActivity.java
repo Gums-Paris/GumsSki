@@ -376,14 +376,14 @@ public class MainActivity extends AppCompatActivity {
 *   avec la date du WE, on va chercher l'info sur gumsparis. Sinon on la récupère en sharedPreferences */
                 String dateWE = mesPrefs.getString("date", null);
                 Log.i("SECUSERV Main", "on auth activ result OK");
-/*                if ( dateWE == null){
+                if ( dateWE == null){
                     modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
                 }else if ( Aux.datePast(dateWE, Integer.parseInt(Objects.requireNonNull(mesPrefs.getString("jours", "2"))))
-                        || !dateWE.equals(mesPrefs.getString("dateData", null))) { */
+                        || !dateWE.equals(mesPrefs.getString("dateData", null))) {
                     modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
-/*                }else{
+                }else{
                     modelListe.getInfosFromPrefs();
-                } */
+                }
             }
         }
 

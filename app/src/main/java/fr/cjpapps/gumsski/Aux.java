@@ -227,7 +227,6 @@ public class Aux {
     static String numInter (String num){
         if ("".equals(num)) {return "";}
         String num1 = num.replaceAll("\\s", "");
-        num1 = num1.startsWith("0") ? num1.substring(1) : num1;
-        return "+33"+num1;
+        return num1.startsWith("0") ? "+33"+num1.substring(1) : num1;
     }
 }

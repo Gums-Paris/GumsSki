@@ -43,5 +43,7 @@
     <string name="title_activity_meteo">Meteo</string>
     <string name="title_activity_secours">Secours</string>
     <string name="title_activity_preferences">Preferences</string>
+    <string name="title_activity_start">StartActivity</string>
+    <string name="titre_accueil">GUMS Paris&lt;br /&gt;Liste des WE de ski de randonnée</string>
 
 </resources>

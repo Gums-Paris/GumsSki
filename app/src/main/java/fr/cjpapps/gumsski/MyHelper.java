@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
-import static fr.cjpapps.gumsski.MainActivity.PREF_FILE;
+import static fr.cjpapps.gumsski.StartActivity.PREF_FILE;
 
 public class MyHelper {
 

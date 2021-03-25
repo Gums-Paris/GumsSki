@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
+import static fr.cjpapps.gumsski.Aux.recupInfo;
+
 public class ModelListeItems extends AndroidViewModel {
 
     static MutableLiveData<ArrayList<HashMap<String,String>>> listeDesItems = new MutableLiveData<>();
@@ -64,8 +66,10 @@ public class ModelListeItems extends AndroidViewModel {
     }
 
  //   void recupListe () {  // devenu recupInfo pour généraliser à plusieurs resources
-     void recupInfo (String uneResource, String uneSortie) {
+/*     void recupInfo (String uneResource, String uneSortie) {
         String stringRequest;
+        final HashMap<String, String> requestParams = new HashMap<>();
+        final String[] taskParams = new String[6];
         requestParams.put("app", Constantes.JOOMLA_APP);
         requestParams.put("resource", uneResource);
         requestParams.put("format", "json");
@@ -87,7 +91,7 @@ public class ModelListeItems extends AndroidViewModel {
                     new GetInfosListe().execute(taskParams);
             }
         }
-    }
+    }  */
 
     void getInfosFromPrefs() {
         ArrayList<HashMap<String,String>> listeBidule;

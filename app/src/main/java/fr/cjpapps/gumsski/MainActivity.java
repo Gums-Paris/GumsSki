@@ -27,7 +27,7 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    final static String PREF_FILE = "authAccess";
+//    final static String PREF_FILE = "authAccess";
     ArrayList<String> nomsItems = new ArrayList<>();//    ArrayList<Item> listeItems = new ArrayList<>();
     ArrayList<HashMap<String,String>> listeDesItems = new ArrayList<>();
     TextView affichage =null;
@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         on se contenera d'ouvrir Signal
     OK  avant distribution remettre les vrais tel et e-mail
     OK  corriger aide rajout mailto:
+    liste des orties
     clic long sur participant deb, deniv, nivA, nivS
     date peut-il être différent de datedata ?
     remplacer startActivityForResult
@@ -105,9 +106,10 @@ public class MainActivity extends AppCompatActivity {
         patience = findViewById(R.id.indeterminateBar);
 
 //        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
-        Variables.urlActive = urlsApiApp.API_GUMS.getUrl();
+//        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
 
-        mesPrefs = MyHelper.getInstance(getApplicationContext()).recupPrefs();
+//        mesPrefs = MyHelper.getInstance(getApplicationContext()).recupPrefs();
+        mesPrefs = MyHelper.getInstance().recupPrefs();
         editeur = mesPrefs.edit();
 // ceci force auth pour les essais :
 //        editeur.putBoolean("authOK", false);
@@ -117,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
         auxMethods = new Aux();
         getSystemService(CONNECTIVITY_SERVICE);
-        auxMethods.watchNetwork();
+        Aux.watchNetwork();
 // Faut patienter un peu jusqu'à ce que le réseau soit disponible
         patience.setVisibility(View.VISIBLE);
         int count = 0;
@@ -182,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }, 200); // délai 0.2 sec
                 } else {
-                    modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_2,"");
+                    Aux.recupInfo(Constantes.JOOMLA_RESOURCE_2,"");
                 }
             }
         };
@@ -194,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
             public void onChanged(Boolean retour) {
                 Log.i("SECUSERV", "flagSuppress " + retour);
                 if (retour) {
-                    modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_2, "");
+                    Aux.recupInfo(Constantes.JOOMLA_RESOURCE_2, "");
                 } else {
                     alerte("4");
                 }
@@ -251,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                     editeur.putString("infoSortie", infos);
                     editeur.apply();
                     Log.i("SECUSERV Main", "params sortie, on appelle liste ");
-                    modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_2, infoSortie.get("id"));
+                    Aux.recupInfo(Constantes.JOOMLA_RESOURCE_2, infoSortie.get("id"));
                 }else{
                     infos = "Y a rien à voir";
                 }
@@ -377,10 +379,10 @@ public class MainActivity extends AppCompatActivity {
                 String dateWE = mesPrefs.getString("date", null);
                 Log.i("SECUSERV Main", "on auth activ result OK");
                 if ( dateWE == null){
-                    modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
+                    Aux.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
                 }else if ( Aux.datePast(dateWE, Integer.parseInt(Objects.requireNonNull(mesPrefs.getString("jours", "2"))))
                         || !dateWE.equals(mesPrefs.getString("dateData", null))) {
-                    modelListe.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
+                   Aux.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
                 }else{
                     modelListe.getInfosFromPrefs();
                 }

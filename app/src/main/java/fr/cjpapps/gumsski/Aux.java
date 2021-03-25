@@ -1,5 +1,6 @@
 package fr.cjpapps.gumsski;
 
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
@@ -35,7 +36,7 @@ public class Aux {
 *   Il apparait qu'il faut un registerDefaultNetworkCallback plutôt qu'un registerNetworkCallback parce que les téléphones
 *   modernes ont souvent plusieurs connexions indépendantes actives ce qui fait que les onAvailable et onLost peuvent
 *   s'emmeler les pinceaux. Ou alors je suppose qu'il faut se choisir un réseau par le logiciel, vive le progrès  */
-    public void watchNetwork() {
+    public static void watchNetwork() {
         ConnectivityManager connectivityManager = MyHelper.getInstance().conMan();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
@@ -57,6 +58,37 @@ public class Aux {
                 );
             } catch (Exception e) {
                 Variables.isNetworkConnected = false;
+            }
+        }
+    }
+
+    //   void recupListe () {  // devenu recupInfo pour généraliser à plusieurs resources
+    static void recupInfo (String uneResource, String uneSortie) {
+        SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
+        String stringRequest;
+        final HashMap<String, String> requestParams = new HashMap<>();
+        final String[] taskParams = new String[6];
+        requestParams.put("app", Constantes.JOOMLA_APP);
+        requestParams.put("resource", uneResource);
+        requestParams.put("format", "json");
+        requestParams.put("sortieid", uneSortie);
+        stringRequest = Aux.buildRequest(requestParams);
+        taskParams[0] = Variables.urlActive;
+        taskParams[1] = stringRequest;
+        taskParams[2] = "Content-Type";
+        taskParams[3] = "application/x-www-form-urlencoded";
+        taskParams[4] = "X-Authorization";
+        taskParams[5] = "Bearer "+ mesPrefs.getString("auth", "");
+        Log.i("SECUSERV", "network ? "+Variables.isNetworkConnected);
+        if (Variables.isNetworkConnected)  {
+            switch(uneResource) {
+                case Constantes.JOOMLA_RESOURCE_1 :
+                    new GetParamSortie().execute(taskParams);
+                    break;
+                case Constantes.JOOMLA_RESOURCE_2 :
+                    new GetInfosListe().execute(taskParams);
+                case Constantes.JOOMLA_RESOURCE_3 :
+                    new GetParamsSorties().execute(taskParams);
             }
         }
     }
@@ -90,6 +122,31 @@ public class Aux {
         return null;
     }
 
+    // pour remplir la listeDesSorties en décodant le json jsListe
+    static ArrayList<HashMap<String,String>> getListeSorties (String jsListe) {
+        ArrayList<HashMap<String,String>> listeSorties = new ArrayList<>();
+        try {
+            JSONObject jsonGums = new JSONObject(jsListe);
+            JSONArray arrayGums = jsonGums.getJSONArray("data");
+            for (int i = 0; i < arrayGums.length(); i++) {
+//                JSONArray unArray = arrayGums.getJSONArray(i);
+                JSONObject jsonData = arrayGums.getJSONObject(i);
+                HashMap<String,String> unItem = new HashMap<>();
+                unItem.put("date_bdh",jsonData.optString("date_bdh"));
+                unItem.put("id",jsonData.optString("id"));
+                unItem.put("titre",jsonData.optString("titre"));
+                unItem.put("date",jsonData.optString("date"));
+                unItem.put("jours",jsonData.optString("jours"));
+                unItem.put("publier_groupes",jsonData.optString("publier_groupes"));
+                unItem.put("responsable",jsonData.optString("responsable"));
+                listeSorties.add(i, unItem);
+            }
+            return  listeSorties;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     // pour remplir la listedes paramètres de la sortie en décodant le jsonParams
     static HashMap<String,String> getListeParams (String jsParams) {
         HashMap<String,String> params = new HashMap<>();
@@ -147,6 +204,24 @@ public class Aux {
         }
         if (liste.isEmpty()){
             Log.i("SECUSERV", "la liste des groupes est vide");
+        }
+        return liste;
+    }
+
+    ArrayList<String> faitListeSorties(ArrayList<HashMap<String,String>> items) {
+// pour fabriquer la liste des noms de sortie à donner à la recyclerView
+        ArrayList<String> liste = new ArrayList<>();
+        for (HashMap<String,String> temp :items) {
+            try {
+                String nomSortie = temp.get("date_bdh")+"\n"+temp.get("titre");
+                Log.i("SECUSERV nom de sortie", nomSortie);
+                liste.add(nomSortie);
+            }catch(NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
+        if (liste.isEmpty()){
+            Log.i("SECUSERV", "la liste des sorties est vide");
         }
         return liste;
     }

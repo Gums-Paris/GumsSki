@@ -18,6 +18,7 @@ public class Constantes {
     final static String JOOMLA_APP = "gski";
     final static String JOOMLA_RESOURCE_1 = "paramsortie";
     final static String JOOMLA_RESOURCE_2 = "inscrits";
+    final static String JOOMLA_RESOURCE_3 = "listesorties";
 
 
     private Constantes(){}

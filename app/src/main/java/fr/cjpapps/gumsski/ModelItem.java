@@ -15,7 +15,6 @@ public class ModelItem extends AndroidViewModel {
     private final HashMap<String, String> requestParams = new HashMap<>();
     private final String[] taskParams = new String[6];
     SharedPreferences mesPrefs;
-    Resources mesResources;  // sens différent de API resource dans requestParams
 
     static MutableLiveData<HashMap<String, String>> monItem = new MutableLiveData<>();
 
@@ -24,7 +23,6 @@ public class ModelItem extends AndroidViewModel {
     public ModelItem(final Application application) {
         super(application);
         mesPrefs = MyHelper.getInstance().recupPrefs();
-        mesResources = MyHelper.getInstance().recupResources();
     }
 
     void recupItem (String id) {

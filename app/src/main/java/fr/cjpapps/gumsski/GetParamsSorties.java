@@ -6,8 +6,12 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class GetParamsSorties extends GetInfosGums {
 
@@ -22,12 +26,18 @@ public class GetParamsSorties extends GetInfosGums {
             String errMsg = jsonGums.optString("err_msg");
             String errCode = jsonGums.optString("err_code");
             if ("".equals(errCode)) {
-                editeur.putString("jsonSorties", result);
-                editeur.apply();
+                final Calendar c = Calendar.getInstance();
+                Date dateJour = c.getTime();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                String dateListe = sdf.format(dateJour);
+                Log.i("SECUSERV", "date jour = "+dateListe);
 
                 params = Aux.getListeSorties(result);
                 Log.i("SECUSERV", "get liste sorties & setValue ");
                 if (params != null) {
+                    editeur.putString("datelist", dateListe);
+                    editeur.putString("jsonSorties", result);
+                    editeur.apply();
                     ModelListeSorties.paramDesSorties.setValue(params);
                     ModelListeSorties.flagListeSorties.setValue(true);
                 }else{

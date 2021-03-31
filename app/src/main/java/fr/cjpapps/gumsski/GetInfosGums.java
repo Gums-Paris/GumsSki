@@ -20,7 +20,6 @@ public class GetInfosGums extends AsyncTask<String,Void,String> {
     protected String doInBackground(String... strings) {
         HttpURLConnection conn = null;
         String resultat;
-        int code = 0;
         StringBuilder result = new StringBuilder();
 
         try{
@@ -32,11 +31,6 @@ public class GetInfosGums extends AsyncTask<String,Void,String> {
             conn.setRequestMethod("GET");
             conn.setRequestProperty(strings[2], strings[3]);
             conn.setRequestProperty(strings[4], strings[5]);
-
-/*            code = conn.getResponseCode();
-            if (code != 200){
-                throw new IOException("Invalid response from server : "+code);
-            }  */
 
             InputStream in = new BufferedInputStream(conn.getInputStream());
             String line;
@@ -53,7 +47,6 @@ public class GetInfosGums extends AsyncTask<String,Void,String> {
                 conn.disconnect();
             }
         }
-//        if (code == 200) {resultat = String.valueOf(result);}
         resultat = String.valueOf(result);
         Log.i("SECUSERV", "get liste "+resultat);
         return resultat;

@@ -64,7 +64,7 @@ public class DelInfosGums extends AsyncTask<String,Void,String> {
             if ("".equals(errCode)) {
                 String content = jsonGums.optString("data");
                 Log.i("SECUSERV", "del data "+content);
-                if (!(content).equals(mesPrefs.getString("idDel", "0"))) {
+                if (!(Aux.egaliteChaines(content, mesPrefs.getString("idDel", "0")))) {
                     editeur.putString("errMsg", "item inexistant");
                     editeur.putString("errCode", content);
                     editeur.apply();

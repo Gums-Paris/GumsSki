@@ -16,9 +16,9 @@ public class SingleLiveEvent<T> extends MutableLiveData<T> {
 /* Une classe fournie par Google
 *  https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/master/app/src/main/java/no/nordicsemi/android/blinky/viewmodels/SingleLiveEvent.java
 * https://medium.com/@abhiappmobiledeveloper/android-singleliveevent-of-livedata-for-ui-event-35d0c58512da
-* qui considère cependant qu'elle n'est pas assez chère pour être insérée dans l'architecture officielle
-* de android. Elle est cependant bien utile pour pallier un dafaut des LiveData qui ne collent pas bien
-* avec la notion d'évènement dans la mesure où l'observateur est exécité lors du démarrage de l'activité
+* qui considère cependant qu'elle n'est pas assez cachère pour être insérée dans l'architecture officielle
+* de android. Elle est cependant bien utile pour pallier un défaut des LiveData qui ne collent pas bien
+* avec la notion d'évènement dans la mesure où l'observateur est exécuté aussi lors du démarrage de l'activité
 * et pas seulement quand on utilise setValue */
 
     private static final String TAG = "SingleLiveEvent";

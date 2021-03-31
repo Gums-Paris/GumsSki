@@ -31,13 +31,8 @@ public class PostInfosAuth extends PostInfosGums{
                 editeur.putString("auth", auth);
                 editeur.putString("userId", userId);
                 editeur.apply();
-// flagAuth et flagAuthFrag pas utilisés version 3 février 2021
-                ModelListeItems.flagAuth.setValue(true);
-                ModelListeItems.flagAuthFrag.setValue(true);
                 ModelAuth.flagAuthActiv.setValue(true);
             }else{
-                ModelListeItems.flagAuth.setValue(false);
-                ModelListeItems.flagAuthFrag.setValue(false);
                 ModelAuth.flagAuthActiv.setValue(false);
                 editeur.putString("errMsg", errMsg);
                 editeur.putString("errCode", errCode);

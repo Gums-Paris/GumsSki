@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#007a6e</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorBackground">#34E57B</color>
     <color name="bleuEmail">#33DAEE</color>
     <color name="jauneMessage">#FFEB3D</color>
     <color name="bleuGums">#8899ee</color>
     <color name="rougeGums">#aa0000</color>
+    <color name="marron_bouton">#D6721A</color>
 </resources>

@@ -2,12 +2,16 @@ package fr.cjpapps.gumsski;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import java.util.Objects;
 
 public class DialogQuestion extends DialogFragment {
 
@@ -55,7 +59,13 @@ public class DialogQuestion extends DialogFragment {
                 editeur.putBoolean("authOK", false);
                 editeur.putString("auth", "");
                 editeur.apply();
+// on termine MainActivity qui a créé ce dialogue
                 requireActivity().finish();
+// on termine StartActivity à travers un BroadcastReceiver parce qu'on a pas le droit (memory leak caca) d'en conserver
+// une référence dans MainActivity
+                Intent intent = new Intent();
+                intent.setAction("finish_activity");
+                LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent);
                 dialog.dismiss();
             }
         });

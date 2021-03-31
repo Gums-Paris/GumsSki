@@ -231,7 +231,7 @@ public class Aux {
         if (items != null) {
             for (HashMap<String,String> temp : items) {
                 try {
-                    if (nom.equals(temp.get("nomitem"))) {
+                    if (Aux.egaliteChaines(nom,temp.get("nomitem"))) {
                         return temp.get("id");
                     }
                 } catch (NullPointerException e) {
@@ -303,5 +303,10 @@ public class Aux {
         if ("".equals(num)) {return "";}
         String num1 = num.replaceAll("\\s", "");
         return num1.startsWith("0") ? "+33"+num1.substring(1) : num1;
+    }
+
+    // test égalité de chaînes. Cette version considère que (null == null) est false
+    static boolean egaliteChaines(String ch1, String ch2) {
+        return (ch1 != null && ch1.equals(ch2));
     }
 }

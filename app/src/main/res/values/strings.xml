@@ -43,7 +43,12 @@
     <string name="title_activity_meteo">Meteo</string>
     <string name="title_activity_secours">Secours</string>
     <string name="title_activity_preferences">Preferences</string>
-    <string name="title_activity_start">StartActivity</string>
-    <string name="titre_accueil">GUMS Paris&lt;br /&gt;Liste des WE de ski de randonnée</string>
+    <string name="title_activity_start">GumsSki</string>
+    <string name="titre_accueil">GUMS Paris\nListe des WE de ski de randonnée\n       en date du %1$s</string>
+    <string name="action">Retour liste</string>
+    <string name="no_groups"> Les groupes n\'ont pas encore été faits pour cette sortie</string>
+    <string name="no_list"> La liste des sorties est vide</string>
+    <string name="save">SAUVEGARDER</string>
+    <string name="cancel">ANNULER</string>
 
 </resources>

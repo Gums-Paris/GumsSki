@@ -21,6 +21,10 @@ import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -31,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> nomsItems = new ArrayList<>();//    ArrayList<Item> listeItems = new ArrayList<>();
     ArrayList<HashMap<String,String>> listeDesItems = new ArrayList<>();
     TextView affichage =null;
+    TextView panic = null;
     ProgressBar patience = null;
     private RecyclerView recyclerView;
     private RecyclerViewGenericAdapter monAdapter;
@@ -44,18 +49,19 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<ArrayList<HashMap<String,String>>> compositionGroupes = new ArrayList<>();
 
 /* TODO
-    OK   assurer fonctionnement si pas autorisé à téléphoner
-    OK   envoi message (faire les 3 icones , menu à 3 items avec icones )
+    OK  assurer fonctionnement si pas autorisé à téléphoner
+    OK  envoi message (faire les 3 icones , menu à 3 items avec icones )
     OK  faire icones rondes plus grandes : taille par width et height avec icone de la bonne taille 
     OK  envoi email groupe par bouton sur la page du groupe
-    OK = NO ; envoi sms groupe par bouton sur la page du groupe peut pas être fait simplement ; Passer immé à Signal ?
-        on se contenera d'ouvrir Signal
+    OK = NON ; envoi sms groupe par bouton sur la page du groupe peut pas être fait simplement ; Passer immé à
+        Signal ?  Oui on se contenera d'ouvrir Signal avec des groupes préalablement créés
     OK  avant distribution remettre les vrais tel et e-mail
     OK  corriger aide rajout mailto:
-    liste des orties
-    clic long sur participant deb, deniv, nivA, nivS
-    date peut-il être différent de datedata ?
-    remplacer startActivityForResult
+    OK  liste des sorties
+    OK  que faire si alerte 2 ?  "données indisponibles" dans l'alerte et on ferme l'activité.
+    OK  est-ce que dans cas ci-dessus on revient au départ, je crois pas. Si on revient à la liste des sorties.
+    -    Clic long sur participant deb, deniv, nivA, nivS?
+    -    Remplacer startActivityForResult
     */
 
 // dérivé de AccessAuth mais avec pas mal de modifs
@@ -101,18 +107,17 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        affichage = findViewById(R.id.affiche);
-        affichage.setText(R.string.white_screen);
-        patience = findViewById(R.id.indeterminateBar);
-
-//        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
-//        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
-
-//        mesPrefs = MyHelper.getInstance(getApplicationContext()).recupPrefs();
         mesPrefs = MyHelper.getInstance().recupPrefs();
         editeur = mesPrefs.edit();
-// ceci force auth pour les essais :
-//        editeur.putBoolean("authOK", false);
+
+        affichage = findViewById(R.id.affiche);
+        String infoSortie = mesPrefs.getString("infoSortie", "");
+        affichage.setText(infoSortie);  // infoSortie a été fabriqué par StartActivity
+
+        panic = findViewById(R.id.panique);  // sert si les groupes ne sont pas publiés
+
+        patience = findViewById(R.id.indeterminateBar);
+
         editeur.putString("errCode", "");
         editeur.putString("errMsg", "");
         editeur.apply();
@@ -120,13 +125,13 @@ public class MainActivity extends AppCompatActivity {
         auxMethods = new Aux();
         getSystemService(CONNECTIVITY_SERVICE);
         Aux.watchNetwork();
-// Faut patienter un peu jusqu'à ce que le réseau soit disponible
+// Faut parfois patienter un peu jusqu'à ce que le réseau soit disponible
         patience.setVisibility(View.VISIBLE);
         int count = 0;
         while (!Variables.isNetworkConnected) {
             new Handler().postDelayed(new Runnable() {
                 public void run() {
-            //on attend que le temps passe
+                    //on attend que le temps passe
                 }
             }, 20); // délai 0.02 sec
             count++;
@@ -135,42 +140,37 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         }
+        patience.setVisibility(View.GONE);
 
+// si les groupes ne sont pas publiés on arrête
+        if ("2".equals(mesPrefs.getString("publier_groupes",""))) {
+
+            patience.setVisibility(View.VISIBLE);
 // création ou récupération du modèle ; ne pas oublier que le constructeur du model s'exécute immédiatement
-        modelListe = new ViewModelProvider(this).get(ModelListeItems.class);
-        recyclerView = findViewById(R.id.listechoix);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            modelListe = new ViewModelProvider(this).get(ModelListeItems.class);
 
-// auth si nécessaire. Une fois auth réalisée, authOK, auth et userId se trouvent en sharedPrefs et on lance une
-// recup des données
-// noter que on passe authOK à false et auth à "" si à l'occasion de onBackPressed l'utilisateur décide de fermer l'appli
-// pour obliger une nouvelle identification après une telle fermeture complète.
-// Jusque là le jeton "auth" restera disponible dans les sharedPrefs.
-// une fois authentifié on récupère la liste d'items (voir onActivityResult pour AUTH_ACTIV tout en bas) ; en cas de
-// démarrage avec auth valide c'est la création demodelListe qui déclenche le chargement
-        if ( !mesPrefs.getBoolean("authOK", false)) {
-        Log.i("SECUSERV main start auth", "true");
-            Intent auth = new Intent(this, AuthActivity.class);
-            startActivityForResult(auth, Constantes.AUTH_ACTIV);
-        }
+            recyclerView = findViewById(R.id.listechoix);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 // flagListe est false si on n'a pas récupéré de réponse du serveur ou si on n'a pas décodé le json ;
-// flagliste est géré par GetInfosListe et par GetParamSortie
-        final Observer<Boolean> flagListeObserver = new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean retour) {
-                Log.i("SECUSERV", "flagListe " + retour);
-                if (!retour) {
-                    new Handler().postDelayed(new Runnable() {
-                        public void run() {
-                            alerte("2");
-                        }
-                    }, 200); // délai 0.2 sec
+// flagliste est géré par GetInfosListe
+            final Observer<Boolean> flagListeObserver = new Observer<Boolean>() {
+                @Override
+                public void onChanged(Boolean retour) {
+                    Log.i("SECUSERV", "flagListe " + retour);
+                    if (!retour) {
+                        new Handler().postDelayed(new Runnable() {
+                            public void run() {
+                                alerte("2");
+                                finish();
+                            }
+                        }, 200); // délai 0.2 sec
+                    }
                 }
-            }
-        };
-        modelListe.getFlagListe().observe(MainActivity.this, flagListeObserver);
+            };
+            modelListe.getFlagListe().observe(MainActivity.this, flagListeObserver);
 
+ /* pas utilisé dans cette version sans la logistique
 // flagModif est géré par PostInfosItem, lequel est utilisé à la fois par ModifItem et CreateItem
         final Observer<Boolean> flagModifObserver = new Observer<Boolean>() {
             @Override
@@ -202,16 +202,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-        modelListe.getFlagSuppress().observe(MainActivity.this, flagSuppressObserver);
+        modelListe.getFlagSuppress().observe(MainActivity.this, flagSuppressObserver);  */
 
-// observateur d'arrivée de la liste des participants
-        final Observer<ArrayList<HashMap<String,String>>> listeItemsObserver = new Observer<ArrayList<HashMap<String,String>>>() {
-            String pourInfo = "";
-            @Override
-            public void onChanged(ArrayList<HashMap<String,String>> items) {
-                String infoSortie = mesPrefs.getString("infoSortie","");
-                affichage.setText(infoSortie);  // infoSortie a été fabriqué par observateur de paramSortie
-                if (items != null) {
+// observateur d'arrivée de la liste des participants et affichage des groupes
+            final Observer<ArrayList<HashMap<String, String>>> listeItemsObserver = new Observer<ArrayList<HashMap<String, String>>>() {
+                String pourInfo = "";
+
+                @Override
+                public void onChanged(ArrayList<HashMap<String, String>> items) {
+                    if (items != null) {
                         listeDesItems = items;
                         patience.setVisibility(View.GONE);
                         Log.i("SECUSERV Main", "taille = " + listeDesItems.size());
@@ -232,36 +231,27 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             pourInfo = "pas de liste de groupes";
                         }
-                } else {
-                    pourInfo = "yavait rien à voir";
+                    } else {
+                        pourInfo = "yavait rien à voir";
+                    }
                 }
-            }
-        };
-        modelListe.getListeDesItems().observe(MainActivity.this, listeItemsObserver);
+            };
+            modelListe.getListeDesItems().observe(MainActivity.this, listeItemsObserver);
 
-// Observateur d'arrivée des paramètres de la sortie
-        final Observer<HashMap<String,String>> paramSortieObserver = new Observer<HashMap<String,String>>() {
-            String infos = "";
+        }else{          // si les groupes n'ont pas été faits
+            panic.setText(R.string.no_groups);
+        }
+
+        ExtendedFloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onChanged(HashMap<String, String> infoSortie) {
-                if (infoSortie != null) {
-                    infos = infoSortie.get("date_bdh") + "\n" +
-                                infoSortie.get("titre") + "\n" +
-                                infoSortie.get("responsable");
-                    editeur.putString("date", infoSortie.get("date"));
-                    editeur.putString("jours", infoSortie.get("jours"));
-                    editeur.putString("infoSortie", infos);
-                    editeur.apply();
-                    Log.i("SECUSERV Main", "params sortie, on appelle liste ");
-                    Aux.recupInfo(Constantes.JOOMLA_RESOURCE_2, infoSortie.get("id"));
-                }else{
-                    infos = "Y a rien à voir";
-                }
-//                affichage.setText(infos);
+            public void onClick(View view) {
+ /*               Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show(); */
+                Intent retourListeSorties = new Intent(MainActivity.this, StartActivity.class);
+                startActivity(retourListeSorties);
             }
-        };
-        modelListe.getParamSortie().observe(this, paramSortieObserver);
-
+        });
     }
 
     @Override
@@ -277,8 +267,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-// si l'usager  presse le bouton retour arrière quend on est sur la page d'accueil (liste des groupes) on luo demande s'il vaut ou
-// non fermer l'appli ce qui a pour conséqience d'effacer l'authentification
+// si l'usager  presse le bouton retour arrière quend on est sur la page d'accueil (liste des groupes) on luo demande
+// s'il vaut ou non fermer l'appli ce qui a pour conséqience d'effacer l'authentification
         String message = "Quitter GumsSki ?";
         DialogQuestion finAppli = DialogQuestion.newInstance(message);
         finAppli.show(getSupportFragmentManager(), "questionSortie");
@@ -350,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
                 message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
                 break;
             case "2" :
-                message = "données indisponible\n"+mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
+                message = "données indisponibles\n"+mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
                 break;
             case "3" :
                 message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
@@ -367,27 +357,6 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == Constantes.AUTH_ACTIV) {
-            if (resultCode == RESULT_CANCELED) {
-                Log.i("SECUSERV Main", "on auth activ result pas OK");
-                finish();
-            }
-            if (resultCode == RESULT_OK) {
-/*  Si date du WE est vide ou si les infos sont périmées par rapport à la date du jour ou si la date des infos ne colle pas
-*   avec la date du WE, on va chercher l'info sur gumsparis. Sinon on la récupère en sharedPreferences */
-                String dateWE = mesPrefs.getString("date", null);
-                Log.i("SECUSERV Main", "on auth activ result OK");
-                if ( dateWE == null){
-                    Aux.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
-                }else if ( Aux.datePast(dateWE, Integer.parseInt(Objects.requireNonNull(mesPrefs.getString("jours", "2"))))
-                        || !dateWE.equals(mesPrefs.getString("dateData", null))) {
-                   Aux.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
-                }else{
-                    modelListe.getInfosFromPrefs();
-                }
-            }
-        }
 
         if (requestCode == Constantes.AUTH_CHANGE) {
             if (resultCode == RESULT_CANCELED) {

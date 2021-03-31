@@ -23,14 +23,6 @@ public class GetInfosListe extends GetInfosGums {
             if ("".equals(errCode)) {
                 editeur.putString("jsonListe", result);
                 editeur.apply();
-/*                try {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    Date today = Calendar.getInstance().getTime();
-                    editeur.putString(DATELISTE, sdf.format(today));
-                    editeur.apply();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }  */
                 listeBidule = Aux.getListeItems(result);
                 if(listeBidule != null){
                     ModelListeItems.listeDesItems.setValue(listeBidule);

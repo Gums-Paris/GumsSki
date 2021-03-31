@@ -103,7 +103,7 @@ public class FirstFragment extends DialogFragment {
                 if (items != null) {
                     final ArrayList<MembreGroupe> membresGroupe = new ArrayList<>();
                     for (HashMap<String,String> temp :items) {
-                        if (numGroupe.equals(temp.get("groupe"))) {
+                        if (Aux.egaliteChaines(numGroupe, temp.get("groupe"))) {
                             try {
                                 MembreGroupe unMembre = new MembreGroupe();
                                 unMembre.setName(temp.get("name"));

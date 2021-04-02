@@ -1,5 +1,6 @@
 package fr.cjpapps.gumsski;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,9 +8,10 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
@@ -20,17 +22,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -42,7 +43,7 @@ public class StartActivity extends AppCompatActivity {
     TextView dateList = null;
     ProgressBar patience = null;
     private RecyclerView recyclerView;
-    private RecyclerViewGenericAdapter monAdapter;
+    private ListeSortiesAdapter monAdapter;
     ModelListeSorties modelSorties = null;
     SharedPreferences mesPrefs;
     SharedPreferences.Editor editeur;
@@ -63,14 +64,46 @@ public class StartActivity extends AppCompatActivity {
 *   OK    traiter les situations d'échec d'authentification. Rien à changer.
 *   OK    traiter le cas où la liste des sorties est vide (data = null)
 *   OK    afficher la date de récup de la liste
-*       vérifier la rotation d'écran
+*   OK    vérifier la rotation d'écran
 *   OK    revoir les tests égalité de chaînes
-*   OK    mettre top menu dans startActivity */
+*   OK    mettre top menu dans startActivity
+*   OK    Déco écran start
+* */
 
 /*  Dans les sharedPreferences :
 *       datelist == date à laquelle on a récupéré la liste des sorties
 *       date == date de la sortie choisie dans la liste des sorties
 *       datedata == date de la sortie à laquelle correspond la liste de participants disponible dans les prefs */
+
+// servira à lancer AuthActivity puis MainActivity si RESULT_OK
+    final private ActivityResultLauncher<Intent> authActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        // There are no request codes
+                        Intent data = result.getData();
+                        Intent groupes =new Intent(StartActivity.this, MainActivity.class);
+                        startActivity(groupes);
+                    }
+                }
+            });
+
+    // servira à lancer AuthActivity pour changer d'utilisateur puis startActivity si RESULT_OK
+    final private ActivityResultLauncher<Intent> authNewUserResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        // There are no request codes
+                        Intent data = result.getData();
+                        Intent liste =new Intent(StartActivity.this, StartActivity.class);
+                        startActivity(liste);
+                    }
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +123,7 @@ public class StartActivity extends AppCompatActivity {
         patience = findViewById(R.id.indeterminateBar);
 
 //        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
-        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
+        Variables.urlActive = urlsApiApp.API_GUMS.getUrl();
 
         mesPrefs = MyHelper.getInstance(getApplicationContext()).recupPrefs();
         editeur = mesPrefs.edit();
@@ -171,11 +204,12 @@ public class StartActivity extends AppCompatActivity {
                                 editeur.putString("date", listeDesItems.get(position).get("date"));
                                 editeur.putString("jours", listeDesItems.get(position).get("jours"));
                                 editeur.putString("publier_groupes", listeDesItems.get(position).get("publier_groupes"));
-                                editeur.putString("responsable", listeDesItems.get(position).get("responsable"));
+                                String responsable = listeDesItems.get(position).get("responsable");
+                                if ("null".equals(responsable)) { responsable = "";}
+                                editeur.putString("responsable", responsable);
                                 String infos;
                                 infos = listeDesItems.get(position).get("date_bdh") + "\n" +
-                                        listeDesItems.get(position).get("titre") + "\n" +
-                                        listeDesItems.get(position).get("responsable");
+                                        listeDesItems.get(position).get("titre") + "\n" + responsable ;
                                 editeur.putString("infoSortie", infos);
                                 editeur.apply();
 
@@ -189,7 +223,8 @@ public class StartActivity extends AppCompatActivity {
                                 if ( !mesPrefs.getBoolean("authOK", false)) {
                                     Log.i("SECUSERV main start auth", "true");
                                     Intent auth = new Intent(StartActivity.this, AuthActivity.class);
-                                    startActivityForResult(auth, Constantes.AUTH_ACTIV);
+//                                    startActivityForResult(auth, Constantes.AUTH_ACTIV);
+                                    authActivityResultLauncher.launch(auth);
                                 }else{
                                     Intent groupes =new Intent(StartActivity.this, MainActivity.class);
                                     startActivity(groupes);
@@ -197,7 +232,7 @@ public class StartActivity extends AppCompatActivity {
 //                                Toast.makeText(getApplicationContext(), "Sortie id = "+listeDesItems.get(position).get("id"), Toast.LENGTH_LONG).show();
                             }
                         };
-                        monAdapter = new RecyclerViewGenericAdapter(recyclerView.getContext(), nomsItems, listener);
+                        monAdapter = new ListeSortiesAdapter(recyclerView.getContext(), nomsItems, listener);
                         recyclerView.setAdapter(monAdapter);
                     } else {
                         pourInfo = "pas de liste de sorties";
@@ -252,7 +287,8 @@ public class StartActivity extends AppCompatActivity {
         }
        if (id == R.id.new_user) {
             Intent newUser = new Intent(this, AuthActivity.class);
-            startActivityForResult(newUser, Constantes.AUTH_CHANGE);
+//            startActivityForResult(newUser, Constantes.AUTH_CHANGE);
+           authNewUserResultLauncher.launch(newUser);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -280,7 +316,7 @@ public class StartActivity extends AppCompatActivity {
         infoUtilisateur.show(getSupportFragmentManager(), "infoutilisateur");
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+/*    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == Constantes.AUTH_ACTIV) {
@@ -293,7 +329,7 @@ public class StartActivity extends AppCompatActivity {
                 startActivity(groupes);
             }
         }
-    }
+    }  */
 
     @Override
     protected void onDestroy() {
@@ -305,5 +341,7 @@ public class StartActivity extends AppCompatActivity {
         }
     }
 
-
+    public static boolean isEmpty(CharSequence str) {
+        return str == null || str.length() == 0;
+    }
 }

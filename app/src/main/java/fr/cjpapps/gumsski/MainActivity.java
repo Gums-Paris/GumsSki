@@ -1,9 +1,14 @@
 package fr.cjpapps.gumsski;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
@@ -22,12 +27,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -60,8 +62,10 @@ public class MainActivity extends AppCompatActivity {
     OK  liste des sorties
     OK  que faire si alerte 2 ?  "données indisponibles" dans l'alerte et on ferme l'activité.
     OK  est-ce que dans cas ci-dessus on revient au départ, je crois pas. Si on revient à la liste des sorties.
-    -    Clic long sur participant deb, deniv, nivA, nivS?
-    -    Remplacer startActivityForResult
+    OK  Remplacer startActivityForResult
+    ---- reste
+       Background item_liste paramétrable
+       Clic long sur participant deb, deniv, nivA, nivS?
     */
 
 // dérivé de AccessAuth mais avec pas mal de modifs
@@ -99,6 +103,21 @@ public class MainActivity extends AppCompatActivity {
              donc de standardiser l'adapter. Mais je vois toujours pas en quoi une interface permet de simuler un
              double héritage
  */
+
+    // servira à lancer AuthActivity pour changer d'utilisateur puis MainActivity si RESULT_OK
+    final private ActivityResultLauncher<Intent> authNewUserResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        // There are no request codes
+                        Intent data = result.getData();
+                        Intent liste =new Intent(MainActivity.this, MainActivity.class);
+                        startActivity(liste);
+                    }
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -313,20 +332,10 @@ public class MainActivity extends AppCompatActivity {
             startActivity(choixPrefs);
              return true;
         }
- /*       if (id == R.id.new_item) {
-            Intent newItem = new Intent(MainActivity.this, CreateItem.class);
-            startActivityForResult(newItem, Constantes.CREATE_REQUEST);
-            return true;
-        } */
         if (id == R.id.new_user) {
-/*            editeur.putBoolean("authOK", false);
-            editeur.putString("auth", "");
-            editeur.putString("userId", "");
-            editeur.commit(); */
-
             Intent newUser = new Intent(this, AuthActivity.class);
-            startActivityForResult(newUser, Constantes.AUTH_CHANGE);
-//           startActivity(newUser);
+//            startActivityForResult(newUser, Constantes.AUTH_CHANGE);
+            authNewUserResultLauncher.launch(newUser);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -355,6 +364,8 @@ public class MainActivity extends AppCompatActivity {
         infoUtilisateur.show(getSupportFragmentManager(), "infoutilisateur");
     }
 
+/*
+// remplacé par registerforactivityresult pour change usager ; à faire pour le reste le moment venu
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -367,18 +378,5 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("SECUSERV Main", "on auth change result OK");
             }
         }
-        if (requestCode == Constantes.MODIF_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                Log.i("SECUSERV Main", "on activity result OK");
-            }
-        }
-        if (requestCode == Constantes.CREATE_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                Log.i("SECUSERV Main", "on activity result OK");
-            }
-            if (resultCode == RESULT_CANCELED) {
-                alerte("4");
-            }
-        }
-    }
+    }  */
 }

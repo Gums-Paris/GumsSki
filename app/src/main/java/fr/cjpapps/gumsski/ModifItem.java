@@ -52,7 +52,7 @@ public class ModifItem extends AppCompatActivity {
         Button boutonSave = new Button(this);
         boutonSave.setId(idS);
         boutonSave.setLayoutParams(boutonParams);
-        boutonSave.setText("SAUVEGARDER");
+        boutonSave.setText(getString(R.string.save));
         boutonSave.setPadding(40, 5, 40, 0);
         parentLayout.addView(boutonSave);
         boutonSave.setOnClickListener(clickListenerSauv);
@@ -61,7 +61,7 @@ public class ModifItem extends AppCompatActivity {
         Button boutonAnnul = new Button(this);
         boutonAnnul.setId(idA);
         boutonAnnul.setLayoutParams(boutonParams);
-        boutonAnnul.setText("ANNULER");
+        boutonAnnul.setText(getString(R.string.cancel));
         boutonAnnul.setPadding(0, 5, 0, 0);
         parentLayout.addView(boutonAnnul);
         boutonAnnul.setOnClickListener(clickListenerCancel);

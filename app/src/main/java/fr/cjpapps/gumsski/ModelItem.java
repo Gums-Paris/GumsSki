@@ -2,7 +2,6 @@ package fr.cjpapps.gumsski;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;

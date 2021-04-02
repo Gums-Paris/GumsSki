@@ -2,7 +2,6 @@ package fr.cjpapps.gumsski;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
@@ -10,7 +9,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 import static fr.cjpapps.gumsski.Aux.egaliteChaines;
 import static fr.cjpapps.gumsski.Aux.recupInfo;

@@ -98,12 +98,9 @@ public class CreateItem extends AppCompatActivity {
         }
     };
 
-    private final View.OnClickListener clickListenerCancel = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Intent result = new Intent();
-            setResult(RESULT_OK, result);
-            finish();
-        }
+    private final View.OnClickListener clickListenerCancel = view -> {
+        Intent result = new Intent();
+        setResult(RESULT_OK, result);
+        finish();
     };
 }

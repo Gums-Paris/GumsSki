@@ -43,12 +43,7 @@ public class DialogQuestion extends DialogFragment {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireActivity());
         alertDialogBuilder.setMessage(message);
 
-        alertDialogBuilder.setNegativeButton("Non",  new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        alertDialogBuilder.setNegativeButton("Non", (dialog, which) -> dialog.dismiss());
 
         alertDialogBuilder.setPositiveButton("Oui",  new DialogInterface.OnClickListener() {
             final SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();

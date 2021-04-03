@@ -45,10 +45,6 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences mesPrefs;
     SharedPreferences.Editor editeur;
     Aux auxMethods;
-    static final String DATELISTE = "dateliste";
-    boolean testAuth = false;
-    String stringAuth = "";
-    ArrayList<ArrayList<HashMap<String,String>>> compositionGroupes = new ArrayList<>();
 
 /* TODO
     OK  assurer fonctionnement si pas autorisé à téléphoner
@@ -107,15 +103,12 @@ public class MainActivity extends AppCompatActivity {
     // servira à lancer AuthActivity pour changer d'utilisateur puis MainActivity si RESULT_OK
     final private ActivityResultLauncher<Intent> authNewUserResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        // There are no request codes
-                        Intent data = result.getData();
-                        Intent liste =new Intent(MainActivity.this, MainActivity.class);
-                        startActivity(liste);
-                    }
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    // There are no request codes
+                    Intent data = result.getData();
+                    Intent liste =new Intent(MainActivity.this, MainActivity.class);
+                    startActivity(liste);
                 }
             });
 
@@ -148,10 +141,8 @@ public class MainActivity extends AppCompatActivity {
         patience.setVisibility(View.VISIBLE);
         int count = 0;
         while (!Variables.isNetworkConnected) {
-            new Handler().postDelayed(new Runnable() {
-                public void run() {
-                    //on attend que le temps passe
-                }
+            new Handler().postDelayed(() -> {
+                //on attend que le temps passe
             }, 20); // délai 0.02 sec
             count++;
             if (count > 1000) {
@@ -173,18 +164,13 @@ public class MainActivity extends AppCompatActivity {
 
 // flagListe est false si on n'a pas récupéré de réponse du serveur ou si on n'a pas décodé le json ;
 // flagliste est géré par GetInfosListe
-            final Observer<Boolean> flagListeObserver = new Observer<Boolean>() {
-                @Override
-                public void onChanged(Boolean retour) {
-                    Log.i("SECUSERV", "flagListe " + retour);
-                    if (!retour) {
-                        new Handler().postDelayed(new Runnable() {
-                            public void run() {
-                                alerte("2");
-                                finish();
-                            }
-                        }, 200); // délai 0.2 sec
-                    }
+            final Observer<Boolean> flagListeObserver = retour -> {
+                Log.i("SECUSERV", "flagListe " + retour);
+                if (!retour) {
+                    new Handler().postDelayed(() -> {
+                        alerte("2");
+                        finish();
+                    }, 200); // délai 0.2 sec
                 }
             };
             modelListe.getFlagListe().observe(MainActivity.this, flagListeObserver);
@@ -235,17 +221,14 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("SECUSERV Main", "taille = " + listeDesItems.size());
                         nomsItems = auxMethods.faitListeGroupes(listeDesItems);
                         if (nomsItems != null) {
-                            RecyclerViewClickListener listener = new RecyclerViewClickListener() {
-                                @Override
-                                public void onClick(View view, final int position) {
-                                    String element = nomsItems.get(position);
-                                    String numGroup = element.substring(0, element.indexOf(':'));
-                                    FragmentManager fm = getSupportFragmentManager();
-                                    FirstFragment partFrag = FirstFragment.newInstance(element, numGroup);
-                                    partFrag.show(fm, "participants");
-                                }
+                            RecyclerViewClickListener listener = (view, position) -> {
+                                String element = nomsItems.get(position);
+                                String numGroup = element.substring(0, element.indexOf(':'));
+                                FragmentManager fm = getSupportFragmentManager();
+                                FirstFragment partFrag = FirstFragment.newInstance(element, numGroup);
+                                partFrag.show(fm, "participants");
                             };
-                            monAdapter = new RecyclerViewGenericAdapter(recyclerView.getContext(), nomsItems, listener);
+                            monAdapter = new RecyclerViewGenericAdapter(recyclerView.getContext(), nomsItems, listener,R.layout.item_liste);
                             recyclerView.setAdapter(monAdapter);
                         } else {
                             pourInfo = "pas de liste de groupes";
@@ -262,14 +245,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         ExtendedFloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
- /*               Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show(); */
-                Intent retourListeSorties = new Intent(MainActivity.this, StartActivity.class);
-                startActivity(retourListeSorties);
-            }
+        fab.setOnClickListener(view -> {
+/*               Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show(); */
+            Intent retourListeSorties = new Intent(MainActivity.this, StartActivity.class);
+            startActivity(retourListeSorties);
         });
     }
 

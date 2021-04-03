@@ -20,7 +20,7 @@ public class Preferences extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         affichage = findViewById(R.id.intro_prefs);
-        affichage.setText(Html.fromHtml(getString(R.string.prefs), Html.FROM_HTML_MODE_LEGACY));
+        affichage.setText(Aux.fromHtml(getString(R.string.prefs)));
 
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

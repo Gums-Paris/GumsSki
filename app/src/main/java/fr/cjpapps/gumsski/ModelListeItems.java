@@ -32,9 +32,6 @@ public class ModelListeItems extends AndroidViewModel {
     MutableLiveData<HashMap<String,String>> getParamSortie() {return paramSortie;}
     MutableLiveData<ArrayList<ArrayList<HashMap<String,String>>>> getCompositionGroupes() {return compositionGroupes;}
 
-    private final HashMap<String, String> requestParams = new HashMap<>();
-    private final String[] taskParams = new String[6];
-
 //  Constructeur du modèle ; on récupère la liste des participants ici
     public ModelListeItems(final Application application) {
         super(application);

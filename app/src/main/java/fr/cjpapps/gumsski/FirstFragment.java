@@ -87,109 +87,96 @@ public class FirstFragment extends DialogFragment {
         affichage.setText(title);
         final String numGroupe = getArguments().getString("numG", "1");
 
-        final Observer<ArrayList<HashMap<String,String>>> participObserver = new Observer<ArrayList<HashMap<String,String>>>() {
-            @Override
-            public void onChanged(ArrayList<HashMap<String,String>> items) {
-                if (items != null) {
-                    final ArrayList<MembreGroupe> membresGroupe = new ArrayList<>();
-                    for (HashMap<String,String> temp :items) {
-                        if (Aux.egaliteChaines(numGroupe, temp.get("groupe"))) {
-                            try {
-                                MembreGroupe unMembre = new MembreGroupe();
-                                unMembre.setName(temp.get("name"));
-                                String numTel = Aux.numInter(temp.get("tel"));
+        final Observer<ArrayList<HashMap<String,String>>> participObserver = items -> {
+            if (items != null) {
+                final ArrayList<MembreGroupe> membresGroupe = new ArrayList<>();
+                for (HashMap<String,String> temp :items) {
+                    if (Aux.egaliteChaines(numGroupe, temp.get("groupe"))) {
+                        try {
+                            MembreGroupe unMembre = new MembreGroupe();
+                            unMembre.setName(temp.get("name"));
+                            String numTel = Aux.numInter(temp.get("tel"));
 // pour les essais
 //                                numTel = "+33688998191";
-                                unMembre.setTel(numTel);
-                                unMembre.setEmail(temp.get("email"));
+                            unMembre.setTel(numTel);
+                            unMembre.setEmail(temp.get("email"));
 // pour les essais
 //                                unMembre.setEmail("claude_pastre@yahoo.fr");
-                                unMembre.setAutonome(temp.get("autonome"));
-                                unMembre.setPeage(temp.get("peage"));
-                                membresGroupe.add(unMembre);
-                                groupeEmail.add(temp.get("email"));
-                            } catch (NullPointerException e) {
-                                e.printStackTrace();
+                            unMembre.setAutonome(temp.get("autonome"));
+                            unMembre.setPeage(temp.get("peage"));
+                            membresGroupe.add(unMembre);
+                            groupeEmail.add(temp.get("email"));
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                Log.i("SECUSERV frag 1", "récup de la liste");
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+                RecyclerViewClickListener listener = (view1, position) -> {
+                    MembreGroupe unP = membresGroupe.get(position);
+                    if (view1.getId() == R.id.phone_button) {
+// on vérifie la permission de téléphoner ; si on l'a pas on demande
+                        if (ContextCompat.checkSelfPermission(
+                                requireActivity(), Manifest.permission.CALL_PHONE) ==
+                                PackageManager.PERMISSION_GRANTED) {
+                            phoneCall(unP);
+                        } else {
+                            // You can directly ask for the permission.
+                            // The registered ActivityResultCallback gets the result of this request.
+                            requestPermissionLauncher.launch(
+                                    Manifest.permission.CALL_PHONE);
+                            if (okPhone) {
+                                phoneCall(unP);
                             }
                         }
                     }
-                    Log.i("SECUSERV frag 1", "récup de la liste");
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-                    RecyclerViewClickListener listener = new RecyclerViewClickListener() {
-                        @Override
-                        public void onClick(View view, final int position) {
-                            MembreGroupe unP = membresGroupe.get(position);
-                            if (view.getId() == R.id.phone_button) {
-// on vérifie la permission de téléphoner ; si on l'a pas on demande
-                                if (ContextCompat.checkSelfPermission(
-                                        requireActivity(), Manifest.permission.CALL_PHONE) ==
-                                        PackageManager.PERMISSION_GRANTED) {
-                                    phoneCall(unP);
-                                } else {
-                                    // You can directly ask for the permission.
-                                    // The registered ActivityResultCallback gets the result of this request.
-                                    requestPermissionLauncher.launch(
-                                            Manifest.permission.CALL_PHONE);
-                                    if (okPhone) {
-                                        phoneCall(unP);
-                                    }
-                                }
-                            }
-                            if (view.getId() == R.id.email_button) {
-                                Log.i("SECUSERV frag 1 onclick", unP.getEmail());
-                                String[] adresses = {unP.getEmail()};
-                                String subject = "juste un truc";
-                                String texte = "Je sais pas quoi te dire";
-                                composeEmail(adresses, subject, texte);
-                            }
-                            if (view.getId() == R.id.sms_button) {
-                                envoiSMS(unP);
-                            }
+                    if (view1.getId() == R.id.email_button) {
+                        Log.i("SECUSERV frag 1 onclick", unP.getEmail());
+                        String[] adresses = {unP.getEmail()};
+                        String subject = "juste un truc";
+                        String texte = "Je sais pas quoi te dire";
+                        composeEmail(adresses, subject, texte);
+                    }
+                    if (view1.getId() == R.id.sms_button) {
+                        envoiSMS(unP);
+                    }
 //                            dismiss(); // finalement on garde le fragment ouvert ; il faudra l'éliminer avec le backbutton
-                        }
-                    };
+                };
 
-                    ParticipantsAdapter mAdapter = new ParticipantsAdapter(getActivity(), membresGroupe, listener);
-                    mRecyclerView.setAdapter(mAdapter);
-                }
+                ParticipantsAdapter mAdapter = new ParticipantsAdapter(getActivity(), membresGroupe, listener);
+                mRecyclerView.setAdapter(mAdapter);
             }
         };
         model.getListeDesItems().observe(getViewLifecycleOwner(),participObserver);
 
-        emailGroupe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i("SECUSERV frag 1 onclick emailGroupe", groupeEmail.toString());
-                String[] adresses = new String[groupeEmail.size()];
-                adresses = groupeEmail.toArray(adresses);
-                String subject = "J'te cause";
-                String texte = "Je sais pas quoi te dire";
-                composeEmail(adresses, subject, texte);
-            }
+        emailGroupe.setOnClickListener(view12 -> {
+            Log.i("SECUSERV frag 1 onclick emailGroupe", groupeEmail.toString());
+            String[] adresses = new String[groupeEmail.size()];
+            adresses = groupeEmail.toArray(adresses);
+            String subject = "J'te cause";
+            String texte = "Je sais pas quoi te dire";
+            composeEmail(adresses, subject, texte);
         });
 
 // pas d'envoi sms au groupe ; ce bouton ouvre Signal
-        smsGroupe.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View view) {
-                Intent launchIntent = requireContext().getPackageManager().getLaunchIntentForPackage("org.thoughtcrime.securesms");
-                if (launchIntent != null) {
-                    startActivity(launchIntent);
-                } else {
-                    Toast.makeText(requireActivity(), "L'appli Signal n'est pas disponible", Toast.LENGTH_LONG).show();
-                }
-   /*             Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_VIEW);
-                sendIntent.setData(Uri.parse("sgnl://signal.group?group_id=dqRJDMbLnldYWhKD3d9pxlHVhn3QkCk2P62xCCmYcPs="));
-                sendIntent.setPackage("org.thoughtcrime.securesms");
-                if (sendIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
-                    startActivity(sendIntent);
-                } else {
-                    Toast.makeText(getActivity(), "Appli Signal non disponible", Toast.LENGTH_LONG).show();
-                } */
+        smsGroupe.setOnClickListener(view13 -> {
+            Intent launchIntent = requireContext().getPackageManager().getLaunchIntentForPackage("org.thoughtcrime.securesms");
+            if (launchIntent != null) {
+                startActivity(launchIntent);
+            } else {
+                Toast.makeText(requireActivity(), "L'appli Signal n'est pas disponible", Toast.LENGTH_LONG).show();
             }
+/*             Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_VIEW);
+            sendIntent.setData(Uri.parse("sgnl://signal.group?group_id=dqRJDMbLnldYWhKD3d9pxlHVhn3QkCk2P62xCCmYcPs="));
+            sendIntent.setPackage("org.thoughtcrime.securesms");
+            if (sendIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
+                startActivity(sendIntent);
+            } else {
+                Toast.makeText(getActivity(), "Appli Signal non disponible", Toast.LENGTH_LONG).show();
+            } */
         });
     }
 

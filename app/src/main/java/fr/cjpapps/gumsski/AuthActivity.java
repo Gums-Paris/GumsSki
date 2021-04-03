@@ -64,54 +64,44 @@ public class AuthActivity extends AppCompatActivity {
 /* pour donner au client trois chances de s'identifier proprement. Faut pas mettre le code de l'observateur
  après celui du clickListener sinon l'observateur est recréé après chaque clic infructueux ce qui agit sur
  le compteur et conchie la procédure */
-        final Observer<Boolean> flagAuthActivObserver = new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean retour) {
-                Log.i("SECUSERV", "flagAuthActiv " + retour);
-                if (retour) {
-                    setResult(RESULT_OK, result);
+        final Observer<Boolean> flagAuthActivObserver = retour -> {
+            Log.i("SECUSERV", "flagAuthActiv " + retour);
+            if (retour) {
+                setResult(RESULT_OK, result);
+                finish();
+            } else {
+                new Handler().postDelayed(this::alerteAuth, 200); // délai 0.2 sec
+                counter--;
+                Log.i("SECUSERV", "counter =  " + counter);
+                if (counter == 0) {
+                    Toast.makeText(getApplicationContext(), "Tant pis ! Au revoir", Toast.LENGTH_LONG).show();
+                    setResult(RESULT_CANCELED, result);
                     finish();
-                } else {
-                    new Handler().postDelayed(new Runnable() {
-                        public void run() {
-                            alerteAuth();
-                        }
-                    }, 200); // délai 0.2 sec
-                    counter--;
-                    Log.i("SECUSERV", "counter =  " + counter);
-                    if (counter == 0) {
-                        Toast.makeText(getApplicationContext(), "Tant pis ! Au revoir", Toast.LENGTH_LONG).show();
-                        setResult(RESULT_CANCELED, result);
-                        finish();
-                    }
                 }
             }
         };
         model.getFlagAuthActiv().observe(this, flagAuthActivObserver);
 
-        envoyer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (ed1 != null) {
-                    user = ed1.getText().toString();
-                }
-                if (ed2 != null) {
-                    password = ed2.getText().toString();
-                }
-                postParams.put("username", user);
-                postParams.put("password", password);
-                taskParams[0] = Variables.urlActive+stringRequest;
-                Log.i("SECUSERV", "post url "+taskParams[0]);
-                taskParams[1] = Aux.buildRequest(postParams);
-                Log.i("SECUSERV", "post params "+taskParams[1]);
-                taskParams[2] = "Content-Type";
-                taskParams[3] = "application/x-www-form-urlencoded ; utf-8";
-                taskParams[4] = "";
-                taskParams[5] = "";
+        envoyer.setOnClickListener(view -> {
+            if (ed1 != null) {
+                user = ed1.getText().toString();
+            }
+            if (ed2 != null) {
+                password = ed2.getText().toString();
+            }
+            postParams.put("username", user);
+            postParams.put("password", password);
+            taskParams[0] = Variables.urlActive+stringRequest;
+            Log.i("SECUSERV", "post url "+taskParams[0]);
+            taskParams[1] = Aux.buildRequest(postParams);
+            Log.i("SECUSERV", "post params "+taskParams[1]);
+            taskParams[2] = "Content-Type";
+            taskParams[3] = "application/x-www-form-urlencoded ; utf-8";
+            taskParams[4] = "";
+            taskParams[5] = "";
 
-                if (Variables.isNetworkConnected) {
-                    new PostInfosAuth().execute(taskParams);
-                }
+            if (Variables.isNetworkConnected) {
+                new PostInfosAuth().execute(taskParams);
             }
         });
     }

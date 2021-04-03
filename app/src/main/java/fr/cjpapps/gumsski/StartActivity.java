@@ -14,7 +14,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -22,7 +21,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,7 +41,7 @@ public class StartActivity extends AppCompatActivity {
     TextView dateList = null;
     ProgressBar patience = null;
     private RecyclerView recyclerView;
-    private ListeSortiesAdapter monAdapter;
+    private RecyclerViewGenericAdapter monAdapter ;
     ModelListeSorties modelSorties = null;
     SharedPreferences mesPrefs;
     SharedPreferences.Editor editeur;
@@ -78,30 +76,24 @@ public class StartActivity extends AppCompatActivity {
 // servira à lancer AuthActivity puis MainActivity si RESULT_OK
     final private ActivityResultLauncher<Intent> authActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        // There are no request codes
-                        Intent data = result.getData();
-                        Intent groupes =new Intent(StartActivity.this, MainActivity.class);
-                        startActivity(groupes);
-                    }
-                }
-            });
+        result -> {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                // There are no request codes
+                Intent data = result.getData();
+                Intent groupes =new Intent(StartActivity.this, MainActivity.class);
+                startActivity(groupes);
+            }
+        });
 
     // servira à lancer AuthActivity pour changer d'utilisateur puis startActivity si RESULT_OK
     final private ActivityResultLauncher<Intent> authNewUserResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        // There are no request codes
-                        Intent data = result.getData();
-                        Intent liste =new Intent(StartActivity.this, StartActivity.class);
-                        startActivity(liste);
-                    }
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    // There are no request codes
+                    Intent data = result.getData();
+                    Intent liste =new Intent(StartActivity.this, StartActivity.class);
+                    startActivity(liste);
                 }
             });
 
@@ -140,10 +132,8 @@ public class StartActivity extends AppCompatActivity {
         patience.setVisibility(View.VISIBLE);
         int count = 0;
         while (!Variables.isNetworkConnected) {
-            new Handler().postDelayed(new Runnable() {
-                public void run() {
-                    //on attend que le temps passe
-                }
+            new Handler().postDelayed(() -> {
+                //on attend que le temps passe
             }, 20); // délai 0.02 sec
             count++;
             if (count > 1000) {
@@ -161,24 +151,19 @@ public class StartActivity extends AppCompatActivity {
 // flagListeSorties est false si on n'a pas récupéré de réponse du serveur ou si on n'a pas décodé le json
 // ou si la liste de sorties est vide; donc on n'a rien mais si on a une liste périmée, on l'affiche à tout hasard.
 // flaglisteSorties est géré par GetParamsSorties
-        final Observer<Boolean> flagListeSortiesObserver = new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean retour) {
-                Log.i("SECUSERV", "flagListeSorties " + retour);
-                if (!retour) {
-                    new Handler().postDelayed(new Runnable() {
-                        public void run() {
-                            alerte("2");
-                            patience.setVisibility(View.GONE);
-                            String dateListeDispo = mesPrefs.getString("datelist", "");
-                            if (!(Aux.egaliteChaines(dateListeDispo, ""))) {
-                                modelSorties.getListeFromPrefs();
-                                }else{
-                                panicDepart.setText(R.string.no_list);
-                            }
-                            }
+        final Observer<Boolean> flagListeSortiesObserver = retour -> {
+            Log.i("SECUSERV", "flagListeSorties " + retour);
+            if (!retour) {
+                new Handler().postDelayed(() -> {
+                    alerte("2");
+                    patience.setVisibility(View.GONE);
+                    String dateListeDispo = mesPrefs.getString("datelist", "");
+                    if (!(Aux.egaliteChaines(dateListeDispo, ""))) {
+                        modelSorties.getListeFromPrefs();
+                        }else{
+                        panicDepart.setText(R.string.no_list);
+                    }
                     }, 200); // délai 0.2 sec
-                }
             }
         };
         modelSorties.getFlagListeSorties().observe(StartActivity.this, flagListeSortiesObserver);
@@ -195,44 +180,42 @@ public class StartActivity extends AppCompatActivity {
                     Log.i("SECUSERV Start", "taille = " + listeDesItems.size());
                     nomsItems = methodesAux.faitListeSorties(listeDesItems);
                     if (nomsItems != null) {
-                        RecyclerViewClickListener listener = new RecyclerViewClickListener() {
-                            @Override
-                            public void onClick(View view, final int position) {
-                                editeur.putString("date_bdh", listeDesItems.get(position).get("date_bdh"));
-                                editeur.putString("id", listeDesItems.get(position).get("id"));
-                                editeur.putString("titre", listeDesItems.get(position).get("titre"));
-                                editeur.putString("date", listeDesItems.get(position).get("date"));
-                                editeur.putString("jours", listeDesItems.get(position).get("jours"));
-                                editeur.putString("publier_groupes", listeDesItems.get(position).get("publier_groupes"));
-                                String responsable = listeDesItems.get(position).get("responsable");
-                                if ("null".equals(responsable)) { responsable = "";}
-                                editeur.putString("responsable", responsable);
-                                String infos;
-                                infos = listeDesItems.get(position).get("date_bdh") + "\n" +
-                                        listeDesItems.get(position).get("titre") + "\n" + responsable ;
-                                editeur.putString("infoSortie", infos);
-                                editeur.apply();
+                        RecyclerViewClickListener listener = (view, position) -> {
+                            editeur.putString("date_bdh", listeDesItems.get(position).get("date_bdh"));
+                            editeur.putString("id", listeDesItems.get(position).get("id"));
+                            editeur.putString("titre", listeDesItems.get(position).get("titre"));
+                            editeur.putString("date", listeDesItems.get(position).get("date"));
+                            editeur.putString("jours", listeDesItems.get(position).get("jours"));
+                            editeur.putString("publier_groupes", listeDesItems.get(position).get("publier_groupes"));
+                            String responsable = listeDesItems.get(position).get("responsable");
+                            if ("null".equals(responsable)) { responsable = "";}
+                            editeur.putString("responsable", responsable);
+                            String infos;
+                            infos = listeDesItems.get(position).get("date_bdh") + "\n" +
+                                    listeDesItems.get(position).get("titre") + "\n" + responsable ;
+                            editeur.putString("infoSortie", infos);
+                            editeur.apply();
 
 // En cas de démarrage avec auth valide on lance Main ici.
 // Si pas auth on lance AuthActivity. Une fois auth réalisée, authOK, auth et userId se trouvent en sharedPrefs
-// et on lance Main pour recup des données des groupes (voir onActivityResult pour AUTH_ACTIV)
+// et on lance Main pour recup des données des groupes (voir onActivityResult du ActivityResultLauncher)
 // Noter que on passe authOK à false et auth à "" si à l'occasion de onBackPressed dans Main l'utilisateur décide de
 // fermer l'appli pour obliger une nouvelle identification lors du redémarrage. Jusque là le jeton "auth" restera
 // disponible dans les sharedPrefs.
 
-                                if ( !mesPrefs.getBoolean("authOK", false)) {
-                                    Log.i("SECUSERV main start auth", "true");
-                                    Intent auth = new Intent(StartActivity.this, AuthActivity.class);
+                            if ( !mesPrefs.getBoolean("authOK", false)) {
+                                Log.i("SECUSERV main start auth", "true");
+                                Intent auth = new Intent(StartActivity.this, AuthActivity.class);
 //                                    startActivityForResult(auth, Constantes.AUTH_ACTIV);
-                                    authActivityResultLauncher.launch(auth);
-                                }else{
-                                    Intent groupes =new Intent(StartActivity.this, MainActivity.class);
-                                    startActivity(groupes);
-                                }
-//                                Toast.makeText(getApplicationContext(), "Sortie id = "+listeDesItems.get(position).get("id"), Toast.LENGTH_LONG).show();
+                                authActivityResultLauncher.launch(auth);
+                            }else{
+                                Intent groupes =new Intent(StartActivity.this, MainActivity.class);
+                                startActivity(groupes);
                             }
+//                                Toast.makeText(getApplicationContext(), "Sortie id = "+listeDesItems.get(position).get("id"), Toast.LENGTH_LONG).show();
                         };
-                        monAdapter = new ListeSortiesAdapter(recyclerView.getContext(), nomsItems, listener);
+//                        monAdapter = new ListeSortiesAdapter(recyclerView.getContext(), nomsItems, listener);
+                        monAdapter = new RecyclerViewGenericAdapter(recyclerView.getContext(), nomsItems, listener, R.layout.item_liste_sorties);
                         recyclerView.setAdapter(monAdapter);
                     } else {
                         pourInfo = "pas de liste de sorties";
@@ -316,21 +299,6 @@ public class StartActivity extends AppCompatActivity {
         infoUtilisateur.show(getSupportFragmentManager(), "infoutilisateur");
     }
 
-/*    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == Constantes.AUTH_ACTIV) {
-            if (resultCode == RESULT_CANCELED) {
-                Log.i("SECUSERV Start", "on auth activ result pas OK");
-//                finish();
-            }
-            if (resultCode == RESULT_OK) {
-                Intent groupes =new Intent(StartActivity.this, MainActivity.class);
-                startActivity(groupes);
-            }
-        }
-    }  */
-
     @Override
     protected void onDestroy() {
 //        Log.i("SECUSERV start destroy", "fin "+isFinishing());
@@ -341,6 +309,7 @@ public class StartActivity extends AppCompatActivity {
         }
     }
 
+// teste si la chaîne str est vide ou null
     public static boolean isEmpty(CharSequence str) {
         return str == null || str.length() == 0;
     }

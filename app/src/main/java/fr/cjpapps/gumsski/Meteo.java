@@ -20,7 +20,7 @@ public class Meteo extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         affichage = findViewById(R.id.intro_meteo);
-        affichage.setText(Html.fromHtml(getString(R.string.pas_fait), Html.FROM_HTML_MODE_LEGACY));
+        affichage.setText(Aux.fromHtml(getString(R.string.pas_fait)));
 
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

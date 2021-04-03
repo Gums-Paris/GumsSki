@@ -78,20 +78,17 @@ public class ModifItem extends AppCompatActivity {
             model.recupItem(idItem);
         }
 
-        final Observer<HashMap<String, String>> monItemObserver = new Observer<HashMap<String, String>>() {
-            @Override
-            public void onChanged(HashMap<String, String> itemTravail) {
-                if(itemTravail != null) {
-                    Log.i("SECUSERV", " hashmap "+itemTravail.toString());
-                    for (String[] params : fieldParams) {
-                        Log.i("SECUSERV", "champ, id "+params[0]+", "+params[3]);
-                        EditText unChamp = findViewById(Integer.parseInt(params[4]));
-                        unChamp.setText(itemTravail.get(params[0]));
-                    }
-                } else {
-                    setResult(RESULT_CANCELED, result);
-                    finish();
+        final Observer<HashMap<String, String>> monItemObserver = itemTravail -> {
+            if(itemTravail != null) {
+                Log.i("SECUSERV", " hashmap "+itemTravail.toString());
+                for (String[] params : fieldParams) {
+                    Log.i("SECUSERV", "champ, id "+params[0]+", "+params[3]);
+                    EditText unChamp = findViewById(Integer.parseInt(params[4]));
+                    unChamp.setText(itemTravail.get(params[0]));
                 }
+            } else {
+                setResult(RESULT_CANCELED, result);
+                finish();
             }
         };
         model.getMonItem().observe(this, monItemObserver);
@@ -133,13 +130,10 @@ public class ModifItem extends AppCompatActivity {
         }
     };
 
-    private final View.OnClickListener clickListenerCancel = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Intent result = new Intent();
-            setResult(RESULT_OK, result);
-            finish();
-        }
+    private final View.OnClickListener clickListenerCancel = view -> {
+        Intent result = new Intent();
+        setResult(RESULT_OK, result);
+        finish();
     };
 
 }

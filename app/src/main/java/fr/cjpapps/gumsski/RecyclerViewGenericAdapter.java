@@ -26,19 +26,26 @@ public class RecyclerViewGenericAdapter extends RecyclerView.Adapter<RecyclerVie
                         recyclerView.setAdapter(monAdapter);
    */
 
+/*  Cette version diffère de la version d'origine par le passage du layout du TextView de l'item en paramètre de l'adapter
+*   cela généralise complètement l'adapter en permettant des affichages d'allure différente d'une occasion à
+*   l'autre. Si l'item est plus compliqué qu'un simple élément de texte ça marcherait pas bien parce qu'il faut de
+*   toutes manières transformer aussi le ViewHolder (voir ParticipantsAdapter pour un exemple) */
+
     final ArrayList<String> mesData;
     final LayoutInflater mInflater;
     final RecyclerViewClickListener listener;
+    int item_layout;
 
 /*  C'est l'utilisation du RecyclerViewClickListener (portant la position de l'item) passé en paramètre à l'adapteur
     et par lui au ViewHolder  qui permet de sortir de l'adapteur tout le travail à faire sur le click et ainsi
     d'avoir un adapteur générique */
 
     //  Constructeur de l'adapter. On lui passe un context, les données et le custom clicklistener.
-    RecyclerViewGenericAdapter(Context context, ArrayList<String> maList, RecyclerViewClickListener mlistener) {
+    RecyclerViewGenericAdapter(Context context, ArrayList<String> maList, RecyclerViewClickListener mlistener,int mitem_layout) {
         mInflater = LayoutInflater.from(context);
         this.mesData = maList;
         this.listener = mlistener;
+        this.item_layout = mitem_layout;
     }
 
 // les trois méthodes de l'adapteur : onCreateViewHolder, onBindViewHolder, getItemCount
@@ -47,7 +54,7 @@ public class RecyclerViewGenericAdapter extends RecyclerView.Adapter<RecyclerVie
     @Override
     public RecyclerViewGenericAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // fournit le ViewHolder avec son layout
-        View mItemView = mInflater.inflate(R.layout.item_liste, parent, false);
+        View mItemView = mInflater.inflate(item_layout, parent, false);
         return new MyViewHolder(mItemView, this, listener);
     }
 

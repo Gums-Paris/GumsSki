@@ -104,7 +104,7 @@ public class StartActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-// pour pouvoir fermer depuis MainActivity quand on décide de la ferme
+// pour pouvoir fermer depuis MainActivity quand on décide de la fermer
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("finish_activity"));
 
         affichageTitre = findViewById(R.id.affiche_titre);
@@ -188,7 +188,7 @@ public class StartActivity extends AppCompatActivity {
                             editeur.putString("jours", listeDesItems.get(position).get("jours"));
                             editeur.putString("publier_groupes", listeDesItems.get(position).get("publier_groupes"));
                             String responsable = listeDesItems.get(position).get("responsable");
-                            if ("null".equals(responsable)) { responsable = "";}
+//                            if ("null".equals(responsable)) { responsable = "";}
                             editeur.putString("responsable", responsable);
                             String infos;
                             infos = listeDesItems.get(position).get("date_bdh") + "\n" +

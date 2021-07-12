@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,7 +60,7 @@ public class AuthActivity extends AppCompatActivity {
         requestParams.put("app", Constantes.JOOMLA_USERS);
         requestParams.put("resource", Constantes.JOOMLA_RESOURCE_LOGIN);
         requestParams.put("format", "raw");
-        stringRequest = Aux.buildRequest(requestParams);
+        stringRequest = AuxReseau.buildRequest(requestParams);
 
 /* pour donner au client trois chances de s'identifier proprement. Faut pas mettre le code de l'observateur
  après celui du clickListener sinon l'observateur est recréé après chaque clic infructueux ce qui agit sur
@@ -70,7 +71,7 @@ public class AuthActivity extends AppCompatActivity {
                 setResult(RESULT_OK, result);
                 finish();
             } else {
-                new Handler().postDelayed(this::alerteAuth, 200); // délai 0.2 sec
+                new Handler(Looper.getMainLooper()).postDelayed(this::alerteAuth, 200); // délai 0.2 sec
                 counter--;
                 Log.i("SECUSERV", "counter =  " + counter);
                 if (counter == 0) {
@@ -93,7 +94,7 @@ public class AuthActivity extends AppCompatActivity {
             postParams.put("password", password);
             taskParams[0] = Variables.urlActive+stringRequest;
             Log.i("SECUSERV", "post url "+taskParams[0]);
-            taskParams[1] = Aux.buildRequest(postParams);
+            taskParams[1] = AuxReseau.buildRequest(postParams);
             Log.i("SECUSERV", "post params "+taskParams[1]);
             taskParams[2] = "Content-Type";
             taskParams[3] = "application/x-www-form-urlencoded ; utf-8";

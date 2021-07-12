@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     OK  corriger aide rajout mailto:
     OK  liste des sorties
     OK  que faire si alerte 2 ?  "données indisponibles" dans l'alerte et on ferme l'activité.
-    OK  est-ce que dans cas ci-dessus on revient au départ, je crois pas. Si on revient à la liste des sorties.
+    OK  est-ce que dans cas ci-dessus on revient au départ, je crois pas. Si, on revient à la liste des sorties.
     OK  Remplacer startActivityForResult
     ---- reste
        Background item_liste paramétrable
@@ -135,13 +136,13 @@ public class MainActivity extends AppCompatActivity {
         editeur.apply();
 
         auxMethods = new Aux();
-        getSystemService(CONNECTIVITY_SERVICE);
-        Aux.watchNetwork();
+/*        getSystemService(CONNECTIVITY_SERVICE);
+        AuxReseau.watchNetwork();
 // Faut parfois patienter un peu jusqu'à ce que le réseau soit disponible
         patience.setVisibility(View.VISIBLE);
         int count = 0;
         while (!Variables.isNetworkConnected) {
-            new Handler().postDelayed(() -> {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 //on attend que le temps passe
             }, 20); // délai 0.02 sec
             count++;
@@ -151,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         patience.setVisibility(View.GONE);
-
+*/
 // si les groupes ne sont pas publiés on arrête
         if ("2".equals(mesPrefs.getString("publier_groupes",""))) {
 
@@ -167,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
             final Observer<Boolean> flagListeObserver = retour -> {
                 Log.i("SECUSERV", "flagListe " + retour);
                 if (!retour) {
-                    new Handler().postDelayed(() -> {
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
                         alerte("2");
                         finish();
                     }, 200); // délai 0.2 sec

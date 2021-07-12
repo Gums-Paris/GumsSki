@@ -21,7 +21,7 @@ public class Secours extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         affichage = findViewById(R.id.intro_secours);
-        affichage.setText(Html.fromHtml(getString(R.string.pas_fait)));
+        affichage.setText(Aux.fromHtml(getString(R.string.pas_fait)));
 
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

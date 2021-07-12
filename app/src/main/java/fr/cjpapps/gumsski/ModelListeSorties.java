@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static fr.cjpapps.gumsski.Aux.recupInfo;
+import static fr.cjpapps.gumsski.AuxReseau.recupInfo;
 
 public class ModelListeSorties extends AndroidViewModel {
 

@@ -80,10 +80,10 @@ public class CreateItem extends AppCompatActivity {
             requestParams.put("app", Constantes.JOOMLA_APP);
             requestParams.put("resource", Constantes.JOOMLA_RESOURCE_1);
             requestParams.put("format", "json");
-            String stringRequest = Aux.buildRequest(requestParams);
+            String stringRequest = AuxReseau.buildRequest(requestParams);
             taskParams[0] = Variables.urlActive+stringRequest;
             Log.i("SECUSERV", " modif post url "+taskParams[0]);
-            taskParams[1] = Aux.buildRequest(postParams);
+            taskParams[1] = AuxReseau.buildRequest(postParams);
             taskParams[2] = "Content-Type";
             taskParams[3] = "application/x-www-form-urlencoded ; utf-8";
             taskParams[4] = "Authorization";

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -115,7 +116,7 @@ public class StartActivity extends AppCompatActivity {
         patience = findViewById(R.id.indeterminateBar);
 
 //        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
-        Variables.urlActive = urlsApiApp.API_GUMS.getUrl();
+        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
 
         mesPrefs = MyHelper.getInstance(getApplicationContext()).recupPrefs();
         editeur = mesPrefs.edit();
@@ -127,12 +128,12 @@ public class StartActivity extends AppCompatActivity {
 
         methodesAux = new Aux();
         getSystemService(CONNECTIVITY_SERVICE);
-        Aux.watchNetwork();
+        AuxReseau.watchNetwork();
 // Faut patienter un peu jusqu'à ce que le réseau soit disponible
         patience.setVisibility(View.VISIBLE);
         int count = 0;
         while (!Variables.isNetworkConnected) {
-            new Handler().postDelayed(() -> {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 //on attend que le temps passe
             }, 20); // délai 0.02 sec
             count++;
@@ -150,11 +151,11 @@ public class StartActivity extends AppCompatActivity {
 
 // flagListeSorties est false si on n'a pas récupéré de réponse du serveur ou si on n'a pas décodé le json
 // ou si la liste de sorties est vide; donc on n'a rien mais si on a une liste périmée, on l'affiche à tout hasard.
-// flaglisteSorties est géré par GetParamsSorties
+// flaglisteSorties est géré par (GetParamsSorties)  AuxReseau.decodeInfosSorties
         final Observer<Boolean> flagListeSortiesObserver = retour -> {
             Log.i("SECUSERV", "flagListeSorties " + retour);
             if (!retour) {
-                new Handler().postDelayed(() -> {
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
                     alerte("2");
                     patience.setVisibility(View.GONE);
                     String dateListeDispo = mesPrefs.getString("datelist", "");
@@ -232,7 +233,7 @@ public class StartActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_start, menu);
         return true;
     }
 
@@ -248,7 +249,7 @@ public class StartActivity extends AppCompatActivity {
             startActivity(lireAide);
             return true;
         }
-        if (id == R.id.logistique) {
+/*        if (id == R.id.logistique) {
             Intent logistic = new Intent(this, Logistique.class);
             startActivity(logistic);
             return true;
@@ -262,7 +263,7 @@ public class StartActivity extends AppCompatActivity {
             Intent secours = new Intent(this, Secours.class);
             startActivity(secours);
             return true;
-        }
+        }  */
         if (id == R.id.action_settings) {
             Intent choixPrefs = new Intent(this, Preferences.class);
             startActivity(choixPrefs);
@@ -309,8 +310,4 @@ public class StartActivity extends AppCompatActivity {
         }
     }
 
-// teste si la chaîne str est vide ou null
-    public static boolean isEmpty(CharSequence str) {
-        return str == null || str.length() == 0;
-    }
 }

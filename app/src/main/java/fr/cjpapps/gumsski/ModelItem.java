@@ -32,7 +32,7 @@ public class ModelItem extends AndroidViewModel {
         requestParams.put("resource", Constantes.JOOMLA_RESOURCE_1);
         requestParams.put("id", id);
         requestParams.put("format", "json");
-        stringRequest = Aux.buildRequest(requestParams);
+        stringRequest = AuxReseau.buildRequest(requestParams);
         taskParams[0] = Variables.urlActive;
         taskParams[1] = stringRequest;
         taskParams[2] = "Content-Type";

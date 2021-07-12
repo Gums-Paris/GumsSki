@@ -47,7 +47,7 @@ public class DeleteItem extends AppCompatActivity {
         requestParams.put("fleur", "bleuet");
         editeur.putString("idDel", idItem);
         editeur.apply();
-        taskParams[0] = Variables.urlActive + Aux.buildRequest(requestParams);
+        taskParams[0] = Variables.urlActive + AuxReseau.buildRequest(requestParams);
         Log.i("SECUSERV", "Del URL " + taskParams[0]);
         taskParams[1] = mesPrefs.getString("auth", "");
         if (Variables.isNetworkConnected) {

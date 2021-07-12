@@ -1,22 +1,14 @@
 package fr.cjpapps.gumsski;
 
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,71 +21,7 @@ import static java.lang.Integer.parseInt;
 
 public class Aux {
 
-/*  la méthode de détection de l'accès réseau change à partir de Android Q (API 29) qui trouve que activeNetworkIfo c'est
-*   très caca. Pour Q il faut mettre en place un NetworkCallback qui intervient lorsque la connectivité change.
-*   La méthode pour Q est inspirée de PasanBhanu :
-*   https://gist.github.com/PasanBhanu/730a32a9eeb180ec2950c172d54bb06a
-*   Il apparait qu'il faut un registerDefaultNetworkCallback plutôt qu'un registerNetworkCallback parce que les téléphones
-*   modernes ont souvent plusieurs connexions indépendantes actives ce qui fait que les onAvailable et onLost peuvent
-*   s'emmeler les pinceaux. Ou alors je suppose qu'il faut se choisir un réseau par le logiciel, vive le progrès  */
-    public static void watchNetwork() {
-        ConnectivityManager connectivityManager = MyHelper.getInstance().conMan();
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            Variables.isNetworkConnected = activeNetworkInfo != null && activeNetworkInfo.isConnected();
-        }else {
-            try {
-                connectivityManager.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback() {
-                     @Override
-                       public void onAvailable(@NonNull Network network) {
-                         Log.i("SECUSERV", "on available " );
-                         Variables.isNetworkConnected = true; // Global Static Variable
-                       }
-                       @Override
-                       public void onLost(@NonNull Network network) {
-                           Log.i("SECUSERV", "on lost " );
-                           Variables.isNetworkConnected = false; // Global Static Variable
-                       }
-                   }
-                );
-            } catch (Exception e) {
-                Variables.isNetworkConnected = false;
-            }
-        }
-    }
-
-    //   void recupListe () {  // devenu recupInfo pour généraliser à plusieurs resources
-    static void recupInfo (String uneResource, String uneSortie) {
-        SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
-        String stringRequest;
-        final HashMap<String, String> requestParams = new HashMap<>();
-        final String[] taskParams = new String[6];
-        requestParams.put("app", Constantes.JOOMLA_APP);
-        requestParams.put("resource", uneResource);
-        requestParams.put("format", "json");
-        requestParams.put("sortieid", uneSortie);
-        stringRequest = Aux.buildRequest(requestParams);
-        taskParams[0] = Variables.urlActive;
-        taskParams[1] = stringRequest;
-        taskParams[2] = "Content-Type";
-        taskParams[3] = "application/x-www-form-urlencoded";
-        taskParams[4] = "X-Authorization";
-        taskParams[5] = "Bearer "+ mesPrefs.getString("auth", "");
-        Log.i("SECUSERV", "network ? "+Variables.isNetworkConnected);
-        if (Variables.isNetworkConnected)  {
-            switch(uneResource) {
-                case Constantes.JOOMLA_RESOURCE_1 :
-                    new GetParamSortie().execute(taskParams);
-                    break;
-                case Constantes.JOOMLA_RESOURCE_2 :
-                    new GetInfosListe().execute(taskParams);
-                case Constantes.JOOMLA_RESOURCE_3 :
-                    new GetParamsSorties().execute(taskParams);
-            }
-        }
-    }
-
-    // pour remplir la listeItems en décodant le json jsListe
+// pour remplir la listeItems en décodant le json jsListe
     static ArrayList<HashMap<String,String>> getListeItems (String jsListe) {
         ArrayList<HashMap<String,String>> listeItems = new ArrayList<>();
         try {
@@ -122,7 +50,7 @@ public class Aux {
         return null;
     }
 
-    // pour remplir la listeDesSorties en décodant le json jsListe
+// pour remplir la listeDesSorties en décodant le json jsListe
     static ArrayList<HashMap<String,String>> getListeSorties (String jsListe) {
         ArrayList<HashMap<String,String>> listeSorties = new ArrayList<>();
         try {
@@ -147,7 +75,7 @@ public class Aux {
         }
         return null;
     }
-    // pour remplir la listedes paramètres de la sortie en décodant le jsonParams
+// pour remplir la listedes paramètres de la sortie en décodant le jsonParams
     static HashMap<String,String> getListeParams (String jsParams) {
         HashMap<String,String> params = new HashMap<>();
         try {
@@ -168,7 +96,7 @@ public class Aux {
         return null;
     }
 
-    // pour fabriquer la liste de noms des items à donner à la recyclerview
+// pour fabriquer la liste de noms des items à donner à la recyclerview
     ArrayList<String> faitListeNoms(ArrayList<HashMap<String,String>> items) {
         ArrayList<String> liste = new ArrayList<>();
         for (HashMap<String,String> temp :items) {
@@ -184,8 +112,8 @@ public class Aux {
         return liste;
     }
 
-    ArrayList<String> faitListeGroupes(ArrayList<HashMap<String,String>> items) {
 // pour fabriquer la liste des noms de groupe à donner à la recyclerView
+    ArrayList<String> faitListeGroupes(ArrayList<HashMap<String,String>> items) {
         ArrayList<String> liste = new ArrayList<>();
         int numGroupe = 0;
         for (HashMap<String,String> temp :items) {
@@ -208,8 +136,8 @@ public class Aux {
         return liste;
     }
 
-    ArrayList<String> faitListeSorties(ArrayList<HashMap<String,String>> items) {
 // pour fabriquer la liste des noms de sortie à donner à la recyclerView
+    ArrayList<String> faitListeSorties(ArrayList<HashMap<String,String>> items) {
         ArrayList<String> liste = new ArrayList<>();
         for (HashMap<String,String> temp :items) {
             try {
@@ -242,30 +170,7 @@ public class Aux {
         return null;
     }
 
-// fabrique la chaîne de requête à partir du tableau des paramètres
-// cette chaîne sera ajoutée à ".../index.php?option=com_api&"
-// ou mise dans le corps d'une requête POST
-    static String buildRequest(HashMap<String,String> params) {
-        StringBuilder sbParams = new StringBuilder();
-        int i = 0;
-        for (String key : params.keySet()) {
-            try {
-                if (i != 0) {
-                    sbParams.append("&");
-                }
-                sbParams.append(key).append("=")
-                        .append(URLEncoder.encode(params.get(key), "UTF-8"));
-
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            i++;
-        }
-        Log.i("SECUSERV", "request = "+sbParams.toString());
-        return sbParams.toString();
-    }
-
-    @SuppressWarnings("deprecation")
+@SuppressWarnings("deprecation")
     static Spanned fromHtml(String source) {
         if (Build.VERSION.SDK_INT >= 24) {
             return Html.fromHtml(source, Html.FROM_HTML_MODE_LEGACY);
@@ -274,7 +179,7 @@ public class Aux {
         }
     }
 
-    // return true si uneDate est antérieure à la date du jour diminuée de ageMax (en jours)
+// return true si uneDate est antérieure à la date du jour diminuée de ageMax (en jours)
     static boolean datePast(String uneDate, int ageMax) {
         Date date1 = null;
         try {
@@ -298,15 +203,21 @@ public class Aux {
         return true;
     }
 
-    // met un numerode téléphone sous la forme internationale +33612345678
+// met un numero de téléphone sous la forme internationale +33612345678
     static String numInter (String num){
         if ("".equals(num)) {return "";}
         String num1 = num.replaceAll("\\s", "");
         return num1.startsWith("0") ? "+33"+num1.substring(1) : num1;
     }
 
-    // test égalité de chaînes. Cette version considère que (null == null) est false
+// test égalité de chaînes. Cette version considère que (null == null) est false
     static boolean egaliteChaines(String ch1, String ch2) {
         return (ch1 != null && ch1.equals(ch2));
     }
+
+// teste si la chaîne str est vide ou null
+    public static boolean isEmpty(CharSequence str) {
+        return str == null || str.length() == 0;
+    }
+
 }

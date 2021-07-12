@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static fr.cjpapps.gumsski.Aux.egaliteChaines;
-import static fr.cjpapps.gumsski.Aux.recupInfo;
+import static fr.cjpapps.gumsski.AuxReseau.recupInfo;
 
 public class ModelListeItems extends AndroidViewModel {
 

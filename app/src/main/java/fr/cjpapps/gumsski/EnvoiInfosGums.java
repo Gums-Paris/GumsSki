@@ -1,6 +1,5 @@
 package fr.cjpapps.gumsski;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -15,20 +14,15 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.Callable;
 
-public class PostInfosGums extends AsyncTask<String,Void,String> {
+public class EnvoiInfosGums implements Callable<String> {
 
-/*  générique pour l'envoi d'une requête POST
-*   en entrée un array de 6 chaînes strings[6] :
-*       string[0] = l'url d'accueil finissant par /
-*       string[1] = la chaine de requête à ajouter comme corps de la requête commence par index.php?
-*       string[2] et string[3] = la RequestProperty à mettre dans l'en-tête pour auth et [4] et [5] en plus
-*           pour les POSTs d'item
-*   en sortie le json renvoyé suite à la demande*/
+    private String[] strings = new String[6];
+    public EnvoiInfosGums(String[] strings) {this.strings = strings;}
 
     @Override
-    protected String doInBackground(String... strings) {
-
+    public String call() throws Exception {
         String resultat;
         StringBuilder result = new StringBuilder();
         HttpURLConnection conn = null;
@@ -77,9 +71,5 @@ public class PostInfosGums extends AsyncTask<String,Void,String> {
         }
         resultat = String.valueOf(result);
         return resultat;
-    }
-
-    protected void onPostExecute (String resultat) {
-// le traitement dépend de l'url accédée
     }
 }

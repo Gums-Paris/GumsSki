@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
         panic = findViewById(R.id.panique);  // sert si les groupes ne sont pas publiés
 
         patience = findViewById(R.id.indeterminateBar);
+        patience.setVisibility(View.GONE);
 
         editeur.putString("errCode", "");
         editeur.putString("errMsg", "");
@@ -190,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }, 200); // délai 0.2 sec
                 } else {
-                    Aux.recupInfo(Constantes.JOOMLA_RESOURCE_2,"");
+                    AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_2,"");
                 }
             }
         };
@@ -202,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
             public void onChanged(Boolean retour) {
                 Log.i("SECUSERV", "flagSuppress " + retour);
                 if (retour) {
-                    Aux.recupInfo(Constantes.JOOMLA_RESOURCE_2, "");
+                    AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_2, "");
                 } else {
                     alerte("4");
                 }
@@ -256,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-//  onDestroy a failli servir ; laissée là par paresse au cas où pour retrouver facilement le
+//  onDestroy a failli servir ; laissée là par paresse au cas où, pour retrouver facilement le
 //  "isFinishing()  && !isChangingConfigurations()" qui ne s'invente pas facilement
         Log.i("SECUSERV destroy", "fin "+isFinishing());
         Log.i("SECUSERV destroy", "chg "+isChangingConfigurations());

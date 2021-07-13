@@ -13,12 +13,16 @@ import java.util.HashMap;
 
 public class DeleteItem extends AppCompatActivity {
 
+/* Le serveur de OVH n'autorise pas la requête DEL. On fait un GET avec un paramètre supplémentaire
+*  fleur = bleuet pour indiquer qu'il faut exécuter une suppression
+ */
     private String idItem;
     SharedPreferences mesPrefs;
     SharedPreferences.Editor editeur;
     private final HashMap<String, String> requestParams = new HashMap<>();
     private final String[] taskParams = new String[6];
     Intent result = new Intent();
+    TaskRunner taskRunner = new TaskRunner();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +55,8 @@ public class DeleteItem extends AppCompatActivity {
         Log.i("SECUSERV", "Del URL " + taskParams[0]);
         taskParams[1] = mesPrefs.getString("auth", "");
         if (Variables.isNetworkConnected) {
-            new DelInfosGums().execute(taskParams);
+//            new DelInfosGums().execute(taskParams);
+            taskRunner.executeAsync(new SupprimeInfosGums(taskParams), AuxReseau::decodeRetourDeleteItem);
         }
 
         setResult(RESULT_OK, result);

@@ -38,6 +38,7 @@ public class AuthActivity extends AppCompatActivity {
     Button envoyer = null;
     SharedPreferences mesPrefs;
     Intent result = new Intent();
+    TaskRunner taskRunner = new TaskRunner();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +103,8 @@ public class AuthActivity extends AppCompatActivity {
             taskParams[5] = "";
 
             if (Variables.isNetworkConnected) {
-                new PostInfosAuth().execute(taskParams);
+//                new PostInfosAuth().execute(taskParams);
+                taskRunner.executeAsync(new EnvoiInfosGums(taskParams), AuxReseau::decodeInfosAuth);
             }
         });
     }

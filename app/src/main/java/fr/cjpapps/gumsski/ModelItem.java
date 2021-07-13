@@ -14,6 +14,7 @@ public class ModelItem extends AndroidViewModel {
     private final HashMap<String, String> requestParams = new HashMap<>();
     private final String[] taskParams = new String[6];
     SharedPreferences mesPrefs;
+    TaskRunner taskRunner = new TaskRunner();
 
     static MutableLiveData<HashMap<String, String>> monItem = new MutableLiveData<>();
 
@@ -41,7 +42,8 @@ public class ModelItem extends AndroidViewModel {
         taskParams[5] = "Bearer "+ mesPrefs.getString("auth", "");
         Log.i("SECUSERV", "network ? "+Variables.isNetworkConnected);
         if (Variables.isNetworkConnected)  {
-            new GetInfosItem().execute(taskParams);
+ //           new GetInfosItem().execute(taskParams);
+            taskRunner.executeAsync(new RecupInfosGums(taskParams), AuxReseau::decodeInfosItem);
         }
     }
 

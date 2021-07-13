@@ -24,6 +24,7 @@ public class CreateItem extends AppCompatActivity {
     private final HashMap<String, String> postParams = new HashMap<>();
     private final String[] taskParams = new String[6];
     ArrayList<String[]> fieldParams = new ArrayList<>();
+    TaskRunner taskRunner = new TaskRunner();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +91,8 @@ public class CreateItem extends AppCompatActivity {
             taskParams[5] = "Bearer "+ mesPrefs.getString("auth", "");
 
             if (Variables.isNetworkConnected) {
-                new PostInfosItem().execute(taskParams);
+//                new PostInfosItem().execute(taskParams);
+                taskRunner.executeAsync(new EnvoiInfosGums(taskParams), AuxReseau::decodeRetourPostItem);
             }
 
             setResult(RESULT_OK, result);

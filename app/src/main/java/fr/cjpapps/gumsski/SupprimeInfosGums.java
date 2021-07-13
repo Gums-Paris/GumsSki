@@ -1,6 +1,5 @@
 package fr.cjpapps.gumsski;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -9,29 +8,26 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.Callable;
 
-public class GetInfosGums extends AsyncTask<String,Void,String> {
+public class SupprimeInfosGums implements Callable<String> {
 
-// strings[0] contient l'url d'accueil terminée par "index.php?option=com_api&" et strings[1] contient le reste
-// de l'url commençant par "app=gblo&...". strings[2] et [3] contiennent le Content-Type ;
-// strings[4] et [5] contiennent l'Authorization
+    private String[] strings = new String[6];
+    public SupprimeInfosGums(String[] strings) {this.strings = strings;}
 
     @Override
-    protected String doInBackground(String... strings) {
+    public String call() throws Exception {
         HttpURLConnection conn = null;
         String resultat;
+        int code = 0;
         StringBuilder result = new StringBuilder();
 
         try{
-            String fullURL = strings[0]+strings[1];
-            Log.i("SECUSERV", "URL "+fullURL);
-            URL urlObject = new URL(fullURL);
+            URL urlObject = new URL(strings[0]);
             conn = (HttpURLConnection) urlObject.openConnection();
             Log.i("SECUSERV", "connexion ouverte ");
             conn.setRequestMethod("GET");
-            conn.setRequestProperty(strings[2], strings[3]);
-            conn.setRequestProperty(strings[4], strings[5]);
-
+            conn.setRequestProperty("Authorization", "Bearer "+ strings[1]);
             InputStream in = new BufferedInputStream(conn.getInputStream());
             String line;
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
@@ -47,13 +43,9 @@ public class GetInfosGums extends AsyncTask<String,Void,String> {
                 conn.disconnect();
             }
         }
+//        if (code == 200) {resultat = String.valueOf(result);}
         resultat = String.valueOf(result);
-        Log.i("SECUSERV", "get liste "+resultat);
+        Log.i("SECUSERV", "del item "+resultat);
         return resultat;
     }
-
-    protected void onPostExecute (String resultat) {
-// le traitement dépend de l'url accédée
-    }
-
 }

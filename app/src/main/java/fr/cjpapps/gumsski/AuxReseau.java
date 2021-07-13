@@ -214,5 +214,96 @@ public class AuxReseau {
         }
     }
 
+    static void decodeInfosAuth(String resultat) {
+        SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
+        SharedPreferences.Editor editeur = mesPrefs.edit();
+        try {
+            JSONObject jsonGums = new JSONObject(resultat);
+            String errMsg = jsonGums.optString("err_msg");
+            String errCode = jsonGums.optString("err_code");
+            JSONObject data = jsonGums.getJSONObject("data");
+            String auth = data.optString("auth");
+            String code = data.optString("code");
+            String userId = data.optString("id");
+            Log.i("SECUSERV", " onpostexec auth "+auth+" code "+code+" userId "+userId);
+            if ("200".equals(code)) {
+                editeur.putBoolean("authOK", true);
+                editeur.putString("auth", auth);
+                editeur.putString("userId", userId);
+                editeur.apply();
+                ModelAuth.flagAuthActiv.setValue(true);
+            }else{
+                ModelAuth.flagAuthActiv.setValue(false);
+                editeur.putString("errMsg", errMsg);
+                editeur.putString("errCode", errCode);
+                editeur.apply();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void decodeRetourPostItem(String resultat) {
+/* si on essaye de modifier un item qui n'existe pas il n'y a pas d'erreur apparente mais il ne se
+ * passe rien en fait, sauf que la liste étant alors rechargée on voit l'item disparaître. Ceci pourrait
+ * arriver si un autre usager sur une autre machine a supprimé l'item depuis qu'on l'a chargé
+ * (normalement c'est pas possible parce que l'item dont on demande l'édition est checked-out dans
+ * Joomla)
+ *
+ * Noter aussi qu'il n'y a pas de différence de requête entre modifier et créer. La seule différence est
+ * que dans les paramètres de l'item on met id = 0 pour créer et id = l'id de l'item pour modifier. */
+
+        SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
+        SharedPreferences.Editor  editeur = mesPrefs.edit();
+        Log.i("SECUSERV", " onpostexec massif "+resultat);
+        try {
+            JSONObject jsonGums = new JSONObject(resultat);
+            String errMsg = jsonGums.optString("err_msg");
+            String errCode = jsonGums.optString("err_code");
+            if ("".equals(errCode)) {
+                ModelListeItems.flagModif.setValue(true);
+                int idItem = jsonGums.optInt("data");
+            }else{
+                ModelListeItems.flagModif.setValue(false);
+                editeur.putString("errMsg", errMsg);
+                editeur.putString("errCode", errCode);
+                editeur.apply();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void decodeRetourDeleteItem(String result){
+// se charge de gérer les erreurs et de positionner flagSuppress
+        SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
+        SharedPreferences.Editor  editeur = mesPrefs.edit();
+        try {
+            JSONObject jsonGums = new JSONObject(result);
+            String errMsg = jsonGums.optString("err_msg");
+            String errCode = jsonGums.optString("err_code");
+            if ("".equals(errCode)) {
+                String content = jsonGums.optString("data");
+                Log.i("SECUSERV", "del data "+content);
+                if (!(Aux.egaliteChaines(content, mesPrefs.getString("idDel", "0")))) {
+                    editeur.putString("errMsg", "item inexistant");
+                    editeur.putString("errCode", content);
+                    editeur.apply();
+                    ModelListeItems.flagSuppress.setValue(false);
+                }else{
+                    ModelListeItems.flagSuppress.setValue(true);
+                }
+            }else{
+                editeur.putString("errMsg", errMsg);
+                editeur.putString("errCode", errCode);
+                editeur.apply();
+                ModelListeItems.flagSuppress.setValue(false);
+            }
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+
+    }
+
 }
 

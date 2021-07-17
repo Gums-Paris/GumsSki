@@ -11,14 +11,22 @@ import java.util.HashMap;
 
 public class ModelItem extends AndroidViewModel {
 
+// utilisé par Logistique et ModifItem
+
     private final HashMap<String, String> requestParams = new HashMap<>();
     private final String[] taskParams = new String[6];
     SharedPreferences mesPrefs;
     TaskRunner taskRunner = new TaskRunner();
 
-    static MutableLiveData<HashMap<String, String>> monItem = new MutableLiveData<>();
+/* Pour monItem on prend SingleLiveEvent sinon si on prend une nouvelle sortie après avoir
+*   visualisé la logistique d'une première la logistique de la première se réaffiche avant la
+*   nouvelle (parce que l'observateur est exécuté au démarrage de l'activité en plus des modifs
+*   de la LiveData. C'est vraiment gênant si l'une des sorties n'a pas de logistique */
+    static SingleLiveEvent<HashMap<String, String>> monItem = new SingleLiveEvent<>();
+    static MutableLiveData<Boolean> flagItem = new MutableLiveData<>();
 
-    MutableLiveData<HashMap<String, String>> getMonItem() { return monItem; }
+    SingleLiveEvent<HashMap<String, String>> getMonItem() { return monItem; }
+    MutableLiveData<Boolean> getFlagItem() { return flagItem; }
 
     public ModelItem(final Application application) {
         super(application);
@@ -27,8 +35,6 @@ public class ModelItem extends AndroidViewModel {
 
     void recupItem (String id) {
         String stringRequest;
-/*        requestParams.put("app", mesResources.getString(R.string.joomlaApp));
-        requestParams.put("resource", mesResources.getString(R.string.joomlaResource_1)); */
         requestParams.put("app", Constantes.JOOMLA_APP);
         requestParams.put("resource", Constantes.JOOMLA_RESOURCE_1);
         requestParams.put("id", id);
@@ -38,7 +44,7 @@ public class ModelItem extends AndroidViewModel {
         taskParams[1] = stringRequest;
         taskParams[2] = "Content-Type";
         taskParams[3] = "application/x-www-form-urlencoded";
-        taskParams[4] = "Authorization";
+        taskParams[4] = "X-Authorization";
         taskParams[5] = "Bearer "+ mesPrefs.getString("auth", "");
         Log.i("SECUSERV", "network ? "+Variables.isNetworkConnected);
         if (Variables.isNetworkConnected)  {

@@ -53,5 +53,12 @@
     <string name="no_list"> La liste des sorties est vide</string>
     <string name="save">SAUVEGARDER</string>
     <string name="cancel">ANNULER</string>
+    <string name="titre_logistique">Infos logistique pour %1$s</string>
+    <string name="tph_chauffeurs">Téléphone des chauffeurs</string>
+    <string name="hotel_chauffeurs">Hôtel des chauffeurs</string>
+    <string name="deposes">Déposes</string>
+    <string name="reprises">Reprises</string>
+    <string name="diner_retour">Dîner au retour</string>
+    <string name="coursesprévues">Courses prévues</string>
 
 </resources>

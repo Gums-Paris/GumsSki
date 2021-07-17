@@ -57,6 +57,8 @@ public class AuxReseau {
     }
 
     //   void recupListe () {  // devenu recupInfo pour généraliser à plusieurs resources
+    // lance les requêtes auprès de gumsparis
+    // dans la versionactuelle le paramètre uneSortie n'est pas utilisé (toujours "")
     static void recupInfo (String uneResource, String uneSortie) {
         TaskRunner taskRunner = new TaskRunner();
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
@@ -78,15 +80,14 @@ public class AuxReseau {
         if (Variables.isNetworkConnected)  {
             switch(uneResource) {
                 case Constantes.JOOMLA_RESOURCE_1 :
-// pas utilisé, scorie à éliminer
-//                    new GetParamSortie().execute(taskParams);
-                    taskRunner.executeAsync(new RecupInfosGums(taskParams), AuxReseau::decodeInfosSortie);
+// pour récupérer la logistique
+                    taskRunner.executeAsync(new RecupInfosGums(taskParams), AuxReseau::decodeInfosItem);
                     break;
                 case Constantes.JOOMLA_RESOURCE_2 :
-//                    new GetInfosListe().execute(taskParams);
+// pourt récupérer la liste des participants
                     taskRunner.executeAsync(new RecupInfosGums(taskParams), AuxReseau::decodeInfosItems);
                 case Constantes.JOOMLA_RESOURCE_3 :
-//                    new GetParamsSorties().execute(taskParams);
+//pour récupérer la liste des sorties
                     taskRunner.executeAsync(new RecupInfosGums(taskParams), AuxReseau::decodeInfosSorties);
             }
         }
@@ -199,12 +200,20 @@ public class AuxReseau {
                 editeur.putString("monItem", result);
                 editeur.apply();
 
-                JSONObject jsonData = jsonGums.getJSONObject("data");
-                for (Attributs attr : Attributs.values()) {
-                    monItem.put(attr.getChamp(), jsonData.optString(attr.getChamp()));
+                if (!jsonGums.isNull("data")) {
+                    JSONObject jsonData = jsonGums.getJSONObject("data");
+                    Log.i("SECUSERV", "data logistique = " + jsonData.toString());
+                    for (Attributs attr : Attributs.values()) {
+                        monItem.put(attr.getChamp(), jsonData.optString(attr.getChamp()));
+                    }
+                }else{
+                    Log.i("SECUSERV", "data logistique est null");
+                    monItem.put("logistique", "absente");
                 }
                 ModelItem.monItem.setValue(monItem);
+                Log.i("SECUSERV", "monItem = " + monItem.toString());
             }else{
+                ModelItem.flagItem.setValue(false);
                 editeur.putString("errMsg", errMsg);
                 editeur.putString("errCode", errCode);
                 editeur.apply();

@@ -43,9 +43,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/liste_we"
         android:scrollbars="vertical"
-        android:layout_width="300dp"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginTop="20dp"
+        app:layout_constraintWidth_percent="0.75"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/affiche_titre"/>

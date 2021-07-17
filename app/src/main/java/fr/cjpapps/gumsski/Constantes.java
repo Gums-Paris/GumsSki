@@ -16,7 +16,7 @@ public class Constantes {
 // *****************************************************************
 // définir ci-dessous les ressources à utiliser par l'appli (plugins de com_api)
     final static String JOOMLA_APP = "gski";
-    final static String JOOMLA_RESOURCE_1 = "paramsortie";
+    final static String JOOMLA_RESOURCE_1 = "logistique";
     final static String JOOMLA_RESOURCE_2 = "inscrits";
     final static String JOOMLA_RESOURCE_3 = "listesorties";
 

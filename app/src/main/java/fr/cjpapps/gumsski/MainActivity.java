@@ -46,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences mesPrefs;
     SharedPreferences.Editor editeur;
     Aux auxMethods;
+    String idSortie;
+    String infoSortie;
+    String titreSortie;
 
 /* TODO
     OK  assurer fonctionnement si pas autorisé à téléphoner
@@ -68,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 // dérivé de AccessAuth mais avec pas mal de modifs
 /*  AccessAuth
 *   est une appli quasi générique au sens où pour faire des opérations de création, modification ou suppression sur les lignes d'une
-*   basesur un site Joomla distant, il n'y a qu'à rentrer les infos concernant le site et la base dans trois classes :
+*   base sur un site Joomla distant, il n'y a qu'à rentrer les infos concernant le site et la base dans trois classes :
 *       - Attributs.java où il faut fournir les lignes ATTR01 à ATTRnn qui décrivent les champs de la base
 *       - urlsApiApp.java pour donner l'URL d'accès à l'API du site joomla sous le forme particulière qui suit
 *   https :// etc./index.php?option=com_api&   (com_api étant supposé installé sur le site et le plugin correspondant à la
@@ -123,9 +126,12 @@ public class MainActivity extends AppCompatActivity {
         mesPrefs = MyHelper.getInstance().recupPrefs();
         editeur = mesPrefs.edit();
 
+        titreSortie = mesPrefs.getString("titre","");
+        idSortie = mesPrefs.getString("id", "");
         affichage = findViewById(R.id.affiche);
-        String infoSortie = mesPrefs.getString("infoSortie", "");
-        affichage.setText(infoSortie);  // infoSortie a été fabriqué par StartActivity
+        infoSortie = mesPrefs.getString("infoSortie", "");
+        affichage.setText(infoSortie);
+// idSortie et infoSortie ont été fabriqués par StartActivity
 
         panic = findViewById(R.id.panique);  // sert si les groupes ne sont pas publiés
 
@@ -178,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
             modelListe.getFlagListe().observe(MainActivity.this, flagListeObserver);
 
  /* pas utilisé dans cette version sans la logistique
-// flagModif est géré par PostInfosItem, lequel est utilisé à la fois par ModifItem et CreateItem
+// flagModif est géré par AuxReseau.decodeRetourPostItem(), lequel est utilisé à la fois par ModifItem et CreateItem
         final Observer<Boolean> flagModifObserver = new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean retour) {
@@ -191,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }, 200); // délai 0.2 sec
                 } else {
-                    AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_2,"");
+                    AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1,"");
                 }
             }
         };
@@ -203,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
             public void onChanged(Boolean retour) {
                 Log.i("SECUSERV", "flagSuppress " + retour);
                 if (retour) {
-                    AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_2, "");
+                    AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
                 } else {
                     alerte("4");
                 }
@@ -257,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-//  onDestroy a failli servir ; laissée là par paresse au cas où, pour retrouver facilement le
+//  onDestroy a failli servir ; laissée là par paresse "au cas où", pour retrouver facilement le
 //  "isFinishing()  && !isChangingConfigurations()" qui ne s'invente pas facilement
         Log.i("SECUSERV destroy", "fin "+isFinishing());
         Log.i("SECUSERV destroy", "chg "+isChangingConfigurations());
@@ -296,6 +302,8 @@ public class MainActivity extends AppCompatActivity {
         }
         if (id == R.id.logistique) {
             Intent logistic = new Intent(MainActivity.this, Logistique.class);
+            logistic.putExtra("sortieid", idSortie);
+            logistic.putExtra("titreSortie", titreSortie);
             startActivity(logistic);
             return true;
         }

@@ -11,8 +11,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import java.util.Objects;
-
 public class DialogQuestion extends DialogFragment {
 
 // cette classe doit être déclarée public

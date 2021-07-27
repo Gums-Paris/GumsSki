@@ -51,21 +51,11 @@ public class MainActivity extends AppCompatActivity {
     String titreSortie;
 
 /* TODO
-    OK  assurer fonctionnement si pas autorisé à téléphoner
-    OK  envoi message (faire les 3 icones , menu à 3 items avec icones )
-    OK  faire icones rondes plus grandes : taille par width et height avec icone de la bonne taille 
-    OK  envoi email groupe par bouton sur la page du groupe
-    OK = NON ; envoi sms groupe par bouton sur la page du groupe peut pas être fait simplement ; Passer immé à
-        Signal ?  Oui on se contenera d'ouvrir Signal avec des groupes préalablement créés
-    OK  avant distribution remettre les vrais tel et e-mail
-    OK  corriger aide rajout mailto:
-    OK  liste des sorties
-    OK  que faire si alerte 2 ?  "données indisponibles" dans l'alerte et on ferme l'activité.
-    OK  est-ce que dans cas ci-dessus on revient au départ, je crois pas. Si, on revient à la liste des sorties.
-    OK  Remplacer startActivityForResult
+    Avant distribution remettre les vrais tel et e-mail
+    Revoir les alertes  que faire si alerte 2 ?  "données indisponibles" dans l'alerte et on ferme l'activité.
     ---- reste
        Background item_liste paramétrable
-       Clic long sur participant deb, deniv, nivA, nivS?
+       Clic long sur participant deb, deniv, nivA, nivS ?
     */
 
 // dérivé de AccessAuth mais avec pas mal de modifs
@@ -128,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
 
         titreSortie = mesPrefs.getString("titre","");
         idSortie = mesPrefs.getString("id", "");
+        Variables.listeChefs.clear();
+        Variables.listeChefs.add(mesPrefs.getString("id_Res_Car", "0"));
         affichage = findViewById(R.id.affiche);
         infoSortie = mesPrefs.getString("infoSortie", "");
         affichage.setText(infoSortie);
@@ -143,7 +135,9 @@ public class MainActivity extends AppCompatActivity {
         editeur.apply();
 
         auxMethods = new Aux();
-/*        getSystemService(CONNECTIVITY_SERVICE);
+
+/*  La même chose existe dans StartActivity. Pour l'instant il n'existe pas d'accès à Main sans passer par Start
+        getSystemService(CONNECTIVITY_SERVICE);
         AuxReseau.watchNetwork();
 // Faut parfois patienter un peu jusqu'à ce que le réseau soit disponible
         patience.setVisibility(View.VISIBLE);
@@ -173,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
 // flagListe est false si on n'a pas récupéré de réponse du serveur ou si on n'a pas décodé le json ;
 // flagliste est géré par GetInfosListe
             final Observer<Boolean> flagListeObserver = retour -> {
-                Log.i("SECUSERV", "flagListe " + retour);
+//                Log.i("SECUSERV", "flagListe " + retour);
                 if (!retour) {
                     new Handler(Looper.getMainLooper()).postDelayed(() -> {
                         alerte("2");
@@ -183,26 +177,7 @@ public class MainActivity extends AppCompatActivity {
             };
             modelListe.getFlagListe().observe(MainActivity.this, flagListeObserver);
 
- /* pas utilisé dans cette version sans la logistique
-// flagModif est géré par AuxReseau.decodeRetourPostItem(), lequel est utilisé à la fois par ModifItem et CreateItem
-        final Observer<Boolean> flagModifObserver = new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean retour) {
-                Log.i("SECUSERV", "flagModif " + retour);
-                if (!retour) {
-// Il faut freiner un peu pour laisser le temps au message d'erreur d'être rangé dans les prefs
-                    new Handler().postDelayed(new Runnable() {
-                        public void run() {
-                            alerte("3");
-                        }
-                    }, 200); // délai 0.2 sec
-                } else {
-                    AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1,"");
-                }
-            }
-        };
-        modelListe.getFlagModif().observe(MainActivity.this, flagModifObserver);
-
+ /* pas utilisé dans cette version
 // flagSuppress est géré par DelInfosGums
         final Observer<Boolean> flagSuppressObserver = new Observer<Boolean>() {
             @Override
@@ -226,8 +201,9 @@ public class MainActivity extends AppCompatActivity {
                     if (items != null) {
                         listeDesItems = items;
                         patience.setVisibility(View.GONE);
-                        Log.i("SECUSERV Main", "taille = " + listeDesItems.size());
+//                        Log.i("SECUSERV Main", "taille = " + listeDesItems.size());
                         nomsItems = auxMethods.faitListeGroupes(listeDesItems);
+//                        Log.i("SECUSERV Main lesChefs", Variables.listeChefs.toString());
                         if (nomsItems != null) {
                             RecyclerViewClickListener listener = (view, position) -> {
                                 String element = nomsItems.get(position);
@@ -254,28 +230,15 @@ public class MainActivity extends AppCompatActivity {
 
         ExtendedFloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-/*               Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show(); */
             Intent retourListeSorties = new Intent(MainActivity.this, StartActivity.class);
             startActivity(retourListeSorties);
         });
     }
 
     @Override
-    protected void onDestroy() {
-//  onDestroy a failli servir ; laissée là par paresse "au cas où", pour retrouver facilement le
-//  "isFinishing()  && !isChangingConfigurations()" qui ne s'invente pas facilement
-        Log.i("SECUSERV destroy", "fin "+isFinishing());
-        Log.i("SECUSERV destroy", "chg "+isChangingConfigurations());
-        super.onDestroy();
-        if (isFinishing()  && !isChangingConfigurations()) {
-        }
-    }
-
-    @Override
     public void onBackPressed() {
-// si l'usager  presse le bouton retour arrière quend on est sur la page d'accueil (liste des groupes) on luo demande
-// s'il vaut ou non fermer l'appli ce qui a pour conséqience d'effacer l'authentification
+// si l'usager  presse le bouton retour arrière quend on est sur la page d'accueil (liste des groupes)
+// on luo demande s'il vaut ou non fermer l'appli ce qui a pour conséqience d'effacer l'authentification
         String message = "Quitter GumsSki ?";
         DialogQuestion finAppli = DialogQuestion.newInstance(message);
         finAppli.show(getSupportFragmentManager(), "questionSortie");
@@ -303,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.logistique) {
             Intent logistic = new Intent(MainActivity.this, Logistique.class);
             logistic.putExtra("sortieid", idSortie);
-            logistic.putExtra("titreSortie", titreSortie);
+//            logistic.putExtra("titreSortie", titreSortie);
             startActivity(logistic);
             return true;
         }
@@ -354,19 +317,4 @@ public class MainActivity extends AppCompatActivity {
         infoUtilisateur.show(getSupportFragmentManager(), "infoutilisateur");
     }
 
-/*
-// remplacé par registerforactivityresult pour change usager ; à faire pour le reste le moment venu
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == Constantes.AUTH_CHANGE) {
-            if (resultCode == RESULT_CANCELED) {
-                Log.i("SECUSERV Main", "on auth change result pas OK");
-//                finish();
-            }
-            if (resultCode == RESULT_OK) {
-                Log.i("SECUSERV Main", "on auth change result OK");
-            }
-        }
-    }  */
 }

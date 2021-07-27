@@ -18,6 +18,8 @@ import java.util.HashMap;
 
 public class CreateItem extends AppCompatActivity {
 
+// pas utilisé dans GumsSki
+
     SharedPreferences mesPrefs;
 
     private final HashMap<String, String> requestParams = new HashMap<>();

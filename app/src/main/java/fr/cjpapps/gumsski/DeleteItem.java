@@ -13,6 +13,8 @@ import java.util.HashMap;
 
 public class DeleteItem extends AppCompatActivity {
 
+// pas utilisé dans GumsSki
+
 /* Le serveur de OVH n'autorise pas la requête DEL. On fait un GET avec un paramètre supplémentaire
 *  fleur = bleuet pour indiquer qu'il faut exécuter une suppression
  */

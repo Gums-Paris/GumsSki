@@ -18,6 +18,8 @@ import java.util.concurrent.Callable;
 
 public class EnvoiInfosGums implements Callable<String> {
 
+// pour exécuter des requêtes POST sur gumsparis
+
     private String[] strings = new String[6];
     public EnvoiInfosGums(String[] strings) {this.strings = strings;}
 

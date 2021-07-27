@@ -1,12 +1,12 @@
 package fr.cjpapps.gumsski;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Constantes {
 
-    final static int MODIF_REQUEST = 1;
-    final static int SUPPR_REQUEST = 2;
-    final static int CREATE_REQUEST = 3;
-    final static int AUTH_ACTIV = 4;
-    final static int AUTH_CHANGE = 5;
+// les id des admins autorisés à modifier le contenu des logistiques
+    final static ArrayList<String> listeAdmins = new ArrayList<>(Arrays.asList("62", "66"));
 
 /* pour caractériser les points d'accès sur le serveur joomla
     (ne pas toucher à users et login)

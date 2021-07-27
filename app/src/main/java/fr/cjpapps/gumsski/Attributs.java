@@ -7,7 +7,7 @@ public enum Attributs {
 *   Voir l'usage dans AuxReseau.decodeInfosItem(). Nom des champs et hint sont utilisés dans les formulaires de CreateItem
 *   et ModifItem.*/
 
-    ATTR01("id", "Id sortie", "123"),
+    ATTR01("id", "Id logistique", "123"),
     ATTR02("hotelchauffeurs", "Hotel des chauffeurs", ""),
     ATTR03("tphchauffeurs", "Téléphone Chauffeurs", "+33612345678"),
     ATTR04("dinerretour", "Dîner au retour", "Resto de la Plage, Chamonix"),

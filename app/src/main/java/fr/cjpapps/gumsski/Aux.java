@@ -33,14 +33,14 @@ public class Aux {
                 if (!("3".equals(unObjet.optString("statut")))) { continue;}
                 HashMap<String,String> unItem = new HashMap<>();
                 unItem.put("groupe", unObjet.optString("groupe"));
-                unItem.put("id", unObjet.optString("id"));
-                    unItem.put("name", unObjet.optString("name"));
-                    unItem.put("statut", unObjet.optString("statut"));
-                    unItem.put("responsabilite", unObjet.optString("responsabilite"));
-                    unItem.put("peage", unObjet.optString("peage"));
-                    unItem.put("autonome", unObjet.optString("autonome"));
-                    unItem.put("tel", unObjet.optString("tel"));
-                    unItem.put("email", unObjet.optString("email"));
+                unItem.put("userid", unObjet.optString("userid"));
+                unItem.put("name", unObjet.optString("name"));
+                unItem.put("statut", unObjet.optString("statut"));
+                unItem.put("responsabilite", unObjet.optString("responsabilite"));
+                unItem.put("peage", unObjet.optString("peage"));
+                unItem.put("autonome", unObjet.optString("autonome"));
+                unItem.put("tel", unObjet.optString("tel"));
+                unItem.put("email", unObjet.optString("email"));
                 listeItems.add(i, unItem);
             }
             return  listeItems;
@@ -67,6 +67,7 @@ public class Aux {
                 unItem.put("jours",jsonData.optString("jours"));
                 unItem.put("publier_groupes",jsonData.optString("publier_groupes"));
                 unItem.put("responsable",jsonData.optString("responsable"));
+                unItem.put("id_responsable", jsonData.optString("id_responsable"));
                 listeSorties.add(i, unItem);
             }
             return  listeSorties;
@@ -121,6 +122,7 @@ public class Aux {
                 if (parseInt(Objects.requireNonNull(temp.get("groupe"))) != numGroupe) {
                     numGroupe = parseInt(Objects.requireNonNull(temp.get("groupe")));
                     if ("Res".equals(temp.get("responsabilite"))) {
+                        Variables.listeChefs.add(temp.get("userid"));
                         String titreGroupe = numGroupe + ":  " + temp.get("name");
                         Log.i("SECUSERV titre groupe", titreGroupe);
                         liste.add(titreGroupe);

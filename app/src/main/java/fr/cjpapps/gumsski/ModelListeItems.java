@@ -17,7 +17,6 @@ public class ModelListeItems extends AndroidViewModel {
 
     static MutableLiveData<ArrayList<HashMap<String,String>>> listeDesItems = new MutableLiveData<>();
     static MutableLiveData<Boolean> flagListe = new MutableLiveData<>();
-    static MutableLiveData<Boolean> flagModif = new MutableLiveData<>();
     static MutableLiveData<Boolean> flagSuppress = new MutableLiveData<>();
     static MutableLiveData<HashMap<String,String>> paramSortie = new MutableLiveData<>();
     static MutableLiveData<ArrayList<ArrayList<HashMap<String,String>>>> compositionGroupes = new MutableLiveData<>();
@@ -27,7 +26,6 @@ public class ModelListeItems extends AndroidViewModel {
     /* Les getters pour les LiveData. Les setters sont setValue() ou postValue()*/
     MutableLiveData<ArrayList<HashMap<String,String>>> getListeDesItems() {return listeDesItems;}
     MutableLiveData<Boolean> getFlagListe() {return flagListe;}
-    MutableLiveData<Boolean> getFlagModif() {return flagModif;}
     MutableLiveData<Boolean> getFlagSuppress() {return flagSuppress;}
     MutableLiveData<HashMap<String,String>> getParamSortie() {return paramSortie;}
     MutableLiveData<ArrayList<ArrayList<HashMap<String,String>>>> getCompositionGroupes() {return compositionGroupes;}

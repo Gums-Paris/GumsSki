@@ -45,7 +45,7 @@ public class RecupInfosGums implements Callable<String> {
             }
         }
         resultat = String.valueOf(result);
-        Log.i("SECUSERV", "get liste "+resultat);
+        Log.i("SECUSERV", "reçu info "+resultat);
         return resultat;
     }
 }

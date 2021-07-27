@@ -12,10 +12,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.HashMap;
@@ -55,7 +53,6 @@ public class AuthActivity extends AppCompatActivity {
         ed1 = findViewById(R.id.username);
         ed2 = findViewById(R.id.password);
         envoyer = findViewById(R.id.envoi);
-        TextView affTemp = findViewById(R.id.tempo);
         model = new ViewModelProvider(this).get(ModelAuth.class);
 
         requestParams.put("app", Constantes.JOOMLA_USERS);

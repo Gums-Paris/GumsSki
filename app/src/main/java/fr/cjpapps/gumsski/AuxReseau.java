@@ -58,7 +58,6 @@ public class AuxReseau {
 
     //   void recupListe () {  // devenu recupInfo pour généraliser à plusieurs resources
     // lance les requêtes auprès de gumsparis
-    // dans la versionactuelle le paramètre uneSortie n'est pas utilisé (toujours "")
     static void recupInfo (String uneResource, String uneSortie) {
         TaskRunner taskRunner = new TaskRunner();
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
@@ -80,11 +79,11 @@ public class AuxReseau {
         if (Variables.isNetworkConnected)  {
             switch(uneResource) {
                 case Constantes.JOOMLA_RESOURCE_1 :
-// pour récupérer la logistique
+// pour récupérer la logistique de uneSortie
                     taskRunner.executeAsync(new RecupInfosGums(taskParams), AuxReseau::decodeInfosItem);
                     break;
                 case Constantes.JOOMLA_RESOURCE_2 :
-// pourt récupérer la liste des participants
+// pourt récupérer la liste des participants de uneSortie
                     taskRunner.executeAsync(new RecupInfosGums(taskParams), AuxReseau::decodeInfosItems);
                 case Constantes.JOOMLA_RESOURCE_3 :
 //pour récupérer la liste des sorties
@@ -132,7 +131,6 @@ public class AuxReseau {
                 Log.i("SECUSERV", "date jour = "+dateListe);
 
                 params = Aux.getListeSorties(result);
-                Log.i("SECUSERV", "get liste sorties & setValue ");
                 if (params != null) {
                     editeur.putString("datelist", dateListe);
                     editeur.putString("jsonSorties", result);
@@ -207,11 +205,15 @@ public class AuxReseau {
                         monItem.put(attr.getChamp(), jsonData.optString(attr.getChamp()));
                     }
                 }else{
-                    Log.i("SECUSERV", "data logistique est null");
-                    monItem.put("logistique", "absente");
+//                    Log.i("SECUSERV", "data logistique est null");
+                    for (Attributs attr : Attributs.values()) {
+                        monItem.put(attr.getChamp(), "");
+                    }
+                    editeur.putBoolean("logistiqueExiste", false);
+                    editeur.commit();
                 }
                 ModelItem.monItem.setValue(monItem);
-                Log.i("SECUSERV", "monItem = " + monItem.toString());
+ //               Log.i("SECUSERV", "monItem = " + monItem.toString());
             }else{
                 ModelItem.flagItem.setValue(false);
                 editeur.putString("errMsg", errMsg);
@@ -264,16 +266,16 @@ public class AuxReseau {
 
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
         SharedPreferences.Editor  editeur = mesPrefs.edit();
-        Log.i("SECUSERV", " onpostexec massif "+resultat);
+        Log.i("SECUSERV", " onpostexec  "+resultat);
         try {
             JSONObject jsonGums = new JSONObject(resultat);
             String errMsg = jsonGums.optString("err_msg");
             String errCode = jsonGums.optString("err_code");
             if ("".equals(errCode)) {
-                ModelListeItems.flagModif.setValue(true);
+                ModelItem.flagModif.setValue(true);
                 int idItem = jsonGums.optInt("data");
             }else{
-                ModelListeItems.flagModif.setValue(false);
+                ModelItem.flagModif.setValue(false);
                 editeur.putString("errMsg", errMsg);
                 editeur.putString("errCode", errCode);
                 editeur.apply();

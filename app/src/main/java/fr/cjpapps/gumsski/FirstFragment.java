@@ -32,8 +32,8 @@ import java.util.HashMap;
 public class FirstFragment extends DialogFragment {
 
 /* Ce fragment sert à l'affichage des membres d'un goupe plus leur tph et email
-*  Il partage le modèle ModelListeItems avec MainActivity ce qui lui donne accès à la liste des participants à partir
-*  de laquelle il nourrit sa recyclerView */
+*  Il partage le modèle ModelListeItems avec MainActivity ce qui lui donne accès à la liste des participants
+*  à partir de laquelle il nourrit sa recyclerView */
 
     private static ModelListeItems model = null;
     private ArrayList<HashMap<String,String>> lesItems;

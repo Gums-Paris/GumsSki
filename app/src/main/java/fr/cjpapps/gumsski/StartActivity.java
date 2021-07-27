@@ -8,8 +8,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,17 +55,7 @@ public class StartActivity extends AppCompatActivity {
             }
         }
     };
-
-/* TODO
-*   OK    traiter les situations d'échec d'authentification. Rien à changer.
-*   OK    traiter le cas où la liste des sorties est vide (data = null)
-*   OK    afficher la date de récup de la liste
-*   OK    vérifier la rotation d'écran
-*   OK    revoir les tests égalité de chaînes
-*   OK    mettre top menu dans startActivity
-*   OK    Déco écran start
-* */
-
+    
 /*  Dans les sharedPreferences :
 *       datelist == date à laquelle on a récupéré la liste des sorties
 *       date == date de la sortie choisie dans la liste des sorties
@@ -116,7 +103,7 @@ public class StartActivity extends AppCompatActivity {
         patience = findViewById(R.id.indeterminateBar);
 
 //        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
-        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
+        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
 
         mesPrefs = MyHelper.getInstance(getApplicationContext()).recupPrefs();
         editeur = mesPrefs.edit();
@@ -144,7 +131,7 @@ public class StartActivity extends AppCompatActivity {
         }
 
 // création ou récupération du modèle ; ne pas oublier que le constructeur du model s'exécute immédiatement
-        Log.i("SECUSERV start", "lance model Sorties ");
+//        Log.i("SECUSERV start", "lance model Sorties ");
         modelSorties = new ViewModelProvider(this).get(ModelListeSorties.class);
         recyclerView = findViewById(R.id.liste_we);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -153,7 +140,6 @@ public class StartActivity extends AppCompatActivity {
 // ou si la liste de sorties est vide; donc on n'a rien mais si on a une liste périmée, on l'affiche à tout hasard.
 // flaglisteSorties est géré par (GetParamsSorties)  AuxReseau.decodeInfosSorties
         final Observer<Boolean> flagListeSortiesObserver = retour -> {
-            Log.i("SECUSERV", "flagListeSorties " + retour);
             if (!retour) {
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
                     alerte("2");
@@ -178,7 +164,6 @@ public class StartActivity extends AppCompatActivity {
                 if (items != null) {
                     listeDesItems = items;
                     patience.setVisibility(View.GONE);
-                    Log.i("SECUSERV Start", "taille = " + listeDesItems.size());
                     nomsItems = methodesAux.faitListeSorties(listeDesItems);
                     if (nomsItems != null) {
                         RecyclerViewClickListener listener = (view, position) -> {
@@ -191,6 +176,7 @@ public class StartActivity extends AppCompatActivity {
                             String responsable = listeDesItems.get(position).get("responsable");
 //                            if ("null".equals(responsable)) { responsable = "";}
                             editeur.putString("responsable", responsable);
+                            editeur.putString("id_Res_Car", listeDesItems.get(position).get("id_responsable"));
                             String infos;
                             infos = listeDesItems.get(position).get("date_bdh") + "\n" +
                                     listeDesItems.get(position).get("titre") + "\n" + responsable ;
@@ -205,9 +191,7 @@ public class StartActivity extends AppCompatActivity {
 // disponible dans les sharedPrefs.
 
                             if ( !mesPrefs.getBoolean("authOK", false)) {
-                                Log.i("SECUSERV main start auth", "true");
                                 Intent auth = new Intent(StartActivity.this, AuthActivity.class);
-//                                    startActivityForResult(auth, Constantes.AUTH_ACTIV);
                                 authActivityResultLauncher.launch(auth);
                             }else{
                                 Intent groupes =new Intent(StartActivity.this, MainActivity.class);
@@ -215,7 +199,6 @@ public class StartActivity extends AppCompatActivity {
                             }
 //                                Toast.makeText(getApplicationContext(), "Sortie id = "+listeDesItems.get(position).get("id"), Toast.LENGTH_LONG).show();
                         };
-//                        monAdapter = new ListeSortiesAdapter(recyclerView.getContext(), nomsItems, listener);
                         monAdapter = new RecyclerViewGenericAdapter(recyclerView.getContext(), nomsItems, listener, R.layout.item_liste_sorties);
                         recyclerView.setAdapter(monAdapter);
                     } else {
@@ -249,21 +232,6 @@ public class StartActivity extends AppCompatActivity {
             startActivity(lireAide);
             return true;
         }
-/*        if (id == R.id.logistique) {
-            Intent logistic = new Intent(this, Logistique.class);
-            startActivity(logistic);
-            return true;
-        }
-        if (id == R.id.meteo) {
-            Intent meteo = new Intent(this, Meteo.class);
-            startActivity(meteo);
-            return true;
-        }
-        if (id == R.id.secours) {
-            Intent secours = new Intent(this, Secours.class);
-            startActivity(secours);
-            return true;
-        }  */
         if (id == R.id.action_settings) {
             Intent choixPrefs = new Intent(this, Preferences.class);
             startActivity(choixPrefs);
@@ -302,8 +270,6 @@ public class StartActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-//        Log.i("SECUSERV start destroy", "fin "+isFinishing());
-//        Log.i("SECUSERV start destroy", "chg "+isChangingConfigurations());
         super.onDestroy();
         if (isFinishing()  && !isChangingConfigurations()) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);

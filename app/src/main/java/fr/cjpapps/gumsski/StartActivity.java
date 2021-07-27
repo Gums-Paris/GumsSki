@@ -55,7 +55,7 @@ public class StartActivity extends AppCompatActivity {
             }
         }
     };
-    
+
 /*  Dans les sharedPreferences :
 *       datelist == date à laquelle on a récupéré la liste des sorties
 *       date == date de la sortie choisie dans la liste des sorties

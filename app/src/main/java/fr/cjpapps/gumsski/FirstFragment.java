@@ -112,7 +112,8 @@ public class FirstFragment extends DialogFragment {
                         }
                     }
                 }
-                Log.i("SECUSERV frag 1", "récup de la liste");
+                if (BuildConfig.DEBUG){
+                Log.i("SECUSERV frag 1", "récup de la liste");}
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
                 RecyclerViewClickListener listener = (view1, position) -> {
@@ -134,7 +135,6 @@ public class FirstFragment extends DialogFragment {
                         }
                     }
                     if (view1.getId() == R.id.email_button) {
-                        Log.i("SECUSERV frag 1 onclick", unP.getEmail());
                         String[] adresses = {unP.getEmail()};
                         String subject = "juste un truc";
                         String texte = "Je sais pas quoi te dire";
@@ -143,7 +143,8 @@ public class FirstFragment extends DialogFragment {
                     if (view1.getId() == R.id.sms_button) {
                         envoiSMS(unP);
                     }
-//                            dismiss(); // finalement on garde le fragment ouvert ; il faudra l'éliminer avec le backbutton
+//                  dismiss(); // finalement on garde le fragment ouvert ; il faudra l'éliminer
+//  avec le backbutton ou en touchant à côté du fragment
                 };
 
                 ParticipantsAdapter mAdapter = new ParticipantsAdapter(getActivity(), membresGroupe, listener);
@@ -153,7 +154,8 @@ public class FirstFragment extends DialogFragment {
         model.getListeDesItems().observe(getViewLifecycleOwner(),participObserver);
 
         emailGroupe.setOnClickListener(view12 -> {
-            Log.i("SECUSERV frag 1 onclick emailGroupe", groupeEmail.toString());
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV frag 1 onclick emailGroupe", groupeEmail.toString());}
             String[] adresses = new String[groupeEmail.size()];
             adresses = groupeEmail.toArray(adresses);
             String subject = "J'te cause";
@@ -183,7 +185,8 @@ public class FirstFragment extends DialogFragment {
 
     void phoneCall(MembreGroupe unP){
         String numInt = unP.getTel();
-        Log.i("SECUSERV frag 1 onclick", numInt);
+        if (BuildConfig.DEBUG){
+        Log.i("SECUSERV frag 1 onclick", numInt);}
         Intent phone = new Intent(Intent.ACTION_CALL);
         phone.setData(Uri.parse("tel:"+numInt));
         if (phone.resolveActivity(requireActivity().getPackageManager()) != null) {

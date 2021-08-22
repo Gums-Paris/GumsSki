@@ -25,14 +25,16 @@ public class ModelListeSorties extends AndroidViewModel {
     public ModelListeSorties(final Application application) {
         super(application);
         mesPrefs = MyHelper.getInstance().recupPrefs();
-
-        recupInfo(Constantes.JOOMLA_RESOURCE_3, "");
-
+        if (Variables.isNetworkConnected) {
+            recupInfo(Constantes.JOOMLA_RESOURCE_3, "");
+        }else{
+            flagListeSorties.setValue(false);
+        }
     }
 
     void getListeFromPrefs(){
         ArrayList<HashMap<String,String>> listeBidule;
-//  jsonliste contient la liste des participants
+//  jsliste contient la liste des sortiess
         String jsliste = mesPrefs.getString("jsonSorties", "");
         listeBidule = Aux.getListeSorties(jsliste);
         if(listeBidule != null){

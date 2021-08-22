@@ -36,9 +36,9 @@ public class ModelListeItems extends AndroidViewModel {
         mesPrefs = MyHelper.getInstance().recupPrefs();
         Log.i("SECUSERV", "main model auth ? "+mesPrefs.getBoolean("authOK", false));
 
-/*  Si dateWE eqt vide ou si la date des infos ne colle pas avec la date du WE, on va chercher les infos sur gumsparis.
+/*  Si dateWE est vide ou si la date des infos ne colle pas avec la date du WE, on va chercher les infos sur gumsparis.
 *   Sinon on les récupère en sharedPreferences.
-*   dateData est mis égal à dateWE par getInfosListe ; a quoi ça sert ?*/
+*   dateData a été mis égal à dateWE par AuxReseau.decodeInfosItem lorsque la récup données par le réseau a marché */
         String dateWE = mesPrefs.getString("date", null);
         String dateInfosDisponibles = mesPrefs.getString("dateData", null);
         if (!egaliteChaines(dateWE, dateInfosDisponibles)) {
@@ -46,7 +46,6 @@ public class ModelListeItems extends AndroidViewModel {
         }else {
             getInfosFromPrefs();
         }
-
     }
 
     void getInfosFromPrefs() {

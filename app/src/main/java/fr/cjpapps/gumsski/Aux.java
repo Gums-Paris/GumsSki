@@ -1,6 +1,6 @@
 package fr.cjpapps.gumsski;
 
-import android.os.Build;
+import android.content.SharedPreferences;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -21,7 +21,7 @@ import static java.lang.Integer.parseInt;
 
 public class Aux {
 
-// pour remplir la listeItems en décodant le json jsListe
+// pour remplir la listeItems (liste des participants) en décodant le json jsListe
     static ArrayList<HashMap<String,String>> getListeItems (String jsListe) {
         ArrayList<HashMap<String,String>> listeItems = new ArrayList<>();
         try {
@@ -76,6 +76,37 @@ public class Aux {
         }
         return null;
     }
+
+// pour fournir l'item logistique en décodant jsonItem
+   static HashMap<String,String> getParamsItem (String jsonItem) {
+       SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
+       SharedPreferences.Editor  editeur = mesPrefs.edit();
+       HashMap<String, String> monItem = new HashMap<>();
+       try {
+           JSONObject jsonGums = new JSONObject(jsonItem);
+           if (!jsonGums.isNull("data")) {
+               JSONObject jsonData = jsonGums.getJSONObject("data");
+               if (BuildConfig.DEBUG){
+               Log.i("SECUSERV", "data logistique = " + jsonData.toString());}
+               for (Attributs attr : Attributs.values()) {
+                   monItem.put(attr.getChamp(), jsonData.optString(attr.getChamp()));
+               }
+           }else{
+               if (BuildConfig.DEBUG){
+                    Log.i("SECUSERV", "data logistique est null");}
+               for (Attributs attr : Attributs.values()) {
+                   monItem.put(attr.getChamp(), "");
+               }
+               editeur.putBoolean("logistiqueExiste", false);
+               editeur.apply();
+           }
+           return monItem;
+       } catch (JSONException e) {
+           e.printStackTrace();
+       }
+       return null;
+   }
+
 // pour remplir la listedes paramètres de la sortie en décodant le jsonParams
     static HashMap<String,String> getListeParams (String jsParams) {
         HashMap<String,String> params = new HashMap<>();
@@ -108,7 +139,8 @@ public class Aux {
             }
         }
         if (liste.isEmpty()){
-            Log.i("SECUSERV", "la liste d'items est vide");
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "la liste d'items est vide");}
         }
         return liste;
     }
@@ -124,7 +156,6 @@ public class Aux {
                     if ("Res".equals(temp.get("responsabilite"))) {
                         Variables.listeChefs.add(temp.get("userid"));
                         String titreGroupe = numGroupe + ":  " + temp.get("name");
-                        Log.i("SECUSERV titre groupe", titreGroupe);
                         liste.add(titreGroupe);
                     }
                 }
@@ -133,7 +164,8 @@ public class Aux {
             }
         }
         if (liste.isEmpty()){
-            Log.i("SECUSERV", "la liste des groupes est vide");
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "la liste des groupes est vide");}
         }
         return liste;
     }
@@ -144,14 +176,14 @@ public class Aux {
         for (HashMap<String,String> temp :items) {
             try {
                 String nomSortie = temp.get("date_bdh")+"\n"+temp.get("titre");
-                Log.i("SECUSERV nom de sortie", nomSortie);
                 liste.add(nomSortie);
             }catch(NullPointerException e) {
                 e.printStackTrace();
             }
         }
         if (liste.isEmpty()){
-            Log.i("SECUSERV", "la liste des sorties est vide");
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "la liste des sorties est vide");}
         }
         return liste;
     }
@@ -172,14 +204,9 @@ public class Aux {
         return null;
     }
 
-@SuppressWarnings("deprecation")
-    static Spanned fromHtml(String source) {
-        if (Build.VERSION.SDK_INT >= 24) {
-            return Html.fromHtml(source, Html.FROM_HTML_MODE_LEGACY);
-        } else {
-            return Html.fromHtml(source);
-        }
-    }
+static Spanned fromHtml(String source) {
+    return Html.fromHtml(source, Html.FROM_HTML_MODE_LEGACY);
+}
 
 // return true si uneDate est antérieure à la date du jour diminuée de ageMax (en jours)
     static boolean datePast(String uneDate, int ageMax) {
@@ -195,9 +222,9 @@ public class Aux {
         Date date2 = c.getTime();
         try {
             if (BuildConfig.DEBUG){
-                Log.i("GUMSKI", "date info = "+uneDate);
-                Log.i("GUMSKI", "date2/date1 = "+date2.compareTo(date1));
-                Log.i("GUMSKI", "date jour = "+date2);}
+                Log.i("SECUSERV", "date info = "+uneDate);
+                Log.i("SECUSERV", "date2/date1 = "+date2.compareTo(date1));
+                Log.i("SECUSERV", "date jour = "+date2);}
             return (date2.compareTo(date1) >= 0);
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -220,6 +247,10 @@ public class Aux {
 // teste si la chaîne str est vide ou null
     public static boolean isEmpty(CharSequence str) {
         return str == null || str.length() == 0;
+    }
+
+    public static boolean isEmptyString(String str) {
+        return str == null || str.isEmpty();
     }
 
 }

@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,9 +30,8 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DialogQuestion.EndMainDialogListener {
 
-//    final static String PREF_FILE = "authAccess";
     ArrayList<String> nomsItems = new ArrayList<>();//    ArrayList<Item> listeItems = new ArrayList<>();
     ArrayList<HashMap<String,String>> listeDesItems = new ArrayList<>();
     TextView affichage =null;
@@ -51,8 +48,12 @@ public class MainActivity extends AppCompatActivity {
     String titreSortie;
 
 /* TODO
-    Avant distribution remettre les vrais tel et e-mail
-    Revoir les alertes  que faire si alerte 2 ?  "données indisponibles" dans l'alerte et on ferme l'activité.
+    Quoi faire pour backspace dans StartActivity
+    Titre dans la page groupes plus gros et plus gras
+    OnClick responsable du car : donner possibilités contact
+    Nettoyage code redondant et branches inutiles
+    Délai 10 sec pour réseau est-il suffiant ?
+    Avant distribution remettre les vrais tel et e-mail (également dans le plugin/inscrits du site)
     ---- reste
        Background item_liste paramétrable
        Clic long sur participant deb, deniv, nivA, nivS ?
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         titreSortie = mesPrefs.getString("titre","");
         idSortie = mesPrefs.getString("id", "");
         Variables.listeChefs.clear();
+// listeChefs contiendra le responsable du car et les Res des groupes
         Variables.listeChefs.add(mesPrefs.getString("id_Res_Car", "0"));
         affichage = findViewById(R.id.affiche);
         infoSortie = mesPrefs.getString("infoSortie", "");
@@ -147,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                 //on attend que le temps passe
             }, 20); // délai 0.02 sec
             count++;
-            if (count > 1000) {
+            if (count > 500) {
                 alerte("5");
                 finish();
             }
@@ -164,20 +166,24 @@ public class MainActivity extends AppCompatActivity {
             recyclerView = findViewById(R.id.listechoix);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-// flagListe est false si on n'a pas récupéré de réponse du serveur ou si on n'a pas décodé le json ;
-// flagliste est géré par GetInfosListe
+// flagListe est false si on n'a pas récupéré de réponse du serveur ou si on n'a pas décodé le json
+// ou si le décodage du json donne un résultat null. Dans ce cas il n'y a plus rien à faire parce que
+// modelListe a déjà essayé d'utiliser les Prefs avant d'aller chercher sur le réseau.
+// flagliste est géré par AuxReseau.decodeInfosItems
             final Observer<Boolean> flagListeObserver = retour -> {
-//                Log.i("SECUSERV", "flagListe " + retour);
+                if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "flagListe " + retour);}
                 if (!retour) {
                     new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                        alerte("2");
-                        finish();
                     }, 200); // délai 0.2 sec
+                    alerte("2");
+                    finish();
+//                    modelListe.getInfosFromPrefs();
                 }
             };
             modelListe.getFlagListe().observe(MainActivity.this, flagListeObserver);
 
- /* pas utilisé dans cette version
+ /* pas utilisé dans cette version de l'appli
 // flagSuppress est géré par DelInfosGums
         final Observer<Boolean> flagSuppressObserver = new Observer<Boolean>() {
             @Override
@@ -201,9 +207,11 @@ public class MainActivity extends AppCompatActivity {
                     if (items != null) {
                         listeDesItems = items;
                         patience.setVisibility(View.GONE);
-//                        Log.i("SECUSERV Main", "taille = " + listeDesItems.size());
+                        if (BuildConfig.DEBUG){
+                        Log.i("SECUSERV Main", "taille = " + listeDesItems.size());}
                         nomsItems = auxMethods.faitListeGroupes(listeDesItems);
-//                        Log.i("SECUSERV Main lesChefs", Variables.listeChefs.toString());
+                        if (BuildConfig.DEBUG){
+                        Log.i("SECUSERV Main lesChefs", Variables.listeChefs.toString());}
                         if (nomsItems != null) {
                             RecyclerViewClickListener listener = (view, position) -> {
                                 String element = nomsItems.get(position);
@@ -228,20 +236,32 @@ public class MainActivity extends AppCompatActivity {
             panic.setText(R.string.no_groups);
         }
 
+//on utilise le FAB pour remonter à StartActivity parce que le retour arrière de Main sert à fermer l'appli
         ExtendedFloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
             Intent retourListeSorties = new Intent(MainActivity.this, StartActivity.class);
             startActivity(retourListeSorties);
+            MainActivity.this.finish();
         });
     }
 
     @Override
     public void onBackPressed() {
 // si l'usager  presse le bouton retour arrière quend on est sur la page d'accueil (liste des groupes)
-// on luo demande s'il vaut ou non fermer l'appli ce qui a pour conséqience d'effacer l'authentification
+// on lui demande s'il veut fermer l'appli (ce qui a pour conséquence d'effacer l'authentification)
         String message = "Quitter GumsSki ?";
         DialogQuestion finAppli = DialogQuestion.newInstance(message);
         finAppli.show(getSupportFragmentManager(), "questionSortie");
+    }
+
+// interface utilisée par DialogQuestion pour fermer MainActvity si l'utiliateur répond qu'il veut fermer l'appli
+// il parait que c'est mieux (plus convenable ? éthique ? moral) de laisser l'activité se tuer elle-même
+// plutôt que de la tuer depuis le fragment
+    @Override
+    public void onPositiveReply() {
+        if (BuildConfig.DEBUG){
+        Log.i("SECUSERV", "Main finish on positive reply");}
+        finish();
     }
 
     @Override

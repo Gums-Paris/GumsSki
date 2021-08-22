@@ -45,7 +45,8 @@ public class EnvoiInfosGums implements Callable<String> {
 
             OutputStream out = new BufferedOutputStream(conn.getOutputStream());
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
-            Log.i("SECUSERV", " POST body "+strings[1]);
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", " POST body "+strings[1]);}
             writer.write(strings[1]);
             writer.flush();
             writer.close();
@@ -62,7 +63,8 @@ public class EnvoiInfosGums implements Callable<String> {
                 result.append(line);
             }
             reader.close();
-            Log.i("SECUSERV", "retour de post "+result.toString());
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "retour de post "+result.toString());}
 
         }catch(IOException e){
             e.printStackTrace();

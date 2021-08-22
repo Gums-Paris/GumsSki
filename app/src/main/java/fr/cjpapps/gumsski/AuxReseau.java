@@ -3,7 +3,9 @@ package fr.cjpapps.gumsski;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Network;
-import android.net.NetworkInfo;
+import android.net.NetworkCapabilities;
+//import android.net.NetworkInfo;
+import android.net.NetworkRequest;
 import android.os.Build;
 import android.util.Log;
 
@@ -23,28 +25,38 @@ import java.util.Locale;
 
 public class AuxReseau {
 
-    /*  la méthode de détection de l'accès réseau change à partir de Android Q (API 29) qui trouve que activeNetworkIfo c'est
-     *   très caca. Pour Q il faut mettre en place un NetworkCallback qui intervient lorsque la connectivité change.
-     *   La méthode pour Q est inspirée de PasanBhanu :
+    /*  la méthode de détection de l'accès réseau change à partir de Android M (API 23) qui trouve que activeNetworkIfo c'est
+     *   très caca. Il faut alors mettre en place un NetworkCallback qui intervient lorsque la connectivité change.
+     *   La méthode est inspirée de PasanBhanu :
      *   https://gist.github.com/PasanBhanu/730a32a9eeb180ec2950c172d54bb06a
      *   Il apparait qu'il faut un registerDefaultNetworkCallback plutôt qu'un registerNetworkCallback parce que les téléphones
      *   modernes ont souvent plusieurs connexions indépendantes actives ce qui fait que les onAvailable et onLost peuvent
-     *   s'emmeler les pinceaux. Ou alors je suppose qu'il faut se choisir un réseau par le logiciel, vive le progrès  */
+     *   s'emmeler les pinceaux. Ou alors je suppose qu'il faut se choisir un réseau par le logiciel, vive le progrès
+     *   Network est OK que ce soit par WIFI ou tph cellulaire*/
     public static void watchNetwork() {
         ConnectivityManager connectivityManager = MyHelper.getInstance().conMan();
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+        NetworkRequest request = new NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_RESTRICTED)
+                .build();
+/*   Cette version de GumsSki fonctionne avec version min = 24, donc pas besoin de ceci :
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            Log.i("SECUSERV", "version < Q");
             NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            Log.i("SECUSERV", "network info ="+activeNetworkInfo);
             Variables.isNetworkConnected = activeNetworkInfo != null && activeNetworkInfo.isConnected();
-        }else {
+        }else {  */
             try {
                 connectivityManager.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback() {
-                       @Override
+                    @Override
                        public void onAvailable(@NonNull Network network) {
+                           super.onAvailable(network);
                            Log.i("SECUSERV", "on available " );
                            Variables.isNetworkConnected = true; // Global Static Variable
                        }
                        @Override
                        public void onLost(@NonNull Network network) {
+                           super.onLost(network);
                            Log.i("SECUSERV", "on lost " );
                            Variables.isNetworkConnected = false; // Global Static Variable
                        }
@@ -53,7 +65,7 @@ public class AuxReseau {
             } catch (Exception e) {
                 Variables.isNetworkConnected = false;
             }
-        }
+//        }
     }
 
     //   void recupListe () {  // devenu recupInfo pour généraliser à plusieurs resources
@@ -111,43 +123,49 @@ public class AuxReseau {
             }
             i++;
         }
-        Log.i("SECUSERV", "request = "+sbParams.toString());
+//        Log.i("SECUSERV", "request = "+sbParams.toString());
         return sbParams.toString();
     }
 
+// fabrique liste des sorties pour StartActivity
     static void decodeInfosSorties (String result){
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
         SharedPreferences.Editor  editeur = mesPrefs.edit();
         ArrayList<HashMap<String,String>> params;
-        try {
-            JSONObject jsonGums = new JSONObject(result);
-            String errMsg = jsonGums.optString("err_msg");
-            String errCode = jsonGums.optString("err_code");
-            if ("".equals(errCode)) {
-                final Calendar c = Calendar.getInstance();
-                Date dateJour = c.getTime();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                String dateListe = sdf.format(dateJour);
-                Log.i("SECUSERV", "date jour = "+dateListe);
+        if (!"netOUT".equals(result)) {
+            try {
+                JSONObject jsonGums = new JSONObject(result);
+                String errMsg = jsonGums.optString("err_msg");
+                String errCode = jsonGums.optString("err_code");
+                if ("".equals(errCode)) {
+                    final Calendar c = Calendar.getInstance();
+                    Date dateJour = c.getTime();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                    String dateListe = sdf.format(dateJour);
+                    Log.i("SECUSERV", "date jour = " + dateListe);
 
-                params = Aux.getListeSorties(result);
-                if (params != null) {
-                    editeur.putString("datelist", dateListe);
-                    editeur.putString("jsonSorties", result);
-                    editeur.apply();
-                    ModelListeSorties.paramDesSorties.setValue(params);
-                    ModelListeSorties.flagListeSorties.setValue(true);
-                }else{
+                    params = Aux.getListeSorties(result);
+                    if (params != null) {
+                        editeur.putString("datelist", dateListe);
+                        editeur.putString("jsonSorties", result);
+                        editeur.apply();
+                        ModelListeSorties.paramDesSorties.setValue(params);
+                        ModelListeSorties.flagListeSorties.setValue(true);
+                    } else {
+                        ModelListeSorties.flagListeSorties.setValue(false);
+                    }
+                } else {
                     ModelListeSorties.flagListeSorties.setValue(false);
+                    editeur.putString("errMsg", errMsg);
+                    editeur.putString("errCode", errCode);
+                    editeur.apply();
                 }
-            }else{
+            } catch (JSONException e) {
+                e.printStackTrace();
                 ModelListeSorties.flagListeSorties.setValue(false);
-                editeur.putString("errMsg", errMsg);
-                editeur.putString("errCode", errCode);
-                editeur.apply();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        }else{
+            ModelListeSorties.flagListeSorties.setValue(false);
         }
     }
 
@@ -155,10 +173,12 @@ public class AuxReseau {
 // pas nécessaire dans la version actuelle
     }
 
+// fabrique liste des participants pour MainActivity
     static void decodeInfosItems(String result){
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
         SharedPreferences.Editor  editeur = mesPrefs.edit();
         ArrayList<HashMap<String,String>> listeBidule;
+        if (!"netOUT".equals(result)) {
         try {
             JSONObject jsonGums = new JSONObject(result);
             String errMsg = jsonGums.optString("err_msg");
@@ -183,45 +203,43 @@ public class AuxReseau {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            ModelListeItems.flagListe.setValue(false);
+        }
+        }else{
+            ModelListeItems.flagListe.setValue(false);
         }
     }
 
+// pour l'item logistique
     static void decodeInfosItem(String result) {
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
         SharedPreferences.Editor  editeur = mesPrefs.edit();
         HashMap<String, String> monItem = new HashMap<>();
-        try {
-            JSONObject jsonGums = new JSONObject(result);
-            String errMsg = jsonGums.optString("err_msg");
-            String errCode = jsonGums.optString("err_code");
-            if ("".equals(errCode)) {
-                editeur.putString("monItem", result);
-                editeur.apply();
-
-                if (!jsonGums.isNull("data")) {
-                    JSONObject jsonData = jsonGums.getJSONObject("data");
-                    Log.i("SECUSERV", "data logistique = " + jsonData.toString());
-                    for (Attributs attr : Attributs.values()) {
-                        monItem.put(attr.getChamp(), jsonData.optString(attr.getChamp()));
-                    }
-                }else{
-//                    Log.i("SECUSERV", "data logistique est null");
-                    for (Attributs attr : Attributs.values()) {
-                        monItem.put(attr.getChamp(), "");
-                    }
-                    editeur.putBoolean("logistiqueExiste", false);
-                    editeur.commit();
+        if (!"netOUT".equals(result)) {
+            try {
+                JSONObject jsonGums = new JSONObject(result);
+                String errMsg = jsonGums.optString("err_msg");
+                String errCode = jsonGums.optString("err_code");
+                if ("".equals(errCode)) {
+                    editeur.putString("jsonItem", result);
+                    editeur.apply();
+                    monItem = Aux.getParamsItem(result);
+                    ModelItem.monItem.setValue(monItem);
+                    ModelItem.flagItem.setValue(true);
+               Log.i("SECUSERV", "monItem = " + monItem.toString());
+                } else {
+                    ModelItem.flagItem.setValue(false);
+                    editeur.putString("errMsg", errMsg);
+                    editeur.putString("errCode", errCode);
+                    editeur.apply();
                 }
-                ModelItem.monItem.setValue(monItem);
- //               Log.i("SECUSERV", "monItem = " + monItem.toString());
-            }else{
+            } catch (JSONException e) {
+                e.printStackTrace();
                 ModelItem.flagItem.setValue(false);
-                editeur.putString("errMsg", errMsg);
-                editeur.putString("errCode", errCode);
-                editeur.apply();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        }else{
+            Log.i("SECUSERV", "netOUT, flagItem est false ");
+            ModelItem.flagItem.setValue(false);
         }
     }
 
@@ -259,14 +277,14 @@ public class AuxReseau {
  * passe rien en fait, sauf que la liste étant alors rechargée on voit l'item disparaître. Ceci pourrait
  * arriver si un autre usager sur une autre machine a supprimé l'item depuis qu'on l'a chargé
  * (normalement c'est pas possible parce que l'item dont on demande l'édition est checked-out dans
- * Joomla)
+ * Joomla de gumsparis)
  *
  * Noter aussi qu'il n'y a pas de différence de requête entre modifier et créer. La seule différence est
  * que dans les paramètres de l'item on met id = 0 pour créer et id = l'id de l'item pour modifier. */
 
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
         SharedPreferences.Editor  editeur = mesPrefs.edit();
-        Log.i("SECUSERV", " onpostexec  "+resultat);
+//        Log.i("SECUSERV", " onpostexec  "+resultat);
         try {
             JSONObject jsonGums = new JSONObject(resultat);
             String errMsg = jsonGums.optString("err_msg");
@@ -282,6 +300,7 @@ public class AuxReseau {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            ModelItem.flagModif.setValue(false);
         }
     }
 
@@ -312,8 +331,8 @@ public class AuxReseau {
             }
         }catch(JSONException e){
             e.printStackTrace();
+            ModelListeItems.flagSuppress.setValue(false);
         }
-
     }
 
 }

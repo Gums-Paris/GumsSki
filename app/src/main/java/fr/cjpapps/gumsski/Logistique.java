@@ -32,21 +32,21 @@ public class Logistique extends AppCompatActivity {
     TextView deposes = null;
     TextView reprises = null;
     TextView coursesPrevues = null;
-    String sortieId = "";
+    private String sortieId = "";
+    private String logistiqueSortieId ="";
     String titreSortie = "";
     String itemId = "";
     ModelItem model = null;
     SharedPreferences mesPrefs;
     SharedPreferences.Editor editeur;
 
-// launcher pour ModifItem. Au retour on relance Logistique pour afficher la nouvelle version.
-// L'intent transporte à la fois itemId et sortieId parce que sortieId est nécessaire pour
-// exécuter Logistique et itemId est nécessaire pour travailler sur la base de données
+// launcher pour ModifItem.
     final private ActivityResultLauncher<Intent> modifItemResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
-                    Log.i("SECUSERV", "retour de ModifItem OK ");
+                    if (BuildConfig.DEBUG){
+                    Log.i("SECUSERV", "retour de ModifItem OK ");}
 /*                    Intent data = result.getData();
                     if (data != null) {
                         if (data.hasExtra("itemChoisi")){
@@ -80,6 +80,8 @@ public class Logistique extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null) {
             sortieId = intent.getStringExtra("sortieid");
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "Logistique sortieId = "+sortieId);}
         }
         titreSortie = mesPrefs.getString("titre","");
 
@@ -100,67 +102,81 @@ public class Logistique extends AppCompatActivity {
 // on affiche le bouton modifier si le user est le responsable du car ou un Res ou un Admin
         String userActuel = mesPrefs.getString("userId","0");
         if (Variables.listeChefs.contains(userActuel) || Constantes.listeAdmins.contains(userActuel)) {
-            fabModif.show();
-            fabModif.setOnClickListener(view -> {
-                if (mesPrefs.getBoolean("logistiqueExiste", false)) {
-                    Intent choisi = new Intent(this, ModifItem.class);
-                    choisi.putExtra("itemChoisi", itemId);
-                    choisi.putExtra("sortieId", sortieId);
-                    modifItemResultLauncher.launch(choisi);
-                }else{
-                    envoiAlerte("La logistique doit être créée par un admin avant de pouvoir" +
-                            "être modifiée");
-                }
-            });
+            if (Variables.isNetworkConnected) {
+                fabModif.show();
+                fabModif.setOnClickListener(view -> {
+                    if (mesPrefs.getBoolean("logistiqueExiste", false)) {
+                        Intent choisi = new Intent(this, ModifItem.class);
+                        choisi.putExtra("itemChoisi", mesPrefs.getString("logistiqueId", "0"));
+                        choisi.putExtra("sortieId", sortieId);
+                        modifItemResultLauncher.launch(choisi);
+                    } else {
+                        envoiAlerte("La logistique doit être créée par un admin avant de pouvoir" +
+                                "être modifiée");
+                    }
+                });
+            }else{
+                envoiAlerte("Pas possible de modifier la logistique sans accès réseau");
+            }
        }
 
-        model = new ViewModelProvider(this).get(ModelItem.class);
-        Log.i("SECUSERV", "logistique charge données ");
-        AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1, sortieId);
+        model = new ViewModelProvider(this).get(ModelItem.class); // constructeur fait rien
+        if (Variables.isNetworkConnected) {
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "logistique charge données réso");}
+            AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1, sortieId);
+        }else{
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "logistique charge données from prefs");}
+            model.loadDatafromPrefs();
+        }
 
-// flagItem est false si la récup des infos logistique se passe mal. Sinon il est true même si la
-// logistique est vide ; ce cas se traite dans l'observer de Item
+// flagItem est false si la récup par le réseau des infos logistique se passe mal. Sinon il est true
+// même si la logistique est vide ; ce cas se traite dans l'observer de Item.
+// Si false on essaye les prefs
         final Observer<Boolean> flagItemObserver = retour -> {
             if (!retour) {
-                String message = "Données non disponibles";
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    envoiAlerte(message);
-                    finish();
-                }, 200); // délai 0.2 sec
+                String message = "Données réseau non disponibles";
+                envoiAlerte(message);
+                model.loadDatafromPrefs();
+            }else{
+                if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "flag logistique = "+retour);}
             }
         };
         model.getFlagItem().observe(this, flagItemObserver);
 
 // flagModif est géré par AuxReseau.decodeRetourPostItem()
+// si true on recharge la logistique modifiée
 // flagModif passe à false en cas d'erreur dans la transaction avec gumsparis
-        final Observer<Boolean> flagModifObserver = new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean retour) {
-                 if (!retour) {
+        final Observer<Boolean> flagModifObserver = retour -> {
+             if (!retour) {
 // Il faut freiner un peu pour laisser le temps au message d'erreur d'être rangé dans les prefs
-                    new Handler().postDelayed(new Runnable() {
-                        public void run() {
-                            String message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
-                            envoiAlerte(message);
-                        }
-                    }, 200); // délai 0.2 sec
-                 }else{
-                     AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1,sortieId);
-                 }
-            }
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                }, 200); // délai 0.2 sec
+                 String message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
+                 envoiAlerte(message);
+             }else{
+                 AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1,sortieId);
+             }
         };
         model.getFlagModif().observe(this, flagModifObserver);
 
 // l'observer de Item - tester pour logistique absente et selon le cas afficher alerte
         final Observer<HashMap<String, String>> ItemObserver = item -> {
             if (item != null){
-                cleanupTextviews();
                 if (!(mesPrefs.getBoolean("logistiqueExiste", false))){
+                    cleanupTextviews();
                     envoiAlerte("Cette logistique n'a pas été créée");
                 }else{
                     editeur.putBoolean("logistiqueExiste", true);
                     editeur.apply();
+// itemId est l'identifiant de la logistique dans la base
                     itemId = item.get("id");
+                    editeur.putString("logistiqueId", itemId);
+                    logistiqueSortieId = item.get("sortieid");
+                    editeur.putString("logistiqueDispo", logistiqueSortieId);
+                    editeur.apply();
                     hotelChauffeurs.setText(item.get("hotelchauffeurs"));
                     tphChauffeurs.setText(item.get("tphchauffeurs"));
                     dinerRetour.setText(item.get("dinerretour"));
@@ -168,6 +184,13 @@ public class Logistique extends AppCompatActivity {
                     reprises.setText(item.get("reprises"));
                     coursesPrevues.setText(item.get("coursesprevues"));
                 }
+            }else{
+                editeur.putBoolean("logistiqueExiste", false);
+                editeur.apply();
+                cleanupTextviews();
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                }, 200); // délai 0.2 sec
+                envoiAlerte("pas d'info disponible");
             }
         };
         model.getMonItem().observe(this, ItemObserver);
@@ -218,4 +241,5 @@ public class Logistique extends AppCompatActivity {
         reprises.setText("");
         coursesPrevues.setText("");
     }
+
 }

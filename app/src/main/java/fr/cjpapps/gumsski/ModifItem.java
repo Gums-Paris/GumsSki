@@ -87,28 +87,32 @@ public class ModifItem extends AppCompatActivity {
         mesPrefs = MyHelper.getInstance(getApplicationContext()).recupPrefs();
         model = new ViewModelProvider(this).get(ModelItem.class);
 
-// récup id de l'item dans l'intent et chargement de l'item
+// récup id de l'item dans l'intent et chargement de l'item (ici la logistique)
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra("itemChoisi")){
                 idItem = intent.getStringExtra("itemChoisi");
                 sortieId = intent.getStringExtra("sortieId");
-                Log.i("SECUSERV", "item "+idItem+", "+sortieId);
+                if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "item "+idItem+", "+sortieId);}
             }
             AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1,sortieId);
         }
 
-// observateur de réception de l'item
+// observateur de réception de l'item (ici la ogistique)
         final Observer<HashMap<String, String>> monItemObserver = itemTravail -> {
             if(itemTravail != null) {
-                Log.i("SECUSERV", " hashmap "+itemTravail.toString());
+                if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", " hashmap "+itemTravail.toString());}
                 for (String[] params : fieldParams) {
-                    Log.i("SECUSERV", "champ, id "+params[0]+", "+params[3]);
+                    if (BuildConfig.DEBUG){
+                    Log.i("SECUSERV", "champ, id "+params[0]+", "+params[3]);}
                     EditText unChamp = findViewById(Integer.parseInt(params[4]));
                     unChamp.setText(itemTravail.get(params[0]));
                 }
             } else {
-                Log.i("SECUSERV", " itemTravail est null ");
+                if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", " itemTravail est null ");}
                 setResult(RESULT_CANCELED, result);
                 finish();
             }
@@ -137,7 +141,6 @@ public class ModifItem extends AppCompatActivity {
             requestParams.put("format", "json");
             String stringRequest = AuxReseau.buildRequest(requestParams);
             taskParams[0] = Variables.urlActive+stringRequest;
-            Log.i("SECUSERV", " modif post url "+taskParams[0]);
             taskParams[1] = AuxReseau.buildRequest(postParams);
             taskParams[2] = "Content-Type";
             taskParams[3] = "application/x-www-form-urlencoded ; utf-8";
@@ -149,7 +152,7 @@ public class ModifItem extends AppCompatActivity {
                 taskRunner.executeAsync(new EnvoiInfosGums(taskParams), AuxReseau::decodeRetourPostItem);
             }
 /*            result.putExtra("itemchoisi", idItem);
-            result.putExtra("sortieId", sortieId);  */
+            result.putExtra("sortieId", sortieId); */
             setResult(RESULT_OK, result);
             finish();
         }

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,10 +47,13 @@ public class StartActivity extends AppCompatActivity {
     SharedPreferences.Editor editeur;
     Aux methodesAux;
 
-    // BroadcastReceiver pour pouvoir fermer depuis MainActivity quand on la ferme (voir DialogQuestion)
+    // BroadcastReceiver pour pouvoir fermer l'appli depuis MainActivity quand on décide de la fermer
+    // (voir DialogQuestion)
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context arg0, Intent intent) {
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "StartActivity receiver finish");}
             String action = intent.getAction();
             if (action.equals("finish_activity")) {
                 finish();
@@ -92,7 +97,7 @@ public class StartActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-// pour pouvoir fermer depuis MainActivity quand on décide de la fermer
+// pour pouvoir fermer depuis MainActivity quand on décide de la fermer ; on connectef le receveur
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("finish_activity"));
 
         affichageTitre = findViewById(R.id.affiche_titre);
@@ -102,6 +107,7 @@ public class StartActivity extends AppCompatActivity {
         dateList = findViewById(R.id.date_list);
         patience = findViewById(R.id.indeterminateBar);
 
+// pour indiquer le site auquel l'appli va s'adresse
 //        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
         Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
 
@@ -113,35 +119,42 @@ public class StartActivity extends AppCompatActivity {
 //        editeur.putBoolean("authOK", false);
         editeur.apply();
 
+// vérif disponibilité réseau
         methodesAux = new Aux();
         getSystemService(CONNECTIVITY_SERVICE);
         AuxReseau.watchNetwork();
-// Faut patienter un peu jusqu'à ce que le réseau soit disponible
+// Faut patienter un peu jusqu'à ce que le réseau soit disponible (ici 10 secondes max)
         patience.setVisibility(View.VISIBLE);
         int count = 0;
         while (!Variables.isNetworkConnected) {
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "not connected ");}
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 //on attend que le temps passe
             }, 20); // délai 0.02 sec
             count++;
-            if (count > 1000) {
-                alerte("5");
-                finish();
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "count = "+count);}
+            if (count > 750) {
+                alerte("5"); // délai de 15 secondes dépassé
+                break;
             }
         }
 
 // création ou récupération du modèle ; ne pas oublier que le constructeur du model s'exécute immédiatement
-//        Log.i("SECUSERV start", "lance model Sorties ");
+        if (BuildConfig.DEBUG){
+        Log.i("SECUSERV start", "lance model Sorties ");}
         modelSorties = new ViewModelProvider(this).get(ModelListeSorties.class);
         recyclerView = findViewById(R.id.liste_we);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 // flagListeSorties est false si on n'a pas récupéré de réponse du serveur ou si on n'a pas décodé le json
 // ou si la liste de sorties est vide; donc on n'a rien mais si on a une liste périmée, on l'affiche à tout hasard.
-// flaglisteSorties est géré par (GetParamsSorties)  AuxReseau.decodeInfosSorties
+// flaglisteSorties est géré par AuxReseau.decodeInfosSorties
         final Observer<Boolean> flagListeSortiesObserver = retour -> {
             if (!retour) {
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                }, 200); // délai 0.2 sec
                     alerte("2");
                     patience.setVisibility(View.GONE);
                     String dateListeDispo = mesPrefs.getString("datelist", "");
@@ -150,7 +163,6 @@ public class StartActivity extends AppCompatActivity {
                         }else{
                         panicDepart.setText(R.string.no_list);
                     }
-                    }, 200); // délai 0.2 sec
             }
         };
         modelSorties.getFlagListeSorties().observe(StartActivity.this, flagListeSortiesObserver);
@@ -169,6 +181,8 @@ public class StartActivity extends AppCompatActivity {
                         RecyclerViewClickListener listener = (view, position) -> {
                             editeur.putString("date_bdh", listeDesItems.get(position).get("date_bdh"));
                             editeur.putString("id", listeDesItems.get(position).get("id"));
+                            if (BuildConfig.DEBUG){
+                            Log.i("SECUSERV", "Start sortieId = "+listeDesItems.get(position).get("id"));}
                             editeur.putString("titre", listeDesItems.get(position).get("titre"));
                             editeur.putString("date", listeDesItems.get(position).get("date"));
                             editeur.putString("jours", listeDesItems.get(position).get("jours"));
@@ -197,7 +211,6 @@ public class StartActivity extends AppCompatActivity {
                                 Intent groupes =new Intent(StartActivity.this, MainActivity.class);
                                 startActivity(groupes);
                             }
-//                                Toast.makeText(getApplicationContext(), "Sortie id = "+listeDesItems.get(position).get("id"), Toast.LENGTH_LONG).show();
                         };
                         monAdapter = new RecyclerViewGenericAdapter(recyclerView.getContext(), nomsItems, listener, R.layout.item_liste_sorties);
                         recyclerView.setAdapter(monAdapter);
@@ -253,7 +266,8 @@ public class StartActivity extends AppCompatActivity {
                 message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
                 break;
             case "2" :
-                message = "nouvelles données indisponibles\n"+mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
+//                message = "nouvelles données indisponibles\n"+mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
+                message = "nouvelles données indisponibles\n";
                 break;
             case "3" :
                 message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
@@ -262,12 +276,13 @@ public class StartActivity extends AppCompatActivity {
                 message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
                 break;
             case "5":
-                message = "Pas de réseau, on s'en va !";
+                message = "Pas de réseau, on va avoir des problèmes !";
         }
         DialogAlertes infoUtilisateur = DialogAlertes.newInstance(message);
         infoUtilisateur.show(getSupportFragmentManager(), "infoutilisateur");
     }
 
+// On déconnecte le receveur si c'est une vraie terminaison de l'appli
     @Override
     protected void onDestroy() {
         super.onDestroy();

@@ -64,14 +64,12 @@ public class AuthActivity extends AppCompatActivity {
  après celui du clickListener sinon l'observateur est recréé après chaque clic infructueux ce qui agit sur
  le compteur et conchie la procédure */
         final Observer<Boolean> flagAuthActivObserver = retour -> {
-            Log.i("SECUSERV", "flagAuthActiv " + retour);
             if (retour) {
                 setResult(RESULT_OK, result);
                 finish();
             } else {
                 new Handler(Looper.getMainLooper()).postDelayed(this::alerteAuth, 200); // délai 0.2 sec
                 counter--;
-                Log.i("SECUSERV", "counter =  " + counter);
                 if (counter == 0) {
                     Toast.makeText(getApplicationContext(), "Tant pis ! Au revoir", Toast.LENGTH_LONG).show();
                     setResult(RESULT_CANCELED, result);
@@ -91,9 +89,7 @@ public class AuthActivity extends AppCompatActivity {
             postParams.put("username", user);
             postParams.put("password", password);
             taskParams[0] = Variables.urlActive+stringRequest;
-            Log.i("SECUSERV", "post url "+taskParams[0]);
             taskParams[1] = AuxReseau.buildRequest(postParams);
-            Log.i("SECUSERV", "post params "+taskParams[1]);
             taskParams[2] = "Content-Type";
             taskParams[3] = "application/x-www-form-urlencoded ; utf-8";
             taskParams[4] = "";
@@ -110,7 +106,8 @@ public class AuthActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (isFinishing() && !isChangingConfigurations()) {
-            Log.i("SECUSERV", "clear model auth ");
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "clear model auth ");}
             getViewModelStore().clear();
         }
     }

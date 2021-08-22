@@ -25,7 +25,8 @@ public class SupprimeInfosGums implements Callable<String> {
         try{
             URL urlObject = new URL(strings[0]);
             conn = (HttpURLConnection) urlObject.openConnection();
-            Log.i("SECUSERV", "connexion ouverte ");
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "connexion ouverte ");}
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Authorization", "Bearer "+ strings[1]);
             InputStream in = new BufferedInputStream(conn.getInputStream());
@@ -45,7 +46,8 @@ public class SupprimeInfosGums implements Callable<String> {
         }
 //        if (code == 200) {resultat = String.valueOf(result);}
         resultat = String.valueOf(result);
-        Log.i("SECUSERV", "del item "+resultat);
+        if (BuildConfig.DEBUG){
+        Log.i("SECUSERV", "del item "+resultat);}
         return resultat;
     }
 }

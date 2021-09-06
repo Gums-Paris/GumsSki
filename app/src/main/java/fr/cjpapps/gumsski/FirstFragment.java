@@ -98,11 +98,11 @@ public class FirstFragment extends DialogFragment {
                             unMembre.setName(temp.get("name"));
                             String numTel = Aux.numInter(temp.get("tel"));
 // pour les essais
-//                                numTel = "+33688998191";
+                                numTel = "+33688998191";
                             unMembre.setTel(numTel);
                             unMembre.setEmail(temp.get("email"));
 // pour les essais
-//                                unMembre.setEmail("claude_pastre@yahoo.fr");
+                                unMembre.setEmail("claude_pastre@yahoo.fr");
                             unMembre.setAutonome(temp.get("autonome"));
                             unMembre.setPeage(temp.get("peage"));
                             membresGroupe.add(unMembre);

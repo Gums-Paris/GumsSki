@@ -1,17 +1,25 @@
 package fr.cjpapps.gumsski;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,19 +30,23 @@ import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity implements DialogQuestion.EndMainDialogListener {
+public class MainActivity extends AppCompatActivity {
 
     ArrayList<String> nomsItems = new ArrayList<>();//    ArrayList<Item> listeItems = new ArrayList<>();
     ArrayList<HashMap<String,String>> listeDesItems = new ArrayList<>();
     TextView affichage =null;
+    TextView affichageSuite = null;
     TextView panic = null;
     ProgressBar patience = null;
     private RecyclerView recyclerView;
@@ -44,16 +56,19 @@ public class MainActivity extends AppCompatActivity implements DialogQuestion.En
     SharedPreferences.Editor editeur;
     Aux auxMethods;
     String idSortie;
-    String infoSortie;
+    String infoSortie, responsable;
     String titreSortie;
+    String idResCar;
+    MembreGroupe resCar;
+    ImageButton phoneResCar = null;
+    ImageButton emailResCar = null;
+    ImageButton smsResCar = null;
+    private Boolean okPhone = false;
 
 /* TODO
-    Quoi faire pour backspace dans StartActivity
-    Titre dans la page groupes plus gros et plus gras
-    OnClick responsable du car : donner possibilités contact
-    Nettoyage code redondant et branches inutiles
-    Délai 10 sec pour réseau est-il suffiant ?
-    Avant distribution remettre les vrais tel et e-mail (également dans le plugin/inscrits du site)
+    Délai 15 sec pour réseau est-il suffiant ?
+    Avant distribution remettre les vrais tel et e-mail (également dans le plugin/inscrits du site
+    et dans Aux.getResCar)
     ---- reste
        Background item_liste paramétrable
        Clic long sur participant deb, deniv, nivA, nivS ?
@@ -95,6 +110,20 @@ public class MainActivity extends AppCompatActivity implements DialogQuestion.En
              double héritage
  */
 
+    // BroadcastReceiver pour pouvoir fermer l'appli depuis le fragment
+    // (voir DialogQuestion)
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context arg0, Intent intent) {
+            if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "Main Activity receiver finish");}
+            String action = intent.getAction();
+            if (action.equals("finish_activity")) {
+                finish();
+            }
+        }
+    };
+
     // servira à lancer AuthActivity pour changer d'utilisateur puis MainActivity si RESULT_OK
     final private ActivityResultLauncher<Intent> authNewUserResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -107,6 +136,17 @@ public class MainActivity extends AppCompatActivity implements DialogQuestion.En
                 }
             });
 
+    final private ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    // Permission is granted. Continue the action or workflow in your app
+                    okPhone = true;
+                } else {
+                    // Explain to the user that the feature is unavailable
+                    okPhone = false;
+                }
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,17 +154,27 @@ public class MainActivity extends AppCompatActivity implements DialogQuestion.En
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+// pour pouvoir fermer depuis le fragment DialogQuestion (réponse OUI) ; on connecte le receveur
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("finish_activity"));
+
         mesPrefs = MyHelper.getInstance().recupPrefs();
         editeur = mesPrefs.edit();
 
         titreSortie = mesPrefs.getString("titre","");
         idSortie = mesPrefs.getString("id", "");
+        idResCar = mesPrefs.getString("id_Res_Car", "");
         Variables.listeChefs.clear();
 // listeChefs contiendra le responsable du car et les Res des groupes
         Variables.listeChefs.add(mesPrefs.getString("id_Res_Car", "0"));
         affichage = findViewById(R.id.affiche);
+        affichageSuite = findViewById(R.id.affiche2);
+        phoneResCar = findViewById(R.id.phone_rescar);
+        emailResCar = findViewById(R.id.email_rescar);
+        smsResCar = findViewById(R.id.sms_rescar);
         infoSortie = mesPrefs.getString("infoSortie", "");
+        responsable = mesPrefs.getString("responsable", "");
         affichage.setText(infoSortie);
+        affichageSuite.setText(responsable);
 // idSortie et infoSortie ont été fabriqués par StartActivity
 
         panic = findViewById(R.id.panique);  // sert si les groupes ne sont pas publiés
@@ -209,6 +259,35 @@ public class MainActivity extends AppCompatActivity implements DialogQuestion.En
                         patience.setVisibility(View.GONE);
                         if (BuildConfig.DEBUG){
                         Log.i("SECUSERV Main", "taille = " + listeDesItems.size());}
+
+// communiquer avec le responabledu car
+                        resCar = auxMethods.getResCar(listeDesItems, idResCar);
+                        phoneResCar.setOnClickListener(view -> {
+                            if (ContextCompat.checkSelfPermission(
+                                    MainActivity.this, Manifest.permission.CALL_PHONE) ==
+                                    PackageManager.PERMISSION_GRANTED) {
+                                phoneCall(resCar);
+                            } else {
+                                // You can directly ask for the permission.
+                                // The registered ActivityResultCallback gets the result of this request.
+                                requestPermissionLauncher.launch(
+                                        Manifest.permission.CALL_PHONE);
+                                if (okPhone) {
+                                    phoneCall(resCar);
+                                }
+                            }
+                        });
+                        emailResCar.setOnClickListener(view -> {
+                            String[] adresses = {resCar.getEmail()};
+                            String subject = "petit problème";
+                            String texte = "En fait yapa de problème";
+                            composeEmail(adresses, subject, texte);
+                        });
+                        smsResCar.setOnClickListener(view -> {
+                            envoiSMS(resCar);
+                        });
+// fin comm res car
+
                         nomsItems = auxMethods.faitListeGroupes(listeDesItems);
                         if (BuildConfig.DEBUG){
                         Log.i("SECUSERV Main lesChefs", Variables.listeChefs.toString());}
@@ -243,25 +322,16 @@ public class MainActivity extends AppCompatActivity implements DialogQuestion.En
             startActivity(retourListeSorties);
             MainActivity.this.finish();
         });
-    }
+
+    }  // end onCreate
 
     @Override
     public void onBackPressed() {
-// si l'usager  presse le bouton retour arrière quend on est sur la page d'accueil (liste des groupes)
-// on lui demande s'il veut fermer l'appli (ce qui a pour conséquence d'effacer l'authentification)
+// si l'usager  presse le bouton retour arrière on lui demande s'il veut fermer l'appli (ce qui
+// a pour conséquence d'effacer l'authentification)
         String message = "Quitter GumsSki ?";
         DialogQuestion finAppli = DialogQuestion.newInstance(message);
         finAppli.show(getSupportFragmentManager(), "questionSortie");
-    }
-
-// interface utilisée par DialogQuestion pour fermer MainActvity si l'utiliateur répond qu'il veut fermer l'appli
-// il parait que c'est mieux (plus convenable ? éthique ? moral) de laisser l'activité se tuer elle-même
-// plutôt que de la tuer depuis le fragment
-    @Override
-    public void onPositiveReply() {
-        if (BuildConfig.DEBUG){
-        Log.i("SECUSERV", "Main finish on positive reply");}
-        finish();
     }
 
     @Override
@@ -335,6 +405,52 @@ public class MainActivity extends AppCompatActivity implements DialogQuestion.En
         }
         DialogAlertes infoUtilisateur = DialogAlertes.newInstance(message);
         infoUtilisateur.show(getSupportFragmentManager(), "infoutilisateur");
+    }
+
+// On déconnecte le receveur si c'est une vraie terminaison de l'appli
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (isFinishing()  && !isChangingConfigurations()) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+        }
+    }
+
+    private void phoneCall(MembreGroupe unP){
+        String numInt = unP.getTel();
+        if (BuildConfig.DEBUG){
+            Log.i("SECUSERV frag 1 onclick", numInt);}
+        Intent phone = new Intent(Intent.ACTION_CALL);
+        phone.setData(Uri.parse("tel:"+numInt));
+        if (phone.resolveActivity(getPackageManager()) != null) {
+            startActivity(phone);
+        } else {
+            Toast.makeText(this, "Appli de téléphone non disponible", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void composeEmail(String[] addresses, String subject, String texte) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, texte);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Appli d'email non disponible", Toast.LENGTH_LONG).show();
+        }
+    }
+    private void envoiSMS(MembreGroupe unP){
+        String numInt = unP.getTel();
+        Intent sms = new Intent(Intent.ACTION_SENDTO)    ;
+        sms.setData(Uri.parse("smsto:"+numInt));
+        sms.putExtra("sms_body", "salut !");
+        if(sms.resolveActivity(getPackageManager()) != null) {
+            startActivity(sms);
+        } else {
+            Toast.makeText(this, "Appli de messagerie non disponible", Toast.LENGTH_LONG).show();
+        }
     }
 
 }

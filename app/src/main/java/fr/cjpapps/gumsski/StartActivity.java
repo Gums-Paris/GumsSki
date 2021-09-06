@@ -47,9 +47,9 @@ public class StartActivity extends AppCompatActivity {
     SharedPreferences.Editor editeur;
     Aux methodesAux;
 
-    // BroadcastReceiver pour pouvoir fermer l'appli depuis MainActivity quand on décide de la fermer
+    // BroadcastReceiver pour pouvoir fermer l'appli depuis le fragment
     // (voir DialogQuestion)
-    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    public BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context arg0, Intent intent) {
             if (BuildConfig.DEBUG){
@@ -78,7 +78,7 @@ public class StartActivity extends AppCompatActivity {
             }
         });
 
-    // servira à lancer AuthActivity pour changer d'utilisateur puis startActivity si RESULT_OK
+// servira à lancer AuthActivity pour changer d'utilisateur puis startActivity si RESULT_OK
     final private ActivityResultLauncher<Intent> authNewUserResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -97,7 +97,7 @@ public class StartActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-// pour pouvoir fermer depuis MainActivity quand on décide de la fermer ; on connectef le receveur
+// pour pouvoir fermer depuis le fragment DialogQuestion (réponse OUI) ; ici on connecte le receveur
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("finish_activity"));
 
         affichageTitre = findViewById(R.id.affiche_titre);
@@ -123,7 +123,7 @@ public class StartActivity extends AppCompatActivity {
         methodesAux = new Aux();
         getSystemService(CONNECTIVITY_SERVICE);
         AuxReseau.watchNetwork();
-// Faut patienter un peu jusqu'à ce que le réseau soit disponible (ici 10 secondes max)
+// Faut patienter un peu jusqu'à ce que le réseau soit disponible (ici 15 secondes max)
         patience.setVisibility(View.VISIBLE);
         int count = 0;
         while (!Variables.isNetworkConnected) {
@@ -193,7 +193,7 @@ public class StartActivity extends AppCompatActivity {
                             editeur.putString("id_Res_Car", listeDesItems.get(position).get("id_responsable"));
                             String infos;
                             infos = listeDesItems.get(position).get("date_bdh") + "\n" +
-                                    listeDesItems.get(position).get("titre") + "\n" + responsable ;
+                                    listeDesItems.get(position).get("titre");
                             editeur.putString("infoSortie", infos);
                             editeur.apply();
 
@@ -224,7 +224,7 @@ public class StartActivity extends AppCompatActivity {
         };
         modelSorties.getParamDesSorties().observe(StartActivity.this, listeSortiessObserver);
 
-    }
+    }   // end onCreate
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -280,6 +280,15 @@ public class StartActivity extends AppCompatActivity {
         }
         DialogAlertes infoUtilisateur = DialogAlertes.newInstance(message);
         infoUtilisateur.show(getSupportFragmentManager(), "infoutilisateur");
+    }
+
+    @Override
+    public void onBackPressed() {
+// si l'usager  presse le bouton retour arrière on lui demande s'il veut fermer l'appli (ce qui a pour
+// conséquence d'effacer l'authentification)
+        String message = "Quitter GumsSki ?";
+        DialogQuestion finAppli = DialogQuestion.newInstance(message);
+        finAppli.show(getSupportFragmentManager(), "questionSortie");
     }
 
 // On déconnecte le receveur si c'est une vraie terminaison de l'appli

@@ -2,6 +2,7 @@ package fr.cjpapps.gumsski;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 
@@ -61,4 +62,8 @@ public class MyHelper {
         return (ConnectivityManager) mContext.getSystemService(CONNECTIVITY_SERVICE);
     }
 
+    // pour accéder au PackageManager
+    PackageManager recupPackageManager() {
+        return mContext.getPackageManager();
+    }
 }

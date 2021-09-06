@@ -21,7 +21,7 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
     final ArrayList<MembreGroupe> mesData;
     final LayoutInflater mInflater;
     final RecyclerViewClickListener listener;
-    Resources res;
+    Resources resources;
 
 //    ParticipantsAdapter(Context context, ArrayList<String> maList, RecyclerViewClickListener mlistener) {
     ParticipantsAdapter(Context context, ArrayList<MembreGroupe> maList, RecyclerViewClickListener mlistener) {
@@ -77,8 +77,8 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
         holder.listItemView.setText(mCurrent.getName());
         if ("1".equals(mCurrent.getAutonome())) {autonome = "A";}
         if ("1".equals(mCurrent.getPeage())) {peage = "P";}
-        res = MyHelper.getInstance().recupResources();
-        holder.detailItemView.setText(res.getString(R.string.details, autonome, peage));
+        resources = MyHelper.getInstance().recupResources();
+        holder.detailItemView.setText(resources.getString(R.string.details, autonome, peage));
     }
 
     @Override

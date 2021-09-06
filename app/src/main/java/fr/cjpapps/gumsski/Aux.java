@@ -170,7 +170,34 @@ public class Aux {
         return liste;
     }
 
-// pour fabriquer la liste des noms de sortie à donner à la recyclerView
+    // pour retrouver le responsable du car dans la liste
+    MembreGroupe getResCar(ArrayList<HashMap<String,String>> items, String idResCar) {
+        MembreGroupe unMembre = new MembreGroupe();
+        for (HashMap<String,String> temp :items) {
+            try {
+                if(egaliteChaines(idResCar, temp.get("userid"))) {
+                    unMembre.setName(temp.get("name"));
+                    String numTel = Aux.numInter(temp.get("tel"));
+// pour les essais
+                                numTel = "+33688998191";
+                    unMembre.setTel(numTel);
+                    unMembre.setEmail(temp.get("email"));
+// pour les essais
+                                unMembre.setEmail("claude_pastre@yahoo.fr");
+                    break;
+                }
+            }catch(NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
+        if (isEmptyString(unMembre.getName())){
+            if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "pas trouvé de resCar");}
+        }
+        return unMembre;
+    }
+
+    // pour fabriquer la liste des noms de sortie à donner à la recyclerView
     ArrayList<String> faitListeSorties(ArrayList<HashMap<String,String>> items) {
         ArrayList<String> liste = new ArrayList<>();
         for (HashMap<String,String> temp :items) {

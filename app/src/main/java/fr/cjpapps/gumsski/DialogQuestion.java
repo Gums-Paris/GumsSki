@@ -22,12 +22,6 @@ public class DialogQuestion extends DialogFragment {
      * de paramètres lors de la création de l'instance. Ici c'est le message de l'alerte
      * */
 
-// interface utilisée par Main pour être informée de ce qu'elle doit se flinguer en cas de réponse positive
-// à la question
-    public interface EndMainDialogListener {
-        void onPositiveReply();
-    }
-
     public DialogQuestion() {
         // Empty constructor required for DialogFragment
     }
@@ -66,16 +60,15 @@ public class DialogQuestion extends DialogFragment {
                 editeur.putBoolean("authOK", false);
                 editeur.putString("auth", "");
                 editeur.apply();
-// on termine StartActivity à travers un BroadcastReceiver parce qu'on a pas le droit (memory leak == caca)
-// d'en conserver une référence dans MainActivity
+// on termine StartActivity et MainActivity à travers un BroadcastReceiver
+// pour celle qui n'a pas créé le fragment  on peut pas faire autrement parce qu'il ne faut pas
+// (memory leak == caca) en conserver une référence dans l'autre
+// pour celle qui a créé le fragment on aurait pu la fermer directement ou à travers une interface
+// qui permette de lui dire de se tuer
                 Intent intent = new Intent();
                 intent.setAction("finish_activity");
                 LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent);
                 dialog.dismiss();
-// on termine MainActivity qui a créé ce dialogue
-//                requireActivity().finish();  // au lieu de la tuer on lui demande de se suicider :
-                EndMainDialogListener listener = (EndMainDialogListener) requireActivity();
-                listener.onPositiveReply();
             }
         });
 

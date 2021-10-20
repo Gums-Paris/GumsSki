@@ -1,6 +1,8 @@
 package fr.cjpapps.gumsski;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -66,4 +68,6 @@ public class MyHelper {
     PackageManager recupPackageManager() {
         return mContext.getPackageManager();
     }
+
+    void launchActivity(Intent intent) {mContext.startActivity(intent);}
 }

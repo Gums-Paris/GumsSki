@@ -15,7 +15,10 @@ public enum Attributs {
     ATTR06("reprises", "Lieux et heures de reprise", ""),
     ATTR07("coursesprevues", "Courses prévues", ""),
     ATTR08("meteo", "Météo", ""),
-    ATTR09("secours", "Secours", "112");
+    ATTR09("secours", "Secours", "112"),
+    ATTR10("checked_out", "checked_out", "" ),
+    ATTR11("checked_out_time","checked_out_time", ""),
+    ATTR12("verrou", "verrou", "");
 
     private String champ = "";
     private String nomChamp = "";

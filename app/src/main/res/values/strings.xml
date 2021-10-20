@@ -26,19 +26,21 @@
     <string name="title_activity_delete_item">DeleteItem</string>
     <string name="title_activity_groupe">Détails du Groupe</string>
     <string name="title_activity_help">Aide</string>
-    <string name="helptext">  L\'appli s\'ouvre sur la liste des sorties de WE en ski de rando du GUMS-Paris.&lt;br /&gt;
-        En cliquant un WE (identifiants sur gumsparis nécessaires) on ouvre la liste des responsables des groupes du WE.&lt;br /&gt;
+    <string name="helptext">L\'appli s\'ouvre sur la &lt;b&gt;liste des sorties de WE en ski de rando&lt;/b&gt; du GUMS-Paris.&lt;br /&gt;
+        En cliquant un WE (identifiants sur gumsparis nécessaires) on ouvre &lt;b&gt;la liste des responsables des groupes&lt;/b&gt; du WE.&lt;br /&gt;
         On ouvre la page du groupe en cliquant le nom du responsable. Les boutons (icônes) e-mail, téléphone,
         SMS s\'identifient facilement. ;-)&lt;br /&gt;Ne pas oublier que passer des appels téléphoniques à l\'étranger
         peut coûter cher quand on n\'a pas un forfait généreux. &lt;br /&gt;&lt;br /&gt;
-        Le bouton "Ouvrir Signal" fait - en principe - ce qu\'il dit. Un groupe Signal a été créé pour chacun des groupes du WE.
-        Tous les participants ont été invités à se joindre au groupe Signal qui leur correspond. Pas d\'obligation, mais cela
-        pourrait servir. Il est facile après le WE pour chacun de quitter le groupe et de le supprimer de sa liste de contacts
-        dans Signal.&lt;br /&gt;&lt;br /&gt;
-        Tant qu\'on n\'a pas volontairement fermé l\'appli, celle-ci reste identifiée auprès de gumsparis. Après le WE
+        Le bouton "Ouvrir Signal" donne accès à l\'appli Signal (c\'est comme WhatsApp en mieux). Dans une version ultérieure de GumsSki un
+        groupe Signal aura été préalablement créé pour chaque groupe du car.&lt;br /&gt;&lt;br /&gt;
+        &lt;b&gt;L\'accès aux informations de logistique&lt;/b&gt; se fait par le menu en haut à droite.
+        Le responsable du car et les RES de chaque groupe ont les autorisations nécessaires pour modifier la logistique de ce car.
+        Pour quitter cette page, il vous est demandé d\'utiliser les boutons "Sauvegarder" ou "Annuler" de la page d\'édition sinon un verrouillage empêchera d\'autres
+        utilisateurs de faire des modifications.&lt;br /&gt;&lt;br /&gt;
+        &lt;b&gt;Tant qu\'on n\'a pas volontairement fermé l\'appli, celle-ci reste identifiée auprès de gumsparis.&lt;/b&gt; Après le WE
         il est recommandé de fermer GumsSki par le bouton retour arrière du téléphone sur la page de la liste des groupes ou sur
         celle de la liste des sorties.
-        &lt;br /&gt;&lt;br /&gt;Bon Week-end.&lt;br /&gt;&lt;br /&gt;Pour toute question, remarque ou suggestion concernant cette appli,
+        &lt;br /&gt;&lt;br /&gt;Bon Week-end.&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Pour toute question, remarque ou suggestion&lt;/b&gt; concernant cette appli,
         écrire à &lt;a href=\"mailto:claude.pastre@laposte.net\"&gt;
         Claude Pastre&lt;/a&gt; avec copie à &lt;a href=\"mailto:voileux59@yahoo.fr\"&gt;Benoît D\'Halluin&lt;/a&gt;</string>
     <string name="prefs">  Actuellement il n\'y a rien à choisir</string>
@@ -63,5 +65,6 @@
     <string name="reprises">Reprises</string>
     <string name="diner_retour">Dîner au retour</string>
     <string name="coursesprévues">Courses prévues</string>
+    <string name="leave_edit">On quitte cette page en utilisant l\'un des boutons "Sauvegarder" ou "Annuler"</string>
 
 </resources>

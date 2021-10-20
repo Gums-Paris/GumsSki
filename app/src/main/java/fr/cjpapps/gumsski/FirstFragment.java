@@ -98,11 +98,11 @@ public class FirstFragment extends DialogFragment {
                             unMembre.setName(temp.get("name"));
                             String numTel = Aux.numInter(temp.get("tel"));
 // pour les essais
-                                numTel = "+33688998191";
+//                                numTel = "+33688998191";
                             unMembre.setTel(numTel);
                             unMembre.setEmail(temp.get("email"));
 // pour les essais
-                                unMembre.setEmail("claude_pastre@yahoo.fr");
+//                                unMembre.setEmail("claude_pastre@yahoo.fr");
                             unMembre.setAutonome(temp.get("autonome"));
                             unMembre.setPeage(temp.get("peage"));
                             membresGroupe.add(unMembre);
@@ -123,25 +123,25 @@ public class FirstFragment extends DialogFragment {
                         if (ContextCompat.checkSelfPermission(
                                 requireActivity(), Manifest.permission.CALL_PHONE) ==
                                 PackageManager.PERMISSION_GRANTED) {
-                            phoneCall(unP);
+                            Aux.phoneCall(unP);
                         } else {
                             // You can directly ask for the permission.
                             // The registered ActivityResultCallback gets the result of this request.
                             requestPermissionLauncher.launch(
                                     Manifest.permission.CALL_PHONE);
                             if (okPhone) {
-                                phoneCall(unP);
+                                Aux.phoneCall(unP);
                             }
                         }
                     }
                     if (view1.getId() == R.id.email_button) {
                         String[] adresses = {unP.getEmail()};
-                        String subject = "juste un truc";
-                        String texte = "Je sais pas quoi te dire";
-                        composeEmail(adresses, subject, texte);
+                        String subject = "";
+                        String texte = "";
+                        Aux.composeEmail(adresses, subject, texte);
                     }
                     if (view1.getId() == R.id.sms_button) {
-                        envoiSMS(unP);
+                        Aux.envoiSMS(unP);
                     }
 //                  dismiss(); // finalement on garde le fragment ouvert ; il faudra l'éliminer
 //  avec le backbutton ou en touchant à côté du fragment
@@ -160,7 +160,7 @@ public class FirstFragment extends DialogFragment {
             adresses = groupeEmail.toArray(adresses);
             String subject = "J'te cause";
             String texte = "Je sais pas quoi te dire";
-            composeEmail(adresses, subject, texte);
+            Aux.composeEmail(adresses, subject, texte);
         });
 
 // pas d'envoi sms au groupe ; ce bouton ouvre Signal
@@ -181,43 +181,6 @@ public class FirstFragment extends DialogFragment {
                 Toast.makeText(getActivity(), "Appli Signal non disponible", Toast.LENGTH_LONG).show();
             } */
         });
-    }
-
-    void phoneCall(MembreGroupe unP){
-        String numInt = unP.getTel();
-        if (BuildConfig.DEBUG){
-        Log.i("SECUSERV frag 1 onclick", numInt);}
-        Intent phone = new Intent(Intent.ACTION_CALL);
-        phone.setData(Uri.parse("tel:"+numInt));
-        if (phone.resolveActivity(requireActivity().getPackageManager()) != null) {
-            startActivity(phone);
-        } else {
-            Toast.makeText(getActivity(), "Appli de téléphone non disponible", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    void composeEmail(String[] addresses, String subject, String texte) {
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
-        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-       intent.putExtra(Intent.EXTRA_TEXT, texte);
-       if (intent.resolveActivity(requireActivity().getPackageManager()) != null) {
-            startActivity(intent);
-        } else {
-            Toast.makeText(getActivity(), "Appli d'email non disponible", Toast.LENGTH_LONG).show();
-        }
-    }
-    void envoiSMS(MembreGroupe unP){
-        String numInt = unP.getTel();
-        Intent sms = new Intent(Intent.ACTION_SENDTO)    ;
-        sms.setData(Uri.parse("smsto:"+numInt));
-        sms.putExtra("sms_body", "salut !");
-        if(sms.resolveActivity(requireActivity().getPackageManager()) != null) {
-            startActivity(sms);
-        } else {
-            Toast.makeText(getActivity(), "Appli de messagerie non disponible", Toast.LENGTH_LONG).show();
-        }
     }
 
 }

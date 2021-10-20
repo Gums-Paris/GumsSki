@@ -26,7 +26,7 @@ public class ModelListeSorties extends AndroidViewModel {
         super(application);
         mesPrefs = MyHelper.getInstance().recupPrefs();
         if (Variables.isNetworkConnected) {
-            recupInfo(Constantes.JOOMLA_RESOURCE_3, "");
+            recupInfo(Constantes.JOOMLA_RESOURCE_3, "", "");
         }else{
             flagListeSorties.setValue(false);
         }

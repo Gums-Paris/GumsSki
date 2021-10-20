@@ -1,12 +1,16 @@
 package fr.cjpapps.gumsski;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -28,6 +32,11 @@ public class AuxAvecContext {
 
         for (Attributs attr : Attributs.values()) {
             if ("id".equals(attr.getChamp())){ continue;}
+            if ("checked_out".equals(attr.getChamp())){ continue;}
+            if ("checked_out_time".equals(attr.getChamp())){ continue;}
+            if ("verrou".equals(attr.getChamp())){ continue;}
+            if ("meteo".equals(attr.getChamp())){ continue;}
+            if ("secours".equals(attr.getChamp())){ continue;}
 
             idT++;
             idE++;
@@ -60,5 +69,6 @@ public class AuxAvecContext {
 
         return fieldParams;
     }
+
 
 }

@@ -66,16 +66,18 @@ public class MainActivity extends AppCompatActivity {
     private Boolean okPhone = false;
 
 /* TODO
-    Délai 15 sec pour réseau est-il suffiant ?
-    Avant distribution remettre les vrais tel et e-mail (également dans le plugin/inscrits du site
-    et dans Aux.getResCar)
+    Pour version publiable : Remettre la bonne url pour www
+    Délai 15 sec pour réseau est-il suffisant ? On fera avec jusqu'à nouvel ordre
     ---- reste
        Background item_liste paramétrable
        Clic long sur participant deb, deniv, nivA, nivS ?
     */
 
-// dérivé de AccessAuth mais avec pas mal de modifs
-/*  AccessAuth
+// Noter   que pour des essais on peut mettre des tel et email bidon dans FirstFragment (lignes 101 et 105)
+// et dans Aux.getResCar (lignes 185 et 189). On peut aussi le faire dans le plugin gski/inscrits de com_api
+
+//  appli dérivée de AccessAuth mais avec pas mal de modifs (adieu générique !)
+/*  AccessAuth :
 *   est une appli quasi générique au sens où pour faire des opérations de création, modification ou suppression sur les lignes d'une
 *   base sur un site Joomla distant, il n'y a qu'à rentrer les infos concernant le site et la base dans trois classes :
 *       - Attributs.java où il faut fournir les lignes ATTR01 à ATTRnn qui décrivent les champs de la base
@@ -136,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+    // launcher pour demande permission d'appeler qqun au tph directement
     final private ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -233,21 +236,6 @@ public class MainActivity extends AppCompatActivity {
             };
             modelListe.getFlagListe().observe(MainActivity.this, flagListeObserver);
 
- /* pas utilisé dans cette version de l'appli
-// flagSuppress est géré par DelInfosGums
-        final Observer<Boolean> flagSuppressObserver = new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean retour) {
-                Log.i("SECUSERV", "flagSuppress " + retour);
-                if (retour) {
-                    AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1, "");
-                } else {
-                    alerte("4");
-                }
-            }
-        };
-        modelListe.getFlagSuppress().observe(MainActivity.this, flagSuppressObserver);  */
-
 // observateur d'arrivée de la liste des participants et affichage des groupes
             final Observer<ArrayList<HashMap<String, String>>> listeItemsObserver = new Observer<ArrayList<HashMap<String, String>>>() {
                 String pourInfo = "";
@@ -260,33 +248,33 @@ public class MainActivity extends AppCompatActivity {
                         if (BuildConfig.DEBUG){
                         Log.i("SECUSERV Main", "taille = " + listeDesItems.size());}
 
-// communiquer avec le responabledu car
+// Pour communiquer avec le responable du car :
                         resCar = auxMethods.getResCar(listeDesItems, idResCar);
                         phoneResCar.setOnClickListener(view -> {
                             if (ContextCompat.checkSelfPermission(
                                     MainActivity.this, Manifest.permission.CALL_PHONE) ==
                                     PackageManager.PERMISSION_GRANTED) {
-                                phoneCall(resCar);
+                                Aux.phoneCall(resCar);
                             } else {
                                 // You can directly ask for the permission.
                                 // The registered ActivityResultCallback gets the result of this request.
                                 requestPermissionLauncher.launch(
                                         Manifest.permission.CALL_PHONE);
                                 if (okPhone) {
-                                    phoneCall(resCar);
+                                    Aux.phoneCall(resCar);
                                 }
                             }
                         });
                         emailResCar.setOnClickListener(view -> {
                             String[] adresses = {resCar.getEmail()};
-                            String subject = "petit problème";
-                            String texte = "En fait yapa de problème";
-                            composeEmail(adresses, subject, texte);
+                            String subject = "";
+                            String texte = "";
+                            Aux.composeEmail(adresses, subject, texte);
                         });
                         smsResCar.setOnClickListener(view -> {
-                            envoiSMS(resCar);
+                            Aux.envoiSMS(resCar);
                         });
-// fin comm res car
+// fin communications res car
 
                         nomsItems = auxMethods.faitListeGroupes(listeDesItems);
                         if (BuildConfig.DEBUG){
@@ -413,43 +401,6 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         if (isFinishing()  && !isChangingConfigurations()) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
-        }
-    }
-
-    private void phoneCall(MembreGroupe unP){
-        String numInt = unP.getTel();
-        if (BuildConfig.DEBUG){
-            Log.i("SECUSERV frag 1 onclick", numInt);}
-        Intent phone = new Intent(Intent.ACTION_CALL);
-        phone.setData(Uri.parse("tel:"+numInt));
-        if (phone.resolveActivity(getPackageManager()) != null) {
-            startActivity(phone);
-        } else {
-            Toast.makeText(this, "Appli de téléphone non disponible", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void composeEmail(String[] addresses, String subject, String texte) {
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
-        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        intent.putExtra(Intent.EXTRA_TEXT, texte);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        } else {
-            Toast.makeText(this, "Appli d'email non disponible", Toast.LENGTH_LONG).show();
-        }
-    }
-    private void envoiSMS(MembreGroupe unP){
-        String numInt = unP.getTel();
-        Intent sms = new Intent(Intent.ACTION_SENDTO)    ;
-        sms.setData(Uri.parse("smsto:"+numInt));
-        sms.putExtra("sms_body", "salut !");
-        if(sms.resolveActivity(getPackageManager()) != null) {
-            startActivity(sms);
-        } else {
-            Toast.makeText(this, "Appli de messagerie non disponible", Toast.LENGTH_LONG).show();
         }
     }
 

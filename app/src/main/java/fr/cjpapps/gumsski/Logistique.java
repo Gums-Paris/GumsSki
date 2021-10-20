@@ -21,7 +21,12 @@ import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class Logistique extends AppCompatActivity {
 
@@ -32,6 +37,7 @@ public class Logistique extends AppCompatActivity {
     TextView deposes = null;
     TextView reprises = null;
     TextView coursesPrevues = null;
+    ExtendedFloatingActionButton fabModif = null;
     private String sortieId = "";
     private String logistiqueSortieId ="";
     String titreSortie = "";
@@ -39,6 +45,9 @@ public class Logistique extends AppCompatActivity {
     ModelItem model = null;
     SharedPreferences mesPrefs;
     SharedPreferences.Editor editeur;
+    int checkedOut = 0;
+    String checkedOutTime = "";
+    String verrou = "";
 
 // launcher pour ModifItem.
     final private ActivityResultLauncher<Intent> modifItemResultLauncher = registerForActivityResult(
@@ -47,17 +56,6 @@ public class Logistique extends AppCompatActivity {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     if (BuildConfig.DEBUG){
                     Log.i("SECUSERV", "retour de ModifItem OK ");}
-/*                    Intent data = result.getData();
-                    if (data != null) {
-                        if (data.hasExtra("itemChoisi")){
-                            itemId = data.getStringExtra("itemChoisi");
-                            sortieId = data.getStringExtra("sortieId");
-                        }
-                    }
-                    Intent affiche =new Intent(this, Logistique.class);
-                    affiche.putExtra("itemchoisi", itemId);
-                    affiche.putExtra("sortieid", sortieId);
-                    startActivity(affiche); */
                 }
             });
 
@@ -96,35 +94,17 @@ public class Logistique extends AppCompatActivity {
         coursesPrevues = findViewById(R.id.champ_courses);
         cleanupTextviews();
 
-        ExtendedFloatingActionButton fabModif = findViewById(R.id.fab_modif);
+        fabModif = findViewById(R.id.fab_modif);
         fabModif.hide();
-
-// on affiche le bouton modifier si le user est le responsable du car ou un Res ou un Admin
-        String userActuel = mesPrefs.getString("userId","0");
-        if (Variables.listeChefs.contains(userActuel) || Constantes.listeAdmins.contains(userActuel)) {
-            if (Variables.isNetworkConnected) {
-                fabModif.show();
-                fabModif.setOnClickListener(view -> {
-                    if (mesPrefs.getBoolean("logistiqueExiste", false)) {
-                        Intent choisi = new Intent(this, ModifItem.class);
-                        choisi.putExtra("itemChoisi", mesPrefs.getString("logistiqueId", "0"));
-                        choisi.putExtra("sortieId", sortieId);
-                        modifItemResultLauncher.launch(choisi);
-                    } else {
-                        envoiAlerte("La logistique doit être créée par un admin avant de pouvoir" +
-                                "être modifiée");
-                    }
-                });
-            }else{
-                envoiAlerte("Pas possible de modifier la logistique sans accès réseau");
-            }
-       }
+/*  on affichera ce bouton modifier dans l'observer de item si le user est le responsable du car ou un Res ou
+ *  un Admin à condition qu'il n'y ait pas verrouillage ; en cas de verrouillage, on déverrouillera si
+ *  le verrouillage date de plus de 10 minutes*/
 
         model = new ViewModelProvider(this).get(ModelItem.class); // constructeur fait rien
         if (Variables.isNetworkConnected) {
             if (BuildConfig.DEBUG){
             Log.i("SECUSERV", "logistique charge données réso");}
-            AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1, sortieId);
+            AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1, sortieId, "");
         }else{
             if (BuildConfig.DEBUG){
             Log.i("SECUSERV", "logistique charge données from prefs");}
@@ -157,7 +137,7 @@ public class Logistique extends AppCompatActivity {
                  String message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
                  envoiAlerte(message);
              }else{
-                 AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1,sortieId);
+                 AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1,sortieId, "");
              }
         };
         model.getFlagModif().observe(this, flagModifObserver);
@@ -183,6 +163,11 @@ public class Logistique extends AppCompatActivity {
                     deposes.setText(item.get("deposes"));
                     reprises.setText(item.get("reprises"));
                     coursesPrevues.setText(item.get("coursesprevues"));
+                    checkedOut = Aux.stringToInt(item.get("checked_out"));
+                    checkedOutTime = item.get("checked_out_time");
+                    verrou = item.get("verrou");
+                    boutonModifier();
+// le check_out pour édition se fait à l'entrée dans ModifItem
                 }
             }else{
                 editeur.putBoolean("logistiqueExiste", false);
@@ -196,6 +181,57 @@ public class Logistique extends AppCompatActivity {
         model.getMonItem().observe(this, ItemObserver);
 
     }   // fin de onCreate()
+
+    protected void boutonModifier() {
+/* on affiche le bouton modifier si le user est le responsable du car ou un Res ou un Admin
+*  à condition qu'il n'y ait pas verrouillage ; en cas de verrouillage, on déverrouille si le verrouillage
+*  date de plus de 10 minutes*/
+        String userActuel = mesPrefs.getString("userId","0");
+        if (Variables.listeChefs.contains(userActuel) || Constantes.listeAdmins.contains(userActuel)) {
+            if (Variables.isNetworkConnected) {
+                if (checkedOut > 0) essaiCheckin();
+                if (checkedOut == 0) {
+                    fabModif.show();
+                    fabModif.setOnClickListener(view -> {
+                        if (mesPrefs.getBoolean("logistiqueExiste", false)) {
+                            Intent choisi = new Intent(this, ModifItem.class);
+                            choisi.putExtra("itemChoisi", mesPrefs.getString("logistiqueId", "0"));
+                            choisi.putExtra("sortieId", sortieId);
+                            modifItemResultLauncher.launch(choisi);
+                        } else {
+                            envoiAlerte("La logistique doit être créée par un admin avant de pouvoir" +
+                                    "être modifiée");
+                        }
+                    });
+                }else{
+                    envoiAlerte(verrou);
+                }
+            }else{
+                envoiAlerte("Pas possible de modifier la logistique sans accès réseau");
+            }
+        }
+    }
+    protected void essaiCheckin(){
+// si le verrouillage date de plus de 10 minutes on déverrouille (checkOut = 0)
+        Date dateCheckedOut = null;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            dateCheckedOut = sdf.parse(checkedOutTime);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        final Calendar now = Calendar.getInstance();
+        now.add(Calendar.MINUTE, -10);
+        Date nowMoinsDelai = now.getTime();
+        if (BuildConfig.DEBUG){
+        Log.i("SECUSERV", "dates check_out et now-délai= "+dateCheckedOut+"  "+nowMoinsDelai);}
+        if (nowMoinsDelai.after(dateCheckedOut)) {
+                checkedOut = 0;
+                checkedOutTime = "0000-00-00 00:00:00";
+                verrou = "";
+        }
+    }
 
     protected void envoiAlerte(String message){
         DialogAlertes infoUtilisateur = DialogAlertes.newInstance(message);

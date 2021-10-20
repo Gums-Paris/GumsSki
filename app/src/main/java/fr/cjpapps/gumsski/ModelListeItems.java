@@ -42,7 +42,7 @@ public class ModelListeItems extends AndroidViewModel {
         String dateWE = mesPrefs.getString("date", null);
         String dateInfosDisponibles = mesPrefs.getString("dateData", null);
         if (!egaliteChaines(dateWE, dateInfosDisponibles)) {
-            recupInfo(Constantes.JOOMLA_RESOURCE_2, mesPrefs.getString("id", null));
+            recupInfo(Constantes.JOOMLA_RESOURCE_2, mesPrefs.getString("id", null),"");
         }else {
             getInfosFromPrefs();
         }

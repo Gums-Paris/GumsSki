@@ -30,14 +30,10 @@ public class ModifItem extends AppCompatActivity {
     private String idItem;
     private String sortieId;
     SharedPreferences mesPrefs;
-    SharedPreferences.Editor editeur;
-    private final HashMap<String, String> requestParams = new HashMap<>();
     private final HashMap<String, String> postParams = new HashMap<>();
-    private final String[] taskParams = new String[6];
     ModelItem model;
     Intent result = new Intent();
     ArrayList<String[]> fieldParams = new ArrayList<>();
-    TaskRunner taskRunner = new TaskRunner();
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
@@ -47,9 +43,9 @@ public class ModifItem extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (getSupportActionBar() != null){
+ /*       if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        }   */
 
 // fabrication du formulaire d'édition
         LinearLayout parentLayout = findViewById(R.id.parent);
@@ -88,6 +84,7 @@ public class ModifItem extends AppCompatActivity {
         model = new ViewModelProvider(this).get(ModelItem.class);
 
 // récup id de l'item dans l'intent et chargement de l'item (ici la logistique)
+// en utilisant la version de GET qui fait en même temps un verrouillage de l'item (task = edit).
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra("itemChoisi")){
@@ -96,10 +93,10 @@ public class ModifItem extends AppCompatActivity {
                 if (BuildConfig.DEBUG){
                 Log.i("SECUSERV", "item "+idItem+", "+sortieId);}
             }
-            AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1,sortieId);
+            AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1,sortieId, "edit");
         }
 
-// observateur de réception de l'item (ici la ogistique)
+// observateur de réception de l'item (ici la logistique)
         final Observer<HashMap<String, String>> monItemObserver = itemTravail -> {
             if(itemTravail != null) {
                 if (BuildConfig.DEBUG){
@@ -118,48 +115,34 @@ public class ModifItem extends AppCompatActivity {
             }
         };
         model.getMonItem().observe(this, monItemObserver);
-    }
+    }  //end onCreate
 
-// click listener pour SAUVEGARDER
+// click listener pour SAUVEGARDER (fait checkout + save + checkin à travers com_api)
     private final View.OnClickListener clickListenerSauv = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
             postParams.put("id",idItem);
             postParams.put("state","1");
-
             for (String[] params : fieldParams) {
                 EditText luChamp = findViewById(Integer.parseInt(params[4]));
                 if (luChamp != null) {
                     postParams.put(params[0], luChamp.getText().toString());
-//                    Log.i("ATTR ", postParams.toString());
                 }
             }
+            AuxReseau.envoiInfo(Constantes.JOOMLA_RESOURCE_1,postParams, "");
 
-            requestParams.put("app", Constantes.JOOMLA_APP);
-            requestParams.put("resource", Constantes.JOOMLA_RESOURCE_1);
-            requestParams.put("format", "json");
-            String stringRequest = AuxReseau.buildRequest(requestParams);
-            taskParams[0] = Variables.urlActive+stringRequest;
-            taskParams[1] = AuxReseau.buildRequest(postParams);
-            taskParams[2] = "Content-Type";
-            taskParams[3] = "application/x-www-form-urlencoded ; utf-8";
-            taskParams[4] = "X-Authorization";
-            taskParams[5] = "Bearer "+ mesPrefs.getString("auth", "");
-//            Log.i("task ", taskParams[1]+"  "+taskParams[5]);
-
-            if (Variables.isNetworkConnected) {
-                taskRunner.executeAsync(new EnvoiInfosGums(taskParams), AuxReseau::decodeRetourPostItem);
-            }
-/*            result.putExtra("itemchoisi", idItem);
-            result.putExtra("sortieId", sortieId); */
             setResult(RESULT_OK, result);
             finish();
         }
     };
 
-// click listener pour ANNULER
+// click listener pour ANNULER (fait un checkin  à travers com_api)
     private final View.OnClickListener clickListenerCancel = view -> {
+
+        postParams.put("id",idItem);
+        AuxReseau.envoiInfo(Constantes.JOOMLA_RESOURCE_1,postParams, "checkin");
+
         Intent result = new Intent();
         result.putExtra("itemchoisi", idItem);
         result.putExtra("sortieId", sortieId);
@@ -167,6 +150,14 @@ public class ModifItem extends AppCompatActivity {
         finish();
     };
 
+    @Override
+    public void onBackPressed() {
+// si l'usager  presse le bouton retour arrière on lui demande d'utiliser les boutons sauv ou annul
+// pour quitter la page
+        String message = getString(R.string.leave_edit);
+        DialogAlertes endEdit = DialogAlertes.newInstance(message);
+        endEdit.show(getSupportFragmentManager(), "quitterEdit");
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

@@ -1,9 +1,12 @@
 package fr.cjpapps.gumsski;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -179,11 +182,11 @@ public class Aux {
                     unMembre.setName(temp.get("name"));
                     String numTel = Aux.numInter(temp.get("tel"));
 // pour les essais
-                                numTel = "+33688998191";
+//                                numTel = "+33688998191";
                     unMembre.setTel(numTel);
                     unMembre.setEmail(temp.get("email"));
 // pour les essais
-                                unMembre.setEmail("claude_pastre@yahoo.fr");
+//                                unMembre.setEmail("claude_pastre@yahoo.fr");
                     break;
                 }
             }catch(NullPointerException e) {
@@ -278,6 +281,61 @@ static Spanned fromHtml(String source) {
 
     public static boolean isEmptyString(String str) {
         return str == null || str.isEmpty();
+    }
+
+// conversion chaine vers entier
+    public static int stringToInt(String str)  {
+        if (!(str == null)) {
+            try {
+                return (Integer.parseInt(str));
+            } catch (NumberFormatException ex) {
+                ex.printStackTrace();
+                return 0;
+            }
+        }else{
+            return 0;
+        }
+    }
+
+    protected static void phoneCall(MembreGroupe unP){
+        String numInt = unP.getTel();
+        if (BuildConfig.DEBUG){
+            Log.i("SECUSERV frag 1 onclick", numInt);}
+        Intent phone = new Intent(Intent.ACTION_CALL);
+        phone.setData(Uri.parse("tel:"+numInt));
+        phone.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (phone.resolveActivity(MyHelper.getInstance().recupPackageManager()) != null) {
+            MyHelper.getInstance().launchActivity(phone);
+        } else {
+            Log.i("SECUSERV"," appli téléphone pas disponible");
+        }
+    }
+
+    protected static void composeEmail(String[] addresses, String subject, String texte) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, texte);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (intent.resolveActivity(MyHelper.getInstance().recupPackageManager()) != null) {
+            MyHelper.getInstance().launchActivity(intent);
+        } else {
+            Log.i("SECUSERV"," appli mail pas disponible");
+        }
+    }
+
+    protected static void envoiSMS(MembreGroupe unP){
+        String numInt = unP.getTel();
+        Intent sms = new Intent(Intent.ACTION_SENDTO);
+        sms.setData(Uri.parse("smsto:"+numInt));
+        sms.putExtra("sms_body", "salut !");
+        sms.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(sms.resolveActivity(MyHelper.getInstance().recupPackageManager()) != null) {
+            MyHelper.getInstance().launchActivity(sms);
+        } else {
+            Log.i("SECUSERV"," appli message pas disponible");
+        }
     }
 
 }

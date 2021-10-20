@@ -70,7 +70,8 @@ public class AuxReseau {
 
     //   void recupListe () {  // devenu recupInfo pour généraliser à plusieurs resources
     // lance les requêtes auprès de gumsparis
-    static void recupInfo (String uneResource, String uneSortie) {
+    // task = "" pour un GET normal, task = edit pour un GET avec checkout. C'est com_api qui relaye
+    static void recupInfo (String uneResource, String uneSortie, String uneTask) {
         TaskRunner taskRunner = new TaskRunner();
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
         String stringRequest;
@@ -80,6 +81,7 @@ public class AuxReseau {
         requestParams.put("resource", uneResource);
         requestParams.put("format", "json");
         requestParams.put("sortieid", uneSortie);
+        requestParams.put("task", uneTask);
         stringRequest = AuxReseau.buildRequest(requestParams);
         taskParams[0] = Variables.urlActive;
         taskParams[1] = stringRequest;
@@ -104,9 +106,33 @@ public class AuxReseau {
         }
     }
 
+//Pour envoyer les requêtes de type POST à gumsparis. C'est fait à travers com_api
+// task = '' pour sauvegarder, task = checkin pour annuler
+    static void envoiInfo (String uneResource, HashMap<String, String> postParams, String uneTask) {
+        TaskRunner taskRunner = new TaskRunner();
+        SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
+        String stringRequest;
+        final HashMap<String, String> requestParams = new HashMap<>();
+        final String[] taskParams = new String[6];
+        requestParams.put("app", Constantes.JOOMLA_APP);
+        requestParams.put("resource", uneResource);
+        requestParams.put("format", "json");
+        requestParams.put("task", uneTask);
+        stringRequest = AuxReseau.buildRequest(requestParams);
+        taskParams[0] = Variables.urlActive+stringRequest;
+        taskParams[1] = AuxReseau.buildRequest(postParams);
+        taskParams[2] = "Content-Type";
+        taskParams[3] = "application/x-www-form-urlencoded";
+        taskParams[4] = "X-Authorization";
+        taskParams[5] = "Bearer "+ mesPrefs.getString("auth", "");
+        if (Variables.isNetworkConnected) {
+            taskRunner.executeAsync(new EnvoiInfosGums(taskParams), AuxReseau::decodeRetourPostItem);
+        }
+    }
+
 // fabrique la chaîne de requête à partir du tableau des paramètres
 // cette chaîne sera ajoutée à ".../index.php?option=com_api&"
-// ou mise dans le corps d'une requête POST
+// ou constituera le corps d'une requête POST
     static String buildRequest(HashMap<String,String> params) {
         StringBuilder sbParams = new StringBuilder();
         int i = 0;
@@ -243,6 +269,7 @@ public class AuxReseau {
         }
     }
 
+// récupère le jeton et le userId correspondant
     static void decodeInfosAuth(String resultat) {
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
         SharedPreferences.Editor editeur = mesPrefs.edit();
@@ -275,7 +302,7 @@ public class AuxReseau {
     static void decodeRetourPostItem(String resultat) {
 /* si on essaye de modifier un item qui n'existe pas il n'y a pas d'erreur apparente mais il ne se
  * passe rien en fait, sauf que la liste étant alors rechargée on voit l'item disparaître. Ceci pourrait
- * arriver si un autre usager sur une autre machine a supprimé l'item depuis qu'on l'a chargé
+ * arriver si un autre usager sur une autre machine a réussi à supprimer l'item depuis qu'on l'a chargé
  * (normalement c'est pas possible parce que l'item dont on demande l'édition est checked-out dans
  * Joomla de gumsparis)
  *

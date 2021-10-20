@@ -58,7 +58,7 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
 // ceci renvoie au listener dans l'activité ou le fragment où on va faire le travail :
             mListener.onClick(v, mPosition);
         }
-    }
+    }   // end ViewHolder
 
     @NonNull
     @Override

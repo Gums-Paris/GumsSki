@@ -37,6 +37,7 @@ public class AuxAvecContext {
             if ("verrou".equals(attr.getChamp())){ continue;}
             if ("meteo".equals(attr.getChamp())){ continue;}
             if ("secours".equals(attr.getChamp())){ continue;}
+            if ("canedit".equals(attr.getChamp())){ continue;}
 
             idT++;
             idE++;

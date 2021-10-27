@@ -64,7 +64,9 @@ public class StartActivity extends AppCompatActivity {
 /*  Dans les sharedPreferences :
 *       datelist == date à laquelle on a récupéré la liste des sorties
 *       date == date de la sortie choisie dans la liste des sorties
-*       datedata == date de la sortie à laquelle correspond la liste de participants disponible dans les prefs */
+*       datedata == date de la sortie à laquelle correspond la liste de participants disponible dans les prefs
+*
+*  Le changement de site internet gumsparis se fait ligne 112 */
 
 // servira à lancer AuthActivity puis MainActivity si RESULT_OK
     final private ActivityResultLauncher<Intent> authActivityResultLauncher = registerForActivityResult(
@@ -108,8 +110,8 @@ public class StartActivity extends AppCompatActivity {
         patience = findViewById(R.id.indeterminateBar);
 
 // pour indiquer le site auquel l'appli va s'adresse
-//        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
-        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
+        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
+//        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
 
         mesPrefs = MyHelper.getInstance(getApplicationContext()).recupPrefs();
         editeur = mesPrefs.edit();
@@ -278,8 +280,8 @@ public class StartActivity extends AppCompatActivity {
             case "5":
                 message = "Pas de réseau, on va avoir des problèmes !";
         }
-        DialogAlertes infoUtilisateur = DialogAlertes.newInstance(message);
-        infoUtilisateur.show(getSupportFragmentManager(), "infoutilisateur");
+        DialogAlertes infoStart = DialogAlertes.newInstance(message);
+        infoStart.show(getSupportFragmentManager(), "infoStart");
     }
 
     @Override

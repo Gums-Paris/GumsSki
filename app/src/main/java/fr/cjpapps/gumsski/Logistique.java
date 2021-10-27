@@ -48,6 +48,8 @@ public class Logistique extends AppCompatActivity {
     int checkedOut = 0;
     String checkedOutTime = "";
     String verrou = "";
+    String canEdit = "";
+    boolean canEditBool = false;
 
 // launcher pour ModifItem.
     final private ActivityResultLauncher<Intent> modifItemResultLauncher = registerForActivityResult(
@@ -116,7 +118,7 @@ public class Logistique extends AppCompatActivity {
 // Si false on essaye les prefs
         final Observer<Boolean> flagItemObserver = retour -> {
             if (!retour) {
-                String message = "Données réseau non disponibles";
+                String message = "Données réseau pas disponibles";
                 envoiAlerte(message);
                 model.loadDatafromPrefs();
             }else{
@@ -149,6 +151,7 @@ public class Logistique extends AppCompatActivity {
                     cleanupTextviews();
                     envoiAlerte("Cette logistique n'a pas été créée");
                 }else{
+                    fabModif.hide();
                     editeur.putBoolean("logistiqueExiste", true);
                     editeur.apply();
 // itemId est l'identifiant de la logistique dans la base
@@ -166,7 +169,12 @@ public class Logistique extends AppCompatActivity {
                     checkedOut = Aux.stringToInt(item.get("checked_out"));
                     checkedOutTime = item.get("checked_out_time");
                     verrou = item.get("verrou");
-                    boutonModifier();
+                    canEdit = item.get("canedit");
+                    canEditBool = Boolean.parseBoolean(canEdit);
+                    Log.i("SECUSERV", "canEdit = "+canEdit+" canEditBool = "+canEditBool);
+                    if (canEditBool) {
+                        boutonModifier();
+                    }
 // le check_out pour édition se fait à l'entrée dans ModifItem
                 }
             }else{
@@ -183,11 +191,14 @@ public class Logistique extends AppCompatActivity {
     }   // fin de onCreate()
 
     protected void boutonModifier() {
-/* on affiche le bouton modifier si le user est le responsable du car ou un Res ou un Admin
+/* on affiche le bouton modifier si le user est autorisé à éditer c'est-à-dire canEdit est vrai
+*  il est soit admin, soit responsable du car, soit Res de groupe
 *  à condition qu'il n'y ait pas verrouillage ; en cas de verrouillage, on déverrouille si le verrouillage
 *  date de plus de 10 minutes*/
-        String userActuel = mesPrefs.getString("userId","0");
-        if (Variables.listeChefs.contains(userActuel) || Constantes.listeAdmins.contains(userActuel)) {
+//        String userActuel = mesPrefs.getString("userId","0");
+//        Log.i("SECUSERV", "Dans bouton  canEditBool = "+canEditBool);
+//        if (canEditBool) {
+//            if (Variables.listeChefs.contains(userActuel) || Constantes.listeAdmins.contains(userActuel)) {
             if (Variables.isNetworkConnected) {
                 if (checkedOut > 0) essaiCheckin();
                 if (checkedOut == 0) {
@@ -209,8 +220,9 @@ public class Logistique extends AppCompatActivity {
             }else{
                 envoiAlerte("Pas possible de modifier la logistique sans accès réseau");
             }
-        }
+//        }
     }
+
     protected void essaiCheckin(){
 // si le verrouillage date de plus de 10 minutes on déverrouille (checkOut = 0)
         Date dateCheckedOut = null;
@@ -234,8 +246,8 @@ public class Logistique extends AppCompatActivity {
     }
 
     protected void envoiAlerte(String message){
-        DialogAlertes infoUtilisateur = DialogAlertes.newInstance(message);
-        infoUtilisateur.show(getSupportFragmentManager(), "infoutilisateur");
+        DialogAlertes infoLogistique = DialogAlertes.newInstance(message);
+        infoLogistique.show(getSupportFragmentManager(), "infouLogistique");
     }
 
     @Override

@@ -69,12 +69,15 @@ public class MainActivity extends AppCompatActivity {
     Pour version publiable : Remettre la bonne url pour www
     Délai 15 sec pour réseau est-il suffisant ? On fera avec jusqu'à nouvel ordre
     ---- reste
+       météo et secours
        Background item_liste paramétrable
        Clic long sur participant deb, deniv, nivA, nivS ?
     */
 
-// Noter   que pour des essais on peut mettre des tel et email bidon dans FirstFragment (lignes 101 et 105)
-// et dans Aux.getResCar (lignes 185 et 189). On peut aussi le faire dans le plugin gski/inscrits de com_api
+/* Noter
+* 1. pour des essais on peut mettre des tel et email bidon dans FirstFragment (lignes 101 et 105)
+*  et dans Aux.getResCar (lignes 185 et 189). On peut aussi le faire dans le plugin gski/inscrits de com_api
+* 2. la liste des gens "hors car" autorisés à éditer la logistique est dans Constantes.listeAdmins */
 
 //  appli dérivée de AccessAuth mais avec pas mal de modifs (adieu générique !)
 /*  AccessAuth :
@@ -391,8 +394,8 @@ public class MainActivity extends AppCompatActivity {
             case "5":
                 message = "Pas de réseau, on s'en va !";
         }
-        DialogAlertes infoUtilisateur = DialogAlertes.newInstance(message);
-        infoUtilisateur.show(getSupportFragmentManager(), "infoutilisateur");
+        DialogAlertes infoMain = DialogAlertes.newInstance(message);
+        infoMain.show(getSupportFragmentManager(), "infoMain");
     }
 
 // On déconnecte le receveur si c'est une vraie terminaison de l'appli

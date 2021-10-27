@@ -108,7 +108,8 @@ public class AuxReseau {
 
 //Pour envoyer les requêtes de type POST à gumsparis. C'est fait à travers com_api
 // task = '' pour sauvegarder, task = checkin pour annuler
-    static void envoiInfo (String uneResource, HashMap<String, String> postParams, String uneTask) {
+// le paramètre uneSortie sert pour vérifier une fois de plus si le user est autorisé
+    static void envoiInfo (String uneResource, HashMap<String, String> postParams, String uneSortie, String uneTask) {
         TaskRunner taskRunner = new TaskRunner();
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
         String stringRequest;
@@ -118,6 +119,7 @@ public class AuxReseau {
         requestParams.put("resource", uneResource);
         requestParams.put("format", "json");
         requestParams.put("task", uneTask);
+        requestParams.put("sortieid", uneSortie);
         stringRequest = AuxReseau.buildRequest(requestParams);
         taskParams[0] = Variables.urlActive+stringRequest;
         taskParams[1] = AuxReseau.buildRequest(postParams);
@@ -149,7 +151,7 @@ public class AuxReseau {
             }
             i++;
         }
-//        Log.i("SECUSERV", "request = "+sbParams.toString());
+        Log.i("SECUSERV", "request = "+sbParams.toString());
         return sbParams.toString();
     }
 

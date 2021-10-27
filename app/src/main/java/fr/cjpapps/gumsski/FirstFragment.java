@@ -178,7 +178,7 @@ public class FirstFragment extends DialogFragment {
             if (sendIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
                 startActivity(sendIntent);
             } else {
-                Toast.makeText(getActivity(), "Appli Signal non disponible", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Appli Signal pas disponible", Toast.LENGTH_LONG).show();
             } */
         });
     }

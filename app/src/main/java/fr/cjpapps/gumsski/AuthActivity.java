@@ -116,8 +116,8 @@ public class AuthActivity extends AppCompatActivity {
 //affichage dialogue d'alerte si problème d'authentification'
     protected void alerteAuth() {
         String message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
-        DialogAlertes infoUtilisateur = DialogAlertes.newInstance(message);
-        infoUtilisateur.show(getSupportFragmentManager(), "infoutilisateur");
+        DialogAlertes infoAuth = DialogAlertes.newInstance(message);
+        infoAuth.show(getSupportFragmentManager(), "infoAuth");
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -42,7 +42,8 @@ public class ModifItem extends AppCompatActivity {
         setContentView(R.layout.activity_modif_item);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        fieldParams.clear();
+        postParams.clear();
  /*       if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }   */
@@ -123,14 +124,16 @@ public class ModifItem extends AppCompatActivity {
         public void onClick(View v) {
 
             postParams.put("id",idItem);
-            postParams.put("state","1");
+            postParams.put("sortieid",sortieId );
+//            postParams.put("state","1");
             for (String[] params : fieldParams) {
                 EditText luChamp = findViewById(Integer.parseInt(params[4]));
                 if (luChamp != null) {
                     postParams.put(params[0], luChamp.getText().toString());
                 }
             }
-            AuxReseau.envoiInfo(Constantes.JOOMLA_RESOURCE_1,postParams, "");
+            Log.i("SECUSERV edit", postParams.toString());
+            AuxReseau.envoiInfo(Constantes.JOOMLA_RESOURCE_1,postParams, "","");
 
             setResult(RESULT_OK, result);
             finish();
@@ -141,7 +144,8 @@ public class ModifItem extends AppCompatActivity {
     private final View.OnClickListener clickListenerCancel = view -> {
 
         postParams.put("id",idItem);
-        AuxReseau.envoiInfo(Constantes.JOOMLA_RESOURCE_1,postParams, "checkin");
+        postParams.put("sortieid",sortieId );
+        AuxReseau.envoiInfo(Constantes.JOOMLA_RESOURCE_1,postParams, sortieId,"checkin");
 
         Intent result = new Intent();
         result.putExtra("itemchoisi", idItem);

@@ -18,7 +18,8 @@ public enum Attributs {
     ATTR09("secours", "Secours", "112"),
     ATTR10("checked_out", "checked_out", "" ),
     ATTR11("checked_out_time","checked_out_time", ""),
-    ATTR12("verrou", "verrou", "");
+    ATTR12("verrou", "verrou", ""),
+    ATTR13("canedit", "canedit", "");
 
     private String champ = "";
     private String nomChamp = "";

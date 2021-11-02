@@ -25,7 +25,7 @@ public class RecupInfosGums implements Callable<String> {
         if (Variables.isNetworkConnected) {
             try {
                 if (BuildConfig.DEBUG){
-                Log.i("SECUSERV", "recupInfo entre dans connect");}
+                Log.i("SECUSERV", "recupInfosGums entre dans connect");}
                 String fullURL = strings[0] + strings[1];
                 if (BuildConfig.DEBUG){
                 Log.i("SECUSERV", "URL " + fullURL);}
@@ -35,6 +35,8 @@ public class RecupInfosGums implements Callable<String> {
                 conn.setRequestProperty(strings[2], strings[3]);
                 conn.setRequestProperty(strings[4], strings[5]);
 
+                if (BuildConfig.DEBUG){
+                    Log.i("SECUSERV", "ouvre InputStream ");}
                 InputStream in = new BufferedInputStream(conn.getInputStream());
                 String line;
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));
@@ -46,13 +48,16 @@ public class RecupInfosGums implements Callable<String> {
                 reader.close();
 
             } catch (ConnectException e) {
-                Log.e("SECUSERV erreur connexion", e.getMessage());
+                if (BuildConfig.DEBUG){
+                Log.e("SECUSERV erreur connexion", e.getMessage());}
                 result.append("netOUT");
-            } catch (MalformedURLException e) {
-                Log.e("SECUSERV erreur URL", e.getMessage());
+            } catch (MalformedURLException e){
+                if (BuildConfig.DEBUG){
+                Log.e("SECUSERV erreur URL", e.getMessage());}
                 result.append("netOUT");
             } catch (UnknownHostException e) {
-                Log.e("SECUSERV erreur url hôte", e.getMessage());
+                if (BuildConfig.DEBUG){
+                Log.e("SECUSERV erreur url hôte", e.getMessage());}
                 result.append("netOUT");
             } catch (IOException e) {
                 e.printStackTrace();

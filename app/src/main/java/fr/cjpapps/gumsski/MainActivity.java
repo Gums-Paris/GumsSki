@@ -1,5 +1,8 @@
 package fr.cjpapps.gumsski;
 
+import static fr.cjpapps.gumsski.Aux.egaliteChaines;
+import static fr.cjpapps.gumsski.AuxReseau.recupInfo;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -43,6 +46,7 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
+// récupère la liste des participants et affiche les groupes
     ArrayList<String> nomsItems = new ArrayList<>();//    ArrayList<Item> listeItems = new ArrayList<>();
     ArrayList<HashMap<String,String>> listeDesItems = new ArrayList<>();
     TextView affichage =null;
@@ -67,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
 
 /* TODO
     Pour version publiable : Remettre la bonne url pour www
+    L'affichage des groupes par Main bafouille (appelle deux fois recupInfosGums (cela ne se produit
+    ni pour la liste des sorties ni pour la logistique.
     Délai 15 sec pour réseau est-il suffisant ? On fera avec jusqu'à nouvel ordre
     ---- reste
        météo et secours
@@ -75,9 +81,9 @@ public class MainActivity extends AppCompatActivity {
     */
 
 /* Noter
-* 1. pour des essais on peut mettre des tel et email bidon dans FirstFragment (lignes 101 et 105)
+* Pour des essais on peut mettre des tel et email bidon dans FirstFragment (lignes 101 et 105)
 *  et dans Aux.getResCar (lignes 185 et 189). On peut aussi le faire dans le plugin gski/inscrits de com_api
-* 2. la liste des gens "hors car" autorisés à éditer la logistique est dans Constantes.listeAdmins */
+*  */
 
 //  appli dérivée de AccessAuth mais avec pas mal de modifs (adieu générique !)
 /*  AccessAuth :
@@ -96,8 +102,8 @@ public class MainActivity extends AppCompatActivity {
              (ça c'est plus sévère que le paramétrage standard). On peut mettre le corps dePOST en form-data ce qui est assez
              laborieux à coder, ou en url-encoded ce qui n'est pas plus pénible à coder que le json. Je choisis
              cette dernière solution.
-             Pour DELETE, je triche avec GET en rajoutant un paramètre &fleur=bleuet. Ça ne marche évidemment que parce
-             que c'est moi qui code le traitement des requêtes sur le site gumsparis.
+             Pour DELETE, on triche avec GET en rajoutant un paramètre &fleur=bleuet. Ça ne marche évidemment que si
+             on peut code le traitement des requêtes sur le site gumsparis (plugin de com_api).
 
             2. Permissions du user sur le composant dans gumsparis
              Le user est identifié par le token d'authentification, il n'est pas nécessaire de le transporter
@@ -129,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    // servira à lancer AuthActivity pour changer d'utilisateur puis MainActivity si RESULT_OK
+    // Lanceur de AuthActivity pour changer d'utilisateur puis MainActivity si RESULT_OK
     final private ActivityResultLauncher<Intent> authNewUserResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -141,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-    // launcher pour demande permission d'appeler qqun au tph directement
+    // lanceur pour demande permission d'appeler qqun au tph directement
     final private ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -160,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-// pour pouvoir fermer depuis le fragment DialogQuestion (réponse OUI) ; on connecte le receveur
+// pour pouvoir fermer depuis le fragment DialogQuestion (réponse OUI) ; ici on connecte le receveur
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("finish_activity"));
 
         mesPrefs = MyHelper.getInstance().recupPrefs();
@@ -169,9 +175,6 @@ public class MainActivity extends AppCompatActivity {
         titreSortie = mesPrefs.getString("titre","");
         idSortie = mesPrefs.getString("id", "");
         idResCar = mesPrefs.getString("id_Res_Car", "");
-        Variables.listeChefs.clear();
-// listeChefs contiendra le responsable du car et les Res des groupes
-        Variables.listeChefs.add(mesPrefs.getString("id_Res_Car", "0"));
         affichage = findViewById(R.id.affiche);
         affichageSuite = findViewById(R.id.affiche2);
         phoneResCar = findViewById(R.id.phone_rescar);
@@ -194,7 +197,8 @@ public class MainActivity extends AppCompatActivity {
 
         auxMethods = new Aux();
 
-/*  La même chose existe dans StartActivity. Pour l'instant il n'existe pas d'accès à Main sans passer par Start
+/*  La même chose existe dans StartActivity. Pour l'instant il n'existe pas d'accès à Main
+    sans passer par Start, donc pas besoin de ce code :
         getSystemService(CONNECTIVITY_SERVICE);
         AuxReseau.watchNetwork();
 // Faut parfois patienter un peu jusqu'à ce que le réseau soit disponible
@@ -234,7 +238,6 @@ public class MainActivity extends AppCompatActivity {
                     }, 200); // délai 0.2 sec
                     alerte("2");
                     finish();
-//                    modelListe.getInfosFromPrefs();
                 }
             };
             modelListe.getFlagListe().observe(MainActivity.this, flagListeObserver);
@@ -242,7 +245,6 @@ public class MainActivity extends AppCompatActivity {
 // observateur d'arrivée de la liste des participants et affichage des groupes
             final Observer<ArrayList<HashMap<String, String>>> listeItemsObserver = new Observer<ArrayList<HashMap<String, String>>>() {
                 String pourInfo = "";
-
                 @Override
                 public void onChanged(ArrayList<HashMap<String, String>> items) {
                     if (items != null) {
@@ -252,36 +254,11 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("SECUSERV Main", "taille = " + listeDesItems.size());}
 
 // Pour communiquer avec le responable du car :
-                        resCar = auxMethods.getResCar(listeDesItems, idResCar);
-                        phoneResCar.setOnClickListener(view -> {
-                            if (ContextCompat.checkSelfPermission(
-                                    MainActivity.this, Manifest.permission.CALL_PHONE) ==
-                                    PackageManager.PERMISSION_GRANTED) {
-                                Aux.phoneCall(resCar);
-                            } else {
-                                // You can directly ask for the permission.
-                                // The registered ActivityResultCallback gets the result of this request.
-                                requestPermissionLauncher.launch(
-                                        Manifest.permission.CALL_PHONE);
-                                if (okPhone) {
-                                    Aux.phoneCall(resCar);
-                                }
-                            }
-                        });
-                        emailResCar.setOnClickListener(view -> {
-                            String[] adresses = {resCar.getEmail()};
-                            String subject = "";
-                            String texte = "";
-                            Aux.composeEmail(adresses, subject, texte);
-                        });
-                        smsResCar.setOnClickListener(view -> {
-                            Aux.envoiSMS(resCar);
-                        });
-// fin communications res car
+                        pourJoindreResCar();
 
                         nomsItems = auxMethods.faitListeGroupes(listeDesItems);
                         if (BuildConfig.DEBUG){
-                        Log.i("SECUSERV Main lesChefs", Variables.listeChefs.toString());}
+                            Log.i("SECUSERV Main", "groupes = " + nomsItems);}
                         if (nomsItems != null) {
                             RecyclerViewClickListener listener = (view, position) -> {
                                 String element = nomsItems.get(position);
@@ -291,6 +268,8 @@ public class MainActivity extends AppCompatActivity {
                                 partFrag.show(fm, "participants");
                             };
                             monAdapter = new RecyclerViewGenericAdapter(recyclerView.getContext(), nomsItems, listener,R.layout.item_liste);
+                            if (BuildConfig.DEBUG){
+                                Log.i("SECUSERV Main", "setAdapter");}
                             recyclerView.setAdapter(monAdapter);
                         } else {
                             pourInfo = "pas de liste de groupes";
@@ -313,8 +292,37 @@ public class MainActivity extends AppCompatActivity {
             startActivity(retourListeSorties);
             MainActivity.this.finish();
         });
-
     }  // end onCreate
+
+    private void pourJoindreResCar(){
+        resCar = auxMethods.getResCar(listeDesItems, idResCar);
+        if (resCar != null) {
+            phoneResCar.setOnClickListener(view -> {
+                if (ContextCompat.checkSelfPermission(
+                        MainActivity.this, Manifest.permission.CALL_PHONE) ==
+                        PackageManager.PERMISSION_GRANTED) {
+                    Aux.phoneCall(resCar);
+                } else {
+                    // You can directly ask for the permission.
+                    // The registered ActivityResultCallback gets the result of this request.
+                    requestPermissionLauncher.launch(
+                            Manifest.permission.CALL_PHONE);
+                    if (okPhone) {
+                        Aux.phoneCall(resCar);
+                    }
+                }
+            });
+            emailResCar.setOnClickListener(view -> {
+                String[] adresses = {resCar.getEmail()};
+                String subject = "";
+                String texte = "";
+                Aux.composeEmail(adresses, subject, texte);
+            });
+            smsResCar.setOnClickListener(view -> {
+                Aux.envoiSMS(resCar);
+            });
+        }
+    }
 
     @Override
     public void onBackPressed() {

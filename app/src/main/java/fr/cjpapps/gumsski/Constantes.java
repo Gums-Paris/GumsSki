@@ -5,10 +5,7 @@ import java.util.Arrays;
 
 public class Constantes {
 
-// les id des admins autorisés à modifier le contenu des logistiques
-    final static ArrayList<String> listeAdmins = new ArrayList<>(Arrays.asList("62", "66"));
-
-/* pour caractériser les points d'accès sur le serveur joomla
+    /* pour caractériser les points d'accès sur le serveur joomla
     (ne pas toucher à users et login)
   ****************************************************************/
     final static String JOOMLA_USERS = "users";

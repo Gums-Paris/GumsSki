@@ -44,7 +44,7 @@ public class Aux {
                 unItem.put("autonome", unObjet.optString("autonome"));
                 unItem.put("tel", unObjet.optString("tel"));
                 unItem.put("email", unObjet.optString("email"));
-                listeItems.add(i, unItem);
+                listeItems.add(unItem);
             }
             return  listeItems;
         } catch (JSONException e) {
@@ -60,7 +60,6 @@ public class Aux {
             JSONObject jsonGums = new JSONObject(jsListe);
             JSONArray arrayGums = jsonGums.getJSONArray("data");
             for (int i = 0; i < arrayGums.length(); i++) {
-//                JSONArray unArray = arrayGums.getJSONArray(i);
                 JSONObject jsonData = arrayGums.getJSONObject(i);
                 HashMap<String,String> unItem = new HashMap<>();
                 unItem.put("date_bdh",jsonData.optString("date_bdh"));
@@ -71,7 +70,7 @@ public class Aux {
                 unItem.put("publier_groupes",jsonData.optString("publier_groupes"));
                 unItem.put("responsable",jsonData.optString("responsable"));
                 unItem.put("id_responsable", jsonData.optString("id_responsable"));
-                listeSorties.add(i, unItem);
+                listeSorties.add(unItem);
             }
             return  listeSorties;
         } catch (JSONException e) {
@@ -89,15 +88,11 @@ public class Aux {
            JSONObject jsonGums = new JSONObject(jsonItem);
            if (!jsonGums.isNull("data")) {
                JSONObject jsonData = jsonGums.getJSONObject("data");
-               if (BuildConfig.DEBUG){
-               Log.i("SECUSERV", "data logistique = " + jsonData.toString());}
                for (Attributs attr : Attributs.values()) {
                    monItem.put(attr.getChamp(), jsonData.optString(attr.getChamp()));
                }
            }else{
-               if (BuildConfig.DEBUG){
-                    Log.i("SECUSERV", "data logistique est null");}
-               for (Attributs attr : Attributs.values()) {
+                for (Attributs attr : Attributs.values()) {
                    monItem.put(attr.getChamp(), "");
                }
                editeur.putBoolean("logistiqueExiste", false);
@@ -154,10 +149,9 @@ public class Aux {
         int numGroupe = 0;
         for (HashMap<String,String> temp :items) {
             try {
-                if (parseInt(Objects.requireNonNull(temp.get("groupe"))) != numGroupe) {
+                 if (parseInt(Objects.requireNonNull(temp.get("groupe"))) != numGroupe) {
                     numGroupe = parseInt(Objects.requireNonNull(temp.get("groupe")));
                     if ("Res".equals(temp.get("responsabilite"))) {
-                        Variables.listeChefs.add(temp.get("userid"));
                         String titreGroupe = numGroupe + ":  " + temp.get("name");
                         liste.add(titreGroupe);
                     }
@@ -196,6 +190,7 @@ public class Aux {
         if (isEmptyString(unMembre.getName())){
             if (BuildConfig.DEBUG){
                 Log.i("SECUSERV", "pas trouvé de resCar");}
+            unMembre = null;
         }
         return unMembre;
     }
@@ -307,7 +302,8 @@ static Spanned fromHtml(String source) {
         if (phone.resolveActivity(MyHelper.getInstance().recupPackageManager()) != null) {
             MyHelper.getInstance().launchActivity(phone);
         } else {
-            Log.i("SECUSERV"," appli téléphone pas disponible");
+            if (BuildConfig.DEBUG) {
+            }            Log.i("SECUSERV"," appli téléphone pas disponible");
         }
     }
 
@@ -321,7 +317,8 @@ static Spanned fromHtml(String source) {
         if (intent.resolveActivity(MyHelper.getInstance().recupPackageManager()) != null) {
             MyHelper.getInstance().launchActivity(intent);
         } else {
-            Log.i("SECUSERV"," appli mail pas disponible");
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV"," appli mail pas disponible");}
         }
     }
 
@@ -334,7 +331,8 @@ static Spanned fromHtml(String source) {
         if(sms.resolveActivity(MyHelper.getInstance().recupPackageManager()) != null) {
             MyHelper.getInstance().launchActivity(sms);
         } else {
-            Log.i("SECUSERV"," appli message pas disponible");
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV"," appli message pas disponible");}
         }
     }
 

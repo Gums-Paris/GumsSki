@@ -17,6 +17,4 @@ public class Variables {
     // liste participants déjà chargée
     public static boolean isListeAvailable = false;
 
-    // table des "chefs" autorisés à modiier la logistique
-    public static ArrayList<String> listeChefs = new ArrayList<>();
 }

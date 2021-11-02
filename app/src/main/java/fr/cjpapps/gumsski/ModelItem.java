@@ -17,8 +17,8 @@ import static fr.cjpapps.gumsski.Aux.egaliteChaines;
 public class ModelItem extends AndroidViewModel {
 
 /* utilisé par Logistique et ModifItem
- du coup on ne met pas la récup des données dans le modèle avec recours aux Prefs si réseau absent
- parce que pour éditer on tient à  avoir les valeurs les plus fraîches des paramètres
+ du coup on ne met pas la récup des données dans le constructeur du modèle avec recours aux Prefs
+ si réseau absent parce que pour éditer on tient à avoir les valeurs les plus fraîches des paramètres
  (et de toutes manières, pour éditer il faut avoir le réseau)  */
 
     SharedPreferences mesPrefs;
@@ -39,8 +39,8 @@ public class ModelItem extends AndroidViewModel {
     protected void loadDatafromPrefs () {
         HashMap<String,String> itemLogistique;
         Log.i("SECUSERV", "model data from prefs");
-//  jsonItem contient la dernière info logistique chargée. On vérifie qu'elle correspond à la sortie voulue
-//  et qu'elle n'est pas vide
+//  jsonItem contient la dernière info logistique chargée. On vérifie qu'elle correspond à la sortie
+//  voulue et qu'elle n'est pas vide
         String jsonItem = mesPrefs.getString("jsonItem", "");
         String idSortieDispo;
         try {
@@ -48,18 +48,21 @@ public class ModelItem extends AndroidViewModel {
             if (!jsonGums.isNull("data")) {
                 JSONObject jsonData = jsonGums.getJSONObject("data");
                 idSortieDispo = jsonData.optString("sortieid", "");
-                Log.i("SECUSERV", "logistique dispo = " + idSortieDispo);
+                if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "logistique dispo = " + idSortieDispo);}
                 if(egaliteChaines(idSortieDispo, mesPrefs.getString("id", null))) {
                     itemLogistique = Aux.getParamsItem(jsonItem);
                     ModelItem.monItem.setValue(itemLogistique);
                     ModelItem.flagItem.setValue(true);
                 }else{
                     ModelItem.monItem.setValue(null);
-                    Log.i("SECUSERV", "model : info prefs colle pas");
+                    if (BuildConfig.DEBUG){
+                    Log.i("SECUSERV", "model : info prefs colle pas");}
                 }
             }else{
                 ModelItem.monItem.setValue(null);
-                Log.i("SECUSERV", "model logistique prefs null");
+                if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "model logistique prefs null");}
             }
         } catch (JSONException e) {
             e.printStackTrace();

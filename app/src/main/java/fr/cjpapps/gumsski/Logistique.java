@@ -96,13 +96,14 @@ public class Logistique extends AppCompatActivity {
         coursesPrevues = findViewById(R.id.champ_courses);
         cleanupTextviews();
 
+// floating action button pour éditer la logistique
         fabModif = findViewById(R.id.fab_modif);
         fabModif.hide();
 /*  on affichera ce bouton modifier dans l'observer de item si le user est le responsable du car ou un Res ou
  *  un Admin à condition qu'il n'y ait pas verrouillage ; en cas de verrouillage, on déverrouillera si
  *  le verrouillage date de plus de 10 minutes*/
 
-        model = new ViewModelProvider(this).get(ModelItem.class); // constructeur fait rien
+        model = new ViewModelProvider(this).get(ModelItem.class); // son constructeur ne fait rien
         if (Variables.isNetworkConnected) {
             if (BuildConfig.DEBUG){
             Log.i("SECUSERV", "logistique charge données réso");}
@@ -144,7 +145,7 @@ public class Logistique extends AppCompatActivity {
         };
         model.getFlagModif().observe(this, flagModifObserver);
 
-// l'observer de Item - tester pour logistique absente et selon le cas afficher alerte
+// l'observer de Item - on teste pour logistique absente et selon le cas afficher alerte
         final Observer<HashMap<String, String>> ItemObserver = item -> {
             if (item != null){
                 if (!(mesPrefs.getBoolean("logistiqueExiste", false))){
@@ -171,7 +172,8 @@ public class Logistique extends AppCompatActivity {
                     verrou = item.get("verrou");
                     canEdit = item.get("canedit");
                     canEditBool = Boolean.parseBoolean(canEdit);
-                    Log.i("SECUSERV", "canEdit = "+canEdit+" canEditBool = "+canEditBool);
+                    if (BuildConfig.DEBUG){
+                    Log.i("SECUSERV", "canEdit = "+canEdit+" canEditBool = "+canEditBool);}
                     if (canEditBool) {
                         boutonModifier();
                     }
@@ -195,10 +197,6 @@ public class Logistique extends AppCompatActivity {
 *  il est soit admin, soit responsable du car, soit Res de groupe
 *  à condition qu'il n'y ait pas verrouillage ; en cas de verrouillage, on déverrouille si le verrouillage
 *  date de plus de 10 minutes*/
-//        String userActuel = mesPrefs.getString("userId","0");
-//        Log.i("SECUSERV", "Dans bouton  canEditBool = "+canEditBool);
-//        if (canEditBool) {
-//            if (Variables.listeChefs.contains(userActuel) || Constantes.listeAdmins.contains(userActuel)) {
             if (Variables.isNetworkConnected) {
                 if (checkedOut > 0) essaiCheckin();
                 if (checkedOut == 0) {
@@ -247,7 +245,7 @@ public class Logistique extends AppCompatActivity {
 
     protected void envoiAlerte(String message){
         DialogAlertes infoLogistique = DialogAlertes.newInstance(message);
-        infoLogistique.show(getSupportFragmentManager(), "infouLogistique");
+        infoLogistique.show(getSupportFragmentManager(), "infoLogistique");
     }
 
     @Override

@@ -34,16 +34,23 @@ public class ModelListeItems extends AndroidViewModel {
     public ModelListeItems(final Application application) {
         super(application);
         mesPrefs = MyHelper.getInstance().recupPrefs();
-        Log.i("SECUSERV", "main model auth ? "+mesPrefs.getBoolean("authOK", false));
+        if (BuildConfig.DEBUG){
+        Log.i("SECUSERV", "main model auth ? "+mesPrefs.getBoolean("authOK", false));}
 
-/*  Si dateWE est vide ou si la date des infos ne colle pas avec la date du WE, on va chercher les infos sur gumsparis.
+/*  Si id sortie ne colle pas avec id données desortie disponible, on va chercher les infos sur gumsparis.
 *   Sinon on les récupère en sharedPreferences.
-*   dateData a été mis égal à dateWE par AuxReseau.decodeInfosItem lorsque la récup données par le réseau a marché */
-        String dateWE = mesPrefs.getString("date", null);
-        String dateInfosDisponibles = mesPrefs.getString("dateData", null);
-        if (!egaliteChaines(dateWE, dateInfosDisponibles)) {
+*   idData a été enregistré par AuxReseau.decodeInfosItems lorsque la récup données par le réseau a marché */
+//        String dateWE = mesPrefs.getString("date", null);
+//        String dateInfosDisponibles = mesPrefs.getString("dateData", null);
+        String sortieId = mesPrefs.getString("id", null);
+        String idSortieDispo = mesPrefs.getString("idData", null);
+        if (!egaliteChaines(sortieId, idSortieDispo)) {
+            if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "model appel réseau  " +sortieId+" "+idSortieDispo);}
             recupInfo(Constantes.JOOMLA_RESOURCE_2, mesPrefs.getString("id", null),"");
         }else {
+            if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "main from prefs  " +sortieId+" "+idSortieDispo);}
             getInfosFromPrefs();
         }
     }
@@ -52,6 +59,8 @@ public class ModelListeItems extends AndroidViewModel {
         ArrayList<HashMap<String,String>> listeBidule;
 //  jsonliste contient la liste des participants
         String jsliste = mesPrefs.getString("jsonListe", "");
+        if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "modelliste prefs jsliste participants " + jsliste);}
         listeBidule = Aux.getListeItems(jsliste);
         if(listeBidule != null){
             ModelListeItems.listeDesItems.setValue(listeBidule);

@@ -85,7 +85,8 @@ public class CreateItem extends AppCompatActivity {
             requestParams.put("format", "json");
             String stringRequest = AuxReseau.buildRequest(requestParams);
             taskParams[0] = Variables.urlActive+stringRequest;
-            Log.i("SECUSERV", " modif post url "+taskParams[0]);
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", " modif post url "+taskParams[0]);}
             taskParams[1] = AuxReseau.buildRequest(postParams);
             taskParams[2] = "Content-Type";
             taskParams[3] = "application/x-www-form-urlencoded ; utf-8";

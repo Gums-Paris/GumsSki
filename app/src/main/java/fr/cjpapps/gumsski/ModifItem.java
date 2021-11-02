@@ -44,7 +44,9 @@ public class ModifItem extends AppCompatActivity {
         setSupportActionBar(toolbar);
         fieldParams.clear();
         postParams.clear();
- /*       if (getSupportActionBar() != null){
+ /* on ne met pas la flèche de retour arrière dans la barre supérieure. On expliquera au client qu'il ne
+ peut pas sortir par retour arrière pour ne pas laisser l'item verrouillé (voir onBackPressed())
+        if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }   */
 
@@ -116,7 +118,7 @@ public class ModifItem extends AppCompatActivity {
             }
         };
         model.getMonItem().observe(this, monItemObserver);
-    }  //end onCreate
+    }  //fin de onCreate
 
 // click listener pour SAUVEGARDER (fait checkout + save + checkin à travers com_api)
     private final View.OnClickListener clickListenerSauv = new View.OnClickListener() {
@@ -132,7 +134,8 @@ public class ModifItem extends AppCompatActivity {
                     postParams.put(params[0], luChamp.getText().toString());
                 }
             }
-            Log.i("SECUSERV edit", postParams.toString());
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV edit", postParams.toString());}
             AuxReseau.envoiInfo(Constantes.JOOMLA_RESOURCE_1,postParams, "","");
 
             setResult(RESULT_OK, result);

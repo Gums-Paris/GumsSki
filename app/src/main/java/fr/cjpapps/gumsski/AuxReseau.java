@@ -51,13 +51,15 @@ public class AuxReseau {
                     @Override
                        public void onAvailable(@NonNull Network network) {
                            super.onAvailable(network);
-                           Log.i("SECUSERV", "on available " );
+                        if (BuildConfig.DEBUG){
+                           Log.i("SECUSERV", "on available " );}
                            Variables.isNetworkConnected = true; // Global Static Variable
                        }
                        @Override
                        public void onLost(@NonNull Network network) {
                            super.onLost(network);
-                           Log.i("SECUSERV", "on lost " );
+                           if (BuildConfig.DEBUG){
+                           Log.i("SECUSERV", "on lost " );}
                            Variables.isNetworkConnected = false; // Global Static Variable
                        }
                     }
@@ -89,7 +91,8 @@ public class AuxReseau {
         taskParams[3] = "application/x-www-form-urlencoded";
         taskParams[4] = "X-Authorization";
         taskParams[5] = "Bearer "+ mesPrefs.getString("auth", "");
-        Log.i("SECUSERV", "network ? "+Variables.isNetworkConnected);
+        if (BuildConfig.DEBUG){
+        Log.i("SECUSERV", "network ? "+Variables.isNetworkConnected);}
         if (Variables.isNetworkConnected)  {
             switch(uneResource) {
                 case Constantes.JOOMLA_RESOURCE_1 :
@@ -151,7 +154,8 @@ public class AuxReseau {
             }
             i++;
         }
-        Log.i("SECUSERV", "request = "+sbParams.toString());
+        if (BuildConfig.DEBUG){
+        Log.i("SECUSERV", "build request = "+sbParams.toString());}
         return sbParams.toString();
     }
 
@@ -170,7 +174,8 @@ public class AuxReseau {
                     Date dateJour = c.getTime();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                     String dateListe = sdf.format(dateJour);
-                    Log.i("SECUSERV", "date jour = " + dateListe);
+                    if (BuildConfig.DEBUG){
+                    Log.i("SECUSERV", "date jour = " + dateListe);}
 
                     params = Aux.getListeSorties(result);
                     if (params != null) {
@@ -219,6 +224,7 @@ public class AuxReseau {
                     ModelListeItems.listeDesItems.setValue(listeBidule);
                     ModelListeItems.flagListe.setValue(true);
                     editeur.putString("dateData", mesPrefs.getString("date", null));
+                    editeur.putString("idData", mesPrefs.getString("id", null));
                     editeur.apply();
                 }else{
                     ModelListeItems.flagListe.setValue(false);
@@ -254,7 +260,8 @@ public class AuxReseau {
                     monItem = Aux.getParamsItem(result);
                     ModelItem.monItem.setValue(monItem);
                     ModelItem.flagItem.setValue(true);
-               Log.i("SECUSERV", "monItem = " + monItem.toString());
+                    if (BuildConfig.DEBUG){
+                        Log.i("SECUSERV", "monItem = " + monItem.toString());}
                 } else {
                     ModelItem.flagItem.setValue(false);
                     editeur.putString("errMsg", errMsg);
@@ -266,7 +273,8 @@ public class AuxReseau {
                 ModelItem.flagItem.setValue(false);
             }
         }else{
-            Log.i("SECUSERV", "netOUT, flagItem est false ");
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "netOUT, flagItem est false ");}
             ModelItem.flagItem.setValue(false);
         }
     }
@@ -283,7 +291,8 @@ public class AuxReseau {
             String auth = data.optString("auth");
             String code = data.optString("code");
             String userId = data.optString("id");
-            Log.i("SECUSERV", " onpostexec auth "+auth+" code "+code+" userId "+userId);
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", " onpostexec auth "+auth+" code "+code+" userId "+userId);}
             if ("200".equals(code)) {
                 editeur.putBoolean("authOK", true);
                 editeur.putString("auth", auth);
@@ -313,7 +322,8 @@ public class AuxReseau {
 
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
         SharedPreferences.Editor  editeur = mesPrefs.edit();
-//        Log.i("SECUSERV", " onpostexec  "+resultat);
+        if (BuildConfig.DEBUG){
+        Log.i("SECUSERV", " onpostexec  "+resultat);}
         try {
             JSONObject jsonGums = new JSONObject(resultat);
             String errMsg = jsonGums.optString("err_msg");
@@ -343,7 +353,8 @@ public class AuxReseau {
             String errCode = jsonGums.optString("err_code");
             if ("".equals(errCode)) {
                 String content = jsonGums.optString("data");
-                Log.i("SECUSERV", "del data "+content);
+                if (BuildConfig.DEBUG){
+                    Log.i("SECUSERV", "del data "+content);}
                 if (!(Aux.egaliteChaines(content, mesPrefs.getString("idDel", "0")))) {
                     editeur.putString("errMsg", "item inexistant");
                     editeur.putString("errCode", content);

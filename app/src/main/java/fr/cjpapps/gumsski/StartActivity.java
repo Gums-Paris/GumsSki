@@ -110,8 +110,8 @@ public class StartActivity extends AppCompatActivity {
         patience = findViewById(R.id.indeterminateBar);
 
 // pour indiquer le site auquel l'appli va s'adresse
-        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
-//        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
+//        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
+        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
 
         mesPrefs = MyHelper.getInstance(getApplicationContext()).recupPrefs();
         editeur = mesPrefs.edit();
@@ -190,7 +190,6 @@ public class StartActivity extends AppCompatActivity {
                             editeur.putString("jours", listeDesItems.get(position).get("jours"));
                             editeur.putString("publier_groupes", listeDesItems.get(position).get("publier_groupes"));
                             String responsable = listeDesItems.get(position).get("responsable");
-//                            if ("null".equals(responsable)) { responsable = "";}
                             editeur.putString("responsable", responsable);
                             editeur.putString("id_Res_Car", listeDesItems.get(position).get("id_responsable"));
                             String infos;
@@ -254,7 +253,6 @@ public class StartActivity extends AppCompatActivity {
         }
        if (id == R.id.new_user) {
             Intent newUser = new Intent(this, AuthActivity.class);
-//            startActivityForResult(newUser, Constantes.AUTH_CHANGE);
            authNewUserResultLauncher.launch(newUser);
             return true;
         }

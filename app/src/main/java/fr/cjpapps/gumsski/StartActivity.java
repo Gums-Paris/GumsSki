@@ -28,8 +28,12 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -65,8 +69,10 @@ public class StartActivity extends AppCompatActivity {
 *       datelist == date à laquelle on a récupéré la liste des sorties
 *       date == date de la sortie choisie dans la liste des sorties
 *       datedata == date de la sortie à laquelle correspond la liste de participants disponible dans les prefs
+*       today == date du jour
+*       dateRecupData == date où on a récupéré la liste des participants
 *
-*  Le changement de site internet gumsparis se fait ligne 112 */
+*   Le changement de site internet gumsparis se fait ligne 118 */
 
 // servira à lancer AuthActivity puis MainActivity si RESULT_OK
     final private ActivityResultLauncher<Intent> authActivityResultLauncher = registerForActivityResult(
@@ -110,11 +116,18 @@ public class StartActivity extends AppCompatActivity {
         patience = findViewById(R.id.indeterminateBar);
 
 // pour indiquer le site auquel l'appli va s'adresse
-//        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
-        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
+        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
+//        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
+
+// trouver la date du jour
+        final Calendar c = Calendar.getInstance();
+        Date dateJour = c.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String dateToday = sdf.format(dateJour);
 
         mesPrefs = MyHelper.getInstance(getApplicationContext()).recupPrefs();
         editeur = mesPrefs.edit();
+        editeur.putString("today", dateToday);
         editeur.putString("errCode", "");
         editeur.putString("errMsg", "");
 // ceci force auth pour les essais :

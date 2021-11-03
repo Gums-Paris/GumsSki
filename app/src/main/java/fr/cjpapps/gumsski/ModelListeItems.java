@@ -7,10 +7,16 @@ import android.util.Log;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import static fr.cjpapps.gumsski.Aux.egaliteChaines;
+import static fr.cjpapps.gumsski.Aux.isEmptyString;
 import static fr.cjpapps.gumsski.AuxReseau.recupInfo;
 
 public class ModelListeItems extends AndroidViewModel {
@@ -38,20 +44,29 @@ public class ModelListeItems extends AndroidViewModel {
         Log.i("SECUSERV", "main model auth ? "+mesPrefs.getBoolean("authOK", false));}
 
 /*  Si id sortie ne colle pas avec id données desortie disponible, on va chercher les infos sur gumsparis.
-*   Sinon on les récupère en sharedPreferences.
+*   Sinon on les récupère en sharedPreferences sauf si les infos datent de plus de 1 jour, et ce
+*   seulement tant qu'on 'est pas arrivé à la date du WE (mais pas s'il n'y a pas d'accès réseau
+*   auquel cas on prend quand même les prefs.
 *   idData a été enregistré par AuxReseau.decodeInfosItems lorsque la récup données par le réseau a marché */
-//        String dateWE = mesPrefs.getString("date", null);
-//        String dateInfosDisponibles = mesPrefs.getString("dateData", null);
+        String dateWE = mesPrefs.getString("date", null);
+        String dateInfosDisponibles = mesPrefs.getString("dateRecupData", "");
+        if (BuildConfig.DEBUG){
+            Log.i("SECUSERV Dates", "WE " +dateWE+" Dispo "+dateInfosDisponibles);}
         String sortieId = mesPrefs.getString("id", null);
         String idSortieDispo = mesPrefs.getString("idData", null);
-        if (!egaliteChaines(sortieId, idSortieDispo)) {
+        if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "main model  " +sortieId+" "+idSortieDispo);}
+        if (egaliteChaines(sortieId, idSortieDispo)) {
             if (BuildConfig.DEBUG){
-                Log.i("SECUSERV", "model appel réseau  " +sortieId+" "+idSortieDispo);}
-            recupInfo(Constantes.JOOMLA_RESOURCE_2, mesPrefs.getString("id", null),"");
-        }else {
-            if (BuildConfig.DEBUG){
-                Log.i("SECUSERV", "main from prefs  " +sortieId+" "+idSortieDispo);}
+                Log.i("SECUSERV", "verifdates  " +verifDates(dateWE, dateInfosDisponibles));}
+            if (verifDates(dateWE, dateInfosDisponibles)  || !Variables.isNetworkConnected){
             getInfosFromPrefs();
+            }
+            else{
+                recupInfo(Constantes.JOOMLA_RESOURCE_2, mesPrefs.getString("id", null), "");
+            }
+        }else{
+            recupInfo(Constantes.JOOMLA_RESOURCE_2, mesPrefs.getString("id", null), "");
         }
     }
 
@@ -68,6 +83,33 @@ public class ModelListeItems extends AndroidViewModel {
         }else{
             ModelListeItems.flagListe.setValue(false);
         }
+    }
+
+/*  verifDates renvoie true si la date du jour est après la date de début du WE ou si les données
+*   disponibles datent de moins d'une journée. */
+    boolean verifDates(String WE, String infoDispo) {
+        if (Aux.isEmptyString(WE) || Aux.isEmptyString(infoDispo)) {
+            return false;
+        }
+        Date dateSortie = null;
+        Date dateData = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        try {
+            dateSortie = sdf.parse(WE);
+            dateData = sdf.parse(infoDispo);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        final Calendar now = Calendar.getInstance();
+        now.add(Calendar.DATE, 1);
+        Date dateUn = now.getTime();
+        now.add(Calendar.DATE, -2);
+        Date dateDeux = now.getTime();
+ //       if (BuildConfig.DEBUG){
+ //           Log.i("SECUSERV verifDates", "J+1 " +dateUn+" J-1 "+dateDeux);}
+        if (dateUn.after(dateSortie)) return true;
+        assert dateData != null;
+        return (dateData.after(dateDeux));
     }
 
 }

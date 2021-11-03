@@ -170,10 +170,11 @@ public class AuxReseau {
                 String errMsg = jsonGums.optString("err_msg");
                 String errCode = jsonGums.optString("err_code");
                 if ("".equals(errCode)) {
-                    final Calendar c = Calendar.getInstance();
+/*                    final Calendar c = Calendar.getInstance();
                     Date dateJour = c.getTime();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    String dateListe = sdf.format(dateJour);
+                    String dateListe = sdf.format(dateJour); */
+                    String dateListe = mesPrefs.getString("today","");
                     if (BuildConfig.DEBUG){
                     Log.i("SECUSERV", "date jour = " + dateListe);}
 
@@ -223,6 +224,7 @@ public class AuxReseau {
                 if(listeBidule != null){
                     ModelListeItems.listeDesItems.setValue(listeBidule);
                     ModelListeItems.flagListe.setValue(true);
+                    editeur.putString("dateRecupData", mesPrefs.getString("today", null));
                     editeur.putString("dateData", mesPrefs.getString("date", null));
                     editeur.putString("idData", mesPrefs.getString("id", null));
                     editeur.apply();

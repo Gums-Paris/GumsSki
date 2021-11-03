@@ -270,12 +270,8 @@ static Spanned fromHtml(String source) {
     }
 
 // teste si la chaîne str est vide ou null
-    public static boolean isEmpty(CharSequence str) {
-        return str == null || str.length() == 0;
-    }
-
     public static boolean isEmptyString(String str) {
-        return str == null || str.isEmpty();
+        return (str == null || str.isEmpty());
     }
 
 // conversion chaine vers entier

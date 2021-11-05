@@ -21,8 +21,8 @@ import static fr.cjpapps.gumsski.AuxReseau.recupInfo;
 
 public class ModelListeItems extends AndroidViewModel {
 
-    static MutableLiveData<ArrayList<HashMap<String,String>>> listeDesItems = new MutableLiveData<>();
-    static MutableLiveData<Boolean> flagListe = new MutableLiveData<>();
+    static SingleLiveEvent<ArrayList<HashMap<String,String>>> listeDesItems = new SingleLiveEvent<>();
+    static SingleLiveEvent<Boolean> flagListe = new SingleLiveEvent<>();
     static MutableLiveData<Boolean> flagSuppress = new MutableLiveData<>();
     static MutableLiveData<HashMap<String,String>> paramSortie = new MutableLiveData<>();
     static MutableLiveData<ArrayList<ArrayList<HashMap<String,String>>>> compositionGroupes = new MutableLiveData<>();
@@ -43,22 +43,20 @@ public class ModelListeItems extends AndroidViewModel {
         if (BuildConfig.DEBUG){
         Log.i("SECUSERV", "main model auth ? "+mesPrefs.getBoolean("authOK", false));}
 
-/*  Si id sortie ne colle pas avec id données desortie disponible, on va chercher les infos sur gumsparis.
+/*  Si id sortie ne colle pas avec id données de sortie disponible, on va chercher les infos sur gumsparis.
 *   Sinon on les récupère en sharedPreferences sauf si les infos datent de plus de 1 jour, et ce
-*   seulement tant qu'on 'est pas arrivé à la date du WE (mais pas s'il n'y a pas d'accès réseau
-*   auquel cas on prend quand même les prefs.
+*   seulement tant qu'on n'est pas arrivé à la date du WE (mais pas s'il n'y a pas d'accès réseau
+*   auquel cas on prend quand même les prefs).
 *   idData a été enregistré par AuxReseau.decodeInfosItems lorsque la récup données par le réseau a marché */
         String dateWE = mesPrefs.getString("date", null);
         String dateInfosDisponibles = mesPrefs.getString("dateRecupData", "");
-        if (BuildConfig.DEBUG){
-            Log.i("SECUSERV Dates", "WE " +dateWE+" Dispo "+dateInfosDisponibles);}
+//        if (BuildConfig.DEBUG){
+ //           Log.i("SECUSERV Dates", "WE " +dateWE+" Dispo "+dateInfosDisponibles);}
         String sortieId = mesPrefs.getString("id", null);
         String idSortieDispo = mesPrefs.getString("idData", null);
-        if (BuildConfig.DEBUG){
-            Log.i("SECUSERV", "main model  " +sortieId+" "+idSortieDispo);}
+//        if (BuildConfig.DEBUG){
+ //           Log.i("SECUSERV", "main model  " +sortieId+" "+idSortieDispo);}
         if (egaliteChaines(sortieId, idSortieDispo)) {
-            if (BuildConfig.DEBUG){
-                Log.i("SECUSERV", "verifdates  " +verifDates(dateWE, dateInfosDisponibles));}
             if (verifDates(dateWE, dateInfosDisponibles)  || !Variables.isNetworkConnected){
             getInfosFromPrefs();
             }
@@ -85,8 +83,9 @@ public class ModelListeItems extends AndroidViewModel {
         }
     }
 
-/*  verifDates renvoie true si la date du jour est après la date de début du WE ou si les données
-*   disponibles datent de moins d'une journée. */
+/*  verifDates renvoie true si la date du jour est après la date de début du WE (jour-1 après
+*    date sortie) ou si les données disponibles datent de moins d'une journée (date données après
+*    jour-1 */
     boolean verifDates(String WE, String infoDispo) {
         if (Aux.isEmptyString(WE) || Aux.isEmptyString(infoDispo)) {
             return false;
@@ -101,12 +100,12 @@ public class ModelListeItems extends AndroidViewModel {
             e.printStackTrace();
         }
         final Calendar now = Calendar.getInstance();
-        now.add(Calendar.DATE, 1);
+        now.add(Calendar.DATE, -1);
         Date dateUn = now.getTime();
-        now.add(Calendar.DATE, -2);
+        now.add(Calendar.DATE, 0);
         Date dateDeux = now.getTime();
- //       if (BuildConfig.DEBUG){
- //           Log.i("SECUSERV verifDates", "J+1 " +dateUn+" J-1 "+dateDeux);}
+//        if (BuildConfig.DEBUG){
+//            Log.i("SECUSERV Dates", "dateUn " +dateUn+" dateDeux "+dateDeux);}
         if (dateUn.after(dateSortie)) return true;
         assert dateData != null;
         return (dateData.after(dateDeux));

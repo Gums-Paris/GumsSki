@@ -71,12 +71,10 @@ public class MainActivity extends AppCompatActivity {
 
 /* TODO
     Pour version publiable : Remettre la bonne url pour www
-    L'affichage des groupes par Main bafouille (appelle deux fois recupInfosGums (cela ne se produit
-    ni pour la liste des sorties ni pour la logistique.
     Délai 15 sec pour réseau est-il suffisant ? On fera avec jusqu'à nouvel ordre
     ---- reste
        météo et secours
-       Background item_liste paramétrable
+       Background item_liste paramétrable ?
        Clic long sur participant deb, deniv, nivA, nivS ?
     */
 
@@ -85,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 *  et dans Aux.getResCar (lignes 185 et 189). On peut aussi le faire dans le plugin gski/inscrits de com_api
 *  */
 
-//  appli dérivée de AccessAuth mais avec pas mal de modifs (adieu générique !)
+//  Cette appli est dérivée de AccessAuth mais avec pas mal de modifs (adieu générique !)
 /*  AccessAuth :
 *   est une appli quasi générique au sens où pour faire des opérations de création, modification ou suppression sur les lignes d'une
 *   base sur un site Joomla distant, il n'y a qu'à rentrer les infos concernant le site et la base dans trois classes :
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
              laborieux à coder, ou en url-encoded ce qui n'est pas plus pénible à coder que le json. Je choisis
              cette dernière solution.
              Pour DELETE, on triche avec GET en rajoutant un paramètre &fleur=bleuet. Ça ne marche évidemment que si
-             on peut code le traitement des requêtes sur le site gumsparis (plugin de com_api).
+             on peut coder le traitement des requêtes sur le site gumsparis (plugin de com_api).
 
             2. Permissions du user sur le composant dans gumsparis
              Le user est identifié par le token d'authentification, il n'est pas nécessaire de le transporter
@@ -135,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    // Lanceur de AuthActivity pour changer d'utilisateur puis MainActivity si RESULT_OK
+    // Lanceur de AuthActivity pour changer d'utilisateur puis lancer MainActivity si RESULT_OK
     final private ActivityResultLauncher<Intent> authNewUserResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -197,25 +195,6 @@ public class MainActivity extends AppCompatActivity {
 
         auxMethods = new Aux();
 
-/*  La même chose existe dans StartActivity. Pour l'instant il n'existe pas d'accès à Main
-    sans passer par Start, donc pas besoin de ce code :
-        getSystemService(CONNECTIVITY_SERVICE);
-        AuxReseau.watchNetwork();
-// Faut parfois patienter un peu jusqu'à ce que le réseau soit disponible
-        patience.setVisibility(View.VISIBLE);
-        int count = 0;
-        while (!Variables.isNetworkConnected) {
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                //on attend que le temps passe
-            }, 20); // délai 0.02 sec
-            count++;
-            if (count > 500) {
-                alerte("5");
-                finish();
-            }
-        }
-        patience.setVisibility(View.GONE);
-*/
 // si les groupes ne sont pas publiés on arrête
         if ("2".equals(mesPrefs.getString("publier_groupes",""))) {
 
@@ -268,8 +247,6 @@ public class MainActivity extends AppCompatActivity {
                                 partFrag.show(fm, "participants");
                             };
                             monAdapter = new RecyclerViewGenericAdapter(recyclerView.getContext(), nomsItems, listener,R.layout.item_liste);
-                            if (BuildConfig.DEBUG){
-                                Log.i("SECUSERV Main", "setAdapter");}
                             recyclerView.setAdapter(monAdapter);
                         } else {
                             pourInfo = "pas de liste de groupes";

@@ -74,9 +74,9 @@ public class AuxReseau {
     // lance les requêtes auprès de gumsparis
     // task = "" pour un GET normal, task = edit pour un GET avec checkout. C'est com_api qui relaye
     static void recupInfo (String uneResource, String uneSortie, String uneTask) {
-        TaskRunner taskRunner = new TaskRunner();
+        TaskRunner taskRunner = TaskRunner.getInstance();
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
-        String stringRequest;
+        String stringRequest = "";
         final HashMap<String, String> requestParams = new HashMap<>();
         final String[] taskParams = new String[6];
         requestParams.put("app", Constantes.JOOMLA_APP);
@@ -102,9 +102,12 @@ public class AuxReseau {
                 case Constantes.JOOMLA_RESOURCE_2 :
 // pourt récupérer la liste des participants de uneSortie
                     taskRunner.executeAsync(new RecupInfosGums(taskParams), AuxReseau::decodeInfosItems);
-                case Constantes.JOOMLA_RESOURCE_3 :
+                    break;
+//                case Constantes.JOOMLA_RESOURCE_3 :
+                    default:
 //pour récupérer la liste des sorties
                     taskRunner.executeAsync(new RecupInfosGums(taskParams), AuxReseau::decodeInfosSorties);
+                    break;
             }
         }
     }
@@ -115,7 +118,7 @@ public class AuxReseau {
     static void envoiInfo (String uneResource, HashMap<String, String> postParams, String uneSortie, String uneTask) {
         TaskRunner taskRunner = new TaskRunner();
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
-        String stringRequest;
+        String stringRequest = "";
         final HashMap<String, String> requestParams = new HashMap<>();
         final String[] taskParams = new String[6];
         requestParams.put("app", Constantes.JOOMLA_APP);
@@ -170,13 +173,9 @@ public class AuxReseau {
                 String errMsg = jsonGums.optString("err_msg");
                 String errCode = jsonGums.optString("err_code");
                 if ("".equals(errCode)) {
-/*                    final Calendar c = Calendar.getInstance();
-                    Date dateJour = c.getTime();
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    String dateListe = sdf.format(dateJour); */
                     String dateListe = mesPrefs.getString("today","");
-                    if (BuildConfig.DEBUG){
-                    Log.i("SECUSERV", "date jour = " + dateListe);}
+//                    if (BuildConfig.DEBUG){
+//                    Log.i("SECUSERV", "decode sorties date jour = " + dateListe);}
 
                     params = Aux.getListeSorties(result);
                     if (params != null) {
@@ -316,8 +315,8 @@ public class AuxReseau {
 /* si on essaye de modifier un item qui n'existe pas il n'y a pas d'erreur apparente mais il ne se
  * passe rien en fait, sauf que la liste étant alors rechargée on voit l'item disparaître. Ceci pourrait
  * arriver si un autre usager sur une autre machine a réussi à supprimer l'item depuis qu'on l'a chargé
- * (normalement c'est pas possible parce que l'item dont on demande l'édition est checked-out dans
- * Joomla de gumsparis)
+ * (normalement c'est pas possible parce que l'item dont on demande l'édition dans l'appli est aussitôt
+ * checked-out dans Joomla de gumsparis)
  *
  * Noter aussi qu'il n'y a pas de différence de requête entre modifier et créer. La seule différence est
  * que dans les paramètres de l'item on met id = 0 pour créer et id = l'id de l'item pour modifier. */

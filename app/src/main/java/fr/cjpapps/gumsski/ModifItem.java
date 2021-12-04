@@ -95,8 +95,13 @@ public class ModifItem extends AppCompatActivity {
                 sortieId = intent.getStringExtra("sortieId");
                 if (BuildConfig.DEBUG){
                 Log.i("SECUSERV", "item "+idItem+", "+sortieId);}
+                if (Variables.isNetworkConnected) {
+                    AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1, sortieId, "edit");
+                }else{
+                    String message = "Désolé, yapa de réseau";
+                    envoiAlerte(message);
+                }
             }
-            AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1,sortieId, "edit");
         }
 
 // observateur de réception de l'item (ici la logistique)
@@ -195,4 +200,10 @@ public class ModifItem extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    protected void envoiAlerte(String message){
+        DialogAlertes modifLogistique = DialogAlertes.newInstance(message);
+        modifLogistique.show(getSupportFragmentManager(), "infoLogistique");
+    }
+
 }

@@ -21,7 +21,15 @@ import static fr.cjpapps.gumsski.AuxReseau.recupInfo;
 
 public class ModelListeItems extends AndroidViewModel {
 
-    static SingleLiveEvent<ArrayList<HashMap<String,String>>> listeDesItems = new SingleLiveEvent<>();
+/* Caveat :
+*   Lorsqu'on enchaîne affichage groupes d'une sortie > retour liste > affichage groupes d'une autre sortie
+*   (ce qui d'ailleurs doit être assez rare) l'observer de Main s'exécute avec avec la listeDesItems de la
+*   première sortie. Il va jusqu'à attacher l'adapter à la recyclerview mais celle-ci ne s'affiche pas et
+*   la recyclerview correspondant au vrai onChange s'affiche normalement. SingleLiveEvent pas possible parce que
+*   le fragment a lui aussi besoin de la liste des Items et que mainactivity a besoin de la livedata pour
+*   retrouver ses billes après rotation écran */
+
+    static MutableLiveData<ArrayList<HashMap<String,String>>> listeDesItems = new MutableLiveData<>();
     static SingleLiveEvent<Boolean> flagListe = new SingleLiveEvent<>();
     static MutableLiveData<Boolean> flagSuppress = new MutableLiveData<>();
     static MutableLiveData<HashMap<String,String>> paramSortie = new MutableLiveData<>();
@@ -60,12 +68,12 @@ public class ModelListeItems extends AndroidViewModel {
             if (verifDates(dateWE, dateInfosDisponibles)  || !Variables.isNetworkConnected){
             getInfosFromPrefs();
             }
-            else{
+            else {
                 recupInfo(Constantes.JOOMLA_RESOURCE_2, mesPrefs.getString("id", null), "");
             }
-        }else{
+        }else if (Variables.isNetworkConnected){
             recupInfo(Constantes.JOOMLA_RESOURCE_2, mesPrefs.getString("id", null), "");
-        }
+        }else flagListe.setValue(false);
     }
 
     void getInfosFromPrefs() {

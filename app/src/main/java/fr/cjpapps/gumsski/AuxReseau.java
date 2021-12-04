@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 //import android.net.NetworkInfo;
+import android.net.NetworkInfo;
 import android.net.NetworkRequest;
 import android.os.Build;
 import android.util.Log;
@@ -24,6 +25,20 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class AuxReseau {
+
+/* Ceci ne marche que pour API > 23. Si c'était pas le cas faudrait faire un truc comme dans
+* watchNetwork ci-dessous. Voir pour cela
+* https://medium.com/dsc-alexandria/implementing-internet-connectivity-checker-in-android-apps-bf28230c4e86 */
+    public static boolean isInternetOK() {
+        ConnectivityManager cm = MyHelper.getInstance().conMan();
+        if (cm == null) return false;
+            Network[] networks = cm.getAllNetworks();
+            for (Network n: networks) {
+                NetworkCapabilities cap = cm.getNetworkCapabilities(n);
+                return cap.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+            }
+            return false;
+        }
 
     /*  la méthode de détection de l'accès réseau change à partir de Android M (API 23) qui trouve que activeNetworkIfo c'est
      *   très caca. Il faut alors mettre en place un NetworkCallback qui intervient lorsque la connectivité change.
@@ -73,6 +88,7 @@ public class AuxReseau {
     //   void recupListe () {  // devenu recupInfo pour généraliser à plusieurs resources
     // lance les requêtes auprès de gumsparis
     // task = "" pour un GET normal, task = edit pour un GET avec checkout. C'est com_api qui relaye
+    // le test sur isNetworkConnected sert à rien car internet est testé avant tout appel à recupInfo; laissé au cas où
     static void recupInfo (String uneResource, String uneSortie, String uneTask) {
         TaskRunner taskRunner = TaskRunner.getInstance();
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
@@ -109,7 +125,7 @@ public class AuxReseau {
                     taskRunner.executeAsync(new RecupInfosGums(taskParams), AuxReseau::decodeInfosSorties);
                     break;
             }
-        }
+        }else{ModelListeSorties.flagReseau.setValue(false);}
     }
 
 //Pour envoyer les requêtes de type POST à gumsparis. C'est fait à travers com_api

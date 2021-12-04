@@ -1,12 +1,8 @@
 package fr.cjpapps.gumsski;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -15,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -50,29 +45,16 @@ public class StartActivity extends AppCompatActivity {
     SharedPreferences mesPrefs;
     SharedPreferences.Editor editeur;
     Aux methodesAux;
+    Handler handler = new Handler(Looper.getMainLooper());
 
-    // BroadcastReceiver pour pouvoir fermer l'appli depuis le fragment
-    // (voir DialogQuestion)
-    public BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context arg0, Intent intent) {
-            if (BuildConfig.DEBUG){
-            Log.i("SECUSERV", "StartActivity receiver finish");}
-            String action = intent.getAction();
-            if (action.equals("finish_activity")) {
-                finish();
-            }
-        }
-    };
-
-/*  Dans les sharedPreferences :
+/*  Le changement de site internet gumsparis se fait ligne 118
+*
+*   Dans les sharedPreferences :
 *       datelist == date à laquelle on a récupéré la liste des sorties
 *       date == date de la sortie choisie dans la liste des sorties
 *       datedata == date de la sortie à laquelle correspond la liste de participants disponible dans les prefs
 *       today == date du jour
-*       dateRecupData == date où on a récupéré la liste des participants
-*
-*   Le changement de site internet gumsparis se fait ligne 118 */
+*       dateRecupData == date où on a récupéré la liste des participants */
 
 // servira à lancer AuthActivity puis MainActivity si RESULT_OK
     final private ActivityResultLauncher<Intent> authActivityResultLauncher = registerForActivityResult(
@@ -105,9 +87,6 @@ public class StartActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-// pour pouvoir fermer depuis le fragment DialogQuestion (réponse OUI) ; ici on connecte le receveur
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("finish_activity"));
-
         affichageTitre = findViewById(R.id.affiche_titre);
         affichageTitre.setText(R.string.white_screen);
         panicDepart = findViewById(R.id.panique_depart);
@@ -115,9 +94,10 @@ public class StartActivity extends AppCompatActivity {
         dateList = findViewById(R.id.date_list);
         patience = findViewById(R.id.indeterminateBar);
 
-// pour indiquer le site auquel l'appli va s'adresse
-        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
+// pour indiquer le site auquel l'appli va s'adresser
+//        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
 //        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
+        Variables.urlActive = urlsApiApp.API_GUMS.getUrl();
 
 // trouver la date du jour
         final Calendar c = Calendar.getInstance();
@@ -135,26 +115,17 @@ public class StartActivity extends AppCompatActivity {
         editeur.apply();
 
 // vérif disponibilité réseau
+        Variables.isNetworkConnected = AuxReseau.isInternetOK();
+        if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "internet = "+Variables.isNetworkConnected);}
         methodesAux = new Aux();
-        getSystemService(CONNECTIVITY_SERVICE);
-        AuxReseau.watchNetwork();
+//        getSystemService(CONNECTIVITY_SERVICE);
 // Faut patienter un peu jusqu'à ce que le réseau soit disponible (ici 15 secondes max)
         patience.setVisibility(View.VISIBLE);
-        int count = 0;
-        while (!Variables.isNetworkConnected) {
-            if (BuildConfig.DEBUG){
-            Log.i("SECUSERV", "not connected ");}
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                //on attend que le temps passe
-            }, 20); // délai 0.02 sec
-            count++;
-            if (BuildConfig.DEBUG){
-            Log.i("SECUSERV", "count = "+count);}
-            if (count > 750) {
-                alerte("5"); // délai de 15 secondes dépassé
-                break;
-            }
-        }
+        AuxReseau.watchNetwork();
+// Faut patienter un peu jusqu'à ce que le réseau soit disponible (ici 15 secondes max)
+//        patience.setVisibility(View.VISIBLE);
+
 
 // création ou récupération du modèle ; ne pas oublier que le constructeur du model s'exécute immédiatement
         if (BuildConfig.DEBUG){
@@ -164,23 +135,25 @@ public class StartActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 // flagListeSorties est false si on n'a pas récupéré de réponse du serveur ou si on n'a pas décodé le json
-// ou si la liste de sorties est vide; donc on n'a rien mais si on a une liste périmée, on l'affiche à tout hasard.
-// flaglisteSorties est géré par AuxReseau.decodeInfosSorties
+// ou si la liste de sorties est vide ou s'il n'y a rien dans prefs (si on a une liste périmée, on l'affiche à tout hasard).
+// flaglisteSorties est géré par AuxReseau.decodeInfosSorties et ModelListeSorties
         final Observer<Boolean> flagListeSortiesObserver = retour -> {
             if (!retour) {
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 }, 200); // délai 0.2 sec
-                    alerte("2");
-                    patience.setVisibility(View.GONE);
-                    String dateListeDispo = mesPrefs.getString("datelist", "");
-                    if (!(Aux.egaliteChaines(dateListeDispo, ""))) {
-                        modelSorties.getListeFromPrefs();
-                        }else{
-                        panicDepart.setText(R.string.no_list);
-                    }
+                alerte("2");
+                panicDepart.setText(R.string.no_list);
             }
         };
         modelSorties.getFlagListeSorties().observe(StartActivity.this, flagListeSortiesObserver);
+
+// observateur de présence réseau. Mis en place par ModelListeSorties
+        final Observer<Boolean> flagReseauObserver = retour -> {
+            if (!retour) {
+                alerte("5");
+            }
+        };
+        modelSorties.getFlagReseau().observe(StartActivity.this, flagReseauObserver);
 
 // observateur d'arrivée de la liste des sorties
         final Observer<ArrayList<HashMap<String,String>>> listeSortiessObserver = new Observer<ArrayList<HashMap<String,String>>>() {
@@ -237,8 +210,9 @@ public class StartActivity extends AppCompatActivity {
             }
         };
         modelSorties.getParamDesSorties().observe(StartActivity.this, listeSortiessObserver);
+    }
+// end onCreate
 
-    }   // end onCreate
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -280,7 +254,7 @@ public class StartActivity extends AppCompatActivity {
                 break;
             case "2" :
 //                message = "nouvelles données indisponibles\n"+mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
-                message = "nouvelles données indisponibles\n";
+                message = "Pas de données disponibles\n";
                 break;
             case "3" :
                 message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
@@ -289,28 +263,10 @@ public class StartActivity extends AppCompatActivity {
                 message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
                 break;
             case "5":
-                message = "Pas de réseau, on va avoir des problèmes !";
+                message = "Pas de réseau, on va peut-être avoir des problèmes !";
         }
         DialogAlertes infoStart = DialogAlertes.newInstance(message);
         infoStart.show(getSupportFragmentManager(), "infoStart");
-    }
-
-    @Override
-    public void onBackPressed() {
-// si l'usager  presse le bouton retour arrière on lui demande s'il veut fermer l'appli (ce qui a pour
-// conséquence d'effacer l'authentification)
-        String message = "Quitter GumsSki ?";
-        DialogQuestion finAppli = DialogQuestion.newInstance(message);
-        finAppli.show(getSupportFragmentManager(), "questionSortie");
-    }
-
-// On déconnecte le receveur si c'est une vraie terminaison de l'appli
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (isFinishing()  && !isChangingConfigurations()) {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
-        }
     }
 
 }

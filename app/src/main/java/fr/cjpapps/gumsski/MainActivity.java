@@ -1,28 +1,21 @@
 package fr.cjpapps.gumsski;
 
-import static fr.cjpapps.gumsski.Aux.egaliteChaines;
-import static fr.cjpapps.gumsski.AuxReseau.recupInfo;
-
 import android.Manifest;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,11 +26,9 @@ import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
@@ -47,6 +38,7 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity {
 
 // récupère la liste des participants et affiche les groupes
+
     ArrayList<String> nomsItems = new ArrayList<>();//    ArrayList<Item> listeItems = new ArrayList<>();
     ArrayList<HashMap<String,String>> listeDesItems = new ArrayList<>();
     TextView affichage =null;
@@ -71,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
 
 /* TODO
     Pour version publiable : Remettre la bonne url pour www
-    Délai 15 sec pour réseau est-il suffisant ? On fera avec jusqu'à nouvel ordre
     ---- reste
        météo et secours
        Background item_liste paramétrable ?
@@ -119,20 +110,6 @@ public class MainActivity extends AppCompatActivity {
              double héritage
  */
 
-    // BroadcastReceiver pour pouvoir fermer l'appli depuis le fragment
-    // (voir DialogQuestion)
-    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context arg0, Intent intent) {
-            if (BuildConfig.DEBUG){
-                Log.i("SECUSERV", "Main Activity receiver finish");}
-            String action = intent.getAction();
-            if (action.equals("finish_activity")) {
-                finish();
-            }
-        }
-    };
-
     // Lanceur de AuthActivity pour changer d'utilisateur puis lancer MainActivity si RESULT_OK
     final private ActivityResultLauncher<Intent> authNewUserResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -163,9 +140,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-// pour pouvoir fermer depuis le fragment DialogQuestion (réponse OUI) ; ici on connecte le receveur
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("finish_activity"));
 
         mesPrefs = MyHelper.getInstance().recupPrefs();
         editeur = mesPrefs.edit();
@@ -213,7 +187,8 @@ public class MainActivity extends AppCompatActivity {
                 if (BuildConfig.DEBUG){
                 Log.i("SECUSERV", "flagListe " + retour);}
                 if (!retour) {
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    Handler handler =new Handler(Looper.getMainLooper());
+                    handler.postDelayed(() -> {
                     }, 200); // délai 0.2 sec
                     alerte("2");
                     finish();
@@ -221,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
             };
             modelListe.getFlagListe().observe(MainActivity.this, flagListeObserver);
 
-// observateur d'arrivée de la liste des participants et affichage des groupes
+// observateur d'arrivée de la liste des participants et affichage de la liste des groupes
             final Observer<ArrayList<HashMap<String, String>>> listeItemsObserver = new Observer<ArrayList<HashMap<String, String>>>() {
                 String pourInfo = "";
                 @Override
@@ -232,13 +207,14 @@ public class MainActivity extends AppCompatActivity {
                         if (BuildConfig.DEBUG){
                         Log.i("SECUSERV Main", "taille = " + listeDesItems.size());}
 
-// Pour communiquer avec le responable du car :
+        // Pour communiquer avec le responable du car :
                         pourJoindreResCar();
 
                         nomsItems = auxMethods.faitListeGroupes(listeDesItems);
                         if (BuildConfig.DEBUG){
                             Log.i("SECUSERV Main", "groupes = " + nomsItems);}
                         if (nomsItems != null) {
+        // au clic, affichage de la composition du groupe dans un fragment
                             RecyclerViewClickListener listener = (view, position) -> {
                                 String element = nomsItems.get(position);
                                 String numGroup = element.substring(0, element.indexOf(':'));
@@ -302,16 +278,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-// si l'usager  presse le bouton retour arrière on lui demande s'il veut fermer l'appli (ce qui
-// a pour conséquence d'effacer l'authentification)
-        String message = "Quitter GumsSki ?";
-        DialogQuestion finAppli = DialogQuestion.newInstance(message);
-        finAppli.show(getSupportFragmentManager(), "questionSortie");
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -381,15 +348,6 @@ public class MainActivity extends AppCompatActivity {
         }
         DialogAlertes infoMain = DialogAlertes.newInstance(message);
         infoMain.show(getSupportFragmentManager(), "infoMain");
-    }
-
-// On déconnecte le receveur si c'est une vraie terminaison de l'appli
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (isFinishing()  && !isChangingConfigurations()) {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
-        }
     }
 
 }

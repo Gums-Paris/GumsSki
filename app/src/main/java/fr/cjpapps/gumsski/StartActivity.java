@@ -114,15 +114,33 @@ public class StartActivity extends AppCompatActivity {
 //        editeur.putBoolean("authOK", false);
         editeur.apply();
 
+// Faut patienter un peu jusqu'à ce que le réseau soit disponible au retour de Main
+//        Handler handler =new Handler(Looper.getMainLooper());
+/*        handler.postDelayed(() -> {
+            if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "post delayed");}
+        }, 2000); // délai 0.2 sec
+        StartActivity.this.runOnUiThread(new Runnable() {
+                                             @Override
+                                             public void run() {
+                                                 handler.postDelayed(() -> {
+                                                     if (BuildConfig.DEBUG){
+                                                         Log.i("SECUSERV", "post delayed");}
+                                                 }, 2000); // délai 0.2 sec
+                                             }
+                                         }
+        ); */
 // vérif disponibilité réseau
-        Variables.isNetworkConnected = AuxReseau.isInternetOK();
-        if (BuildConfig.DEBUG){
-            Log.i("SECUSERV", "internet = "+Variables.isNetworkConnected);}
-        methodesAux = new Aux();
-//        getSystemService(CONNECTIVITY_SERVICE);
-// Faut patienter un peu jusqu'à ce que le réseau soit disponible (ici 15 secondes max)
-        patience.setVisibility(View.VISIBLE);
+        if (!Variables.isNetworkConnected) {
+            Variables.isNetworkConnected = AuxReseau.isInternetOK();
+            if (BuildConfig.DEBUG) {
+                Log.i("SECUSERV", "internet = " + Variables.isNetworkConnected);
+            }
+        }
         AuxReseau.watchNetwork();
+
+        methodesAux = new Aux();
+        patience.setVisibility(View.VISIBLE);
 // Faut patienter un peu jusqu'à ce que le réseau soit disponible (ici 15 secondes max)
 //        patience.setVisibility(View.VISIBLE);
 

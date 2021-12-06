@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
        Clic long sur participant deb, deniv, nivA, nivS ?
     */
 
-/* Noter
+/* Noter²
 * Pour des essais on peut mettre des tel et email bidon dans FirstFragment (lignes 101 et 105)
 *  et dans Aux.getResCar (lignes 185 et 189). On peut aussi le faire dans le plugin gski/inscrits de com_api
 *  */
@@ -239,12 +239,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
 //on utilise le FAB pour remonter à StartActivity parce que le retour arrière de Main sert à fermer l'appli
-        ExtendedFloatingActionButton fab = findViewById(R.id.fab);
+/*        ExtendedFloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
             Intent retourListeSorties = new Intent(MainActivity.this, StartActivity.class);
             startActivity(retourListeSorties);
             MainActivity.this.finish();
-        });
+        });  */
     }  // end onCreate
 
     private void pourJoindreResCar(){

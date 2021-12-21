@@ -32,15 +32,15 @@
         On ouvre la page du groupe en cliquant le nom du responsable. Les boutons (icônes) e-mail, téléphone,
         SMS s\'identifient facilement. ;-)&lt;br /&gt;Ne pas oublier que passer des appels téléphoniques à l\'étranger
         peut coûter cher quand on n\'a pas un forfait généreux. &lt;br /&gt;&lt;br /&gt;
-        Le bouton "Ouvrir Signal" donne accès à l\'appli Signal (c\'est comme WhatsApp en mieux). Dans une version ultérieure de GumsSki un
-        groupe Signal aura été préalablement créé pour chaque groupe du car.&lt;br /&gt;&lt;br /&gt;
+        Le bouton "Ouvrir Signal" donne accès à l\'appli Signal (c\'est comme WhatsApp mais ça respecte les données perso
+        de l\'utilisateur). Dans une version ultérieure de GumsSki un groupe Signal aura été préalablement créé pour chaque
+        groupe du car.&lt;br /&gt;&lt;br /&gt;
         &lt;b&gt;L\'accès aux informations de logistique&lt;/b&gt; se fait par le menu en haut à droite.
         Le responsable du car et les RES de chaque groupe ont les autorisations nécessaires pour modifier la logistique de ce car.
-        Pour quitter cette page, il vous est demandé d\'utiliser les boutons "Sauvegarder" ou "Annuler" de la page d\'édition sinon un verrouillage empêchera d\'autres
-        utilisateurs de faire des modifications.&lt;br /&gt;&lt;br /&gt;
+        Pour quitter cette page, il vous est demandé d\'utiliser les boutons "Sauvegarder" ou "Annuler" de la page d\'édition
+        sinon un verrouillage empêchera d\'autres utilisateurs de faire des modifications.&lt;br /&gt;&lt;br /&gt;
         Bon Week-end.&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Pour toute question, remarque ou suggestion&lt;/b&gt; concernant cette appli,
-        écrire à &lt;a href=\"mailto:claude.pastre@laposte.net\"&gt;
-        Claude Pastre&lt;/a&gt; avec copie à &lt;a href=\"mailto:voileux59@yahoo.fr\"&gt;Benoît D\'Halluin&lt;/a&gt;</string>
+        écrire à &lt;a href=\"mailto:appli.gumsski@gumsparis.asso.fr\"&gt;Appli GumsSki&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;</string>
     <string name="prefs">  Actuellement il n\'y a rien à choisir</string>
     <string name="pas_fait"> C\'est pas encore fait, patience …</string>
     <string name="details">  %1$s  %2$s</string>

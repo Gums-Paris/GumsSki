@@ -1,8 +1,11 @@
 package fr.cjpapps.gumsski;
 
+import static android.content.Intent.EXTRA_EMAIL;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -306,7 +309,7 @@ static Spanned fromHtml(String source) {
     protected static void composeEmail(String[] addresses, String subject, String texte) {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse("mailto:")); // only email apps should handle this
-        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(EXTRA_EMAIL, addresses);
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.putExtra(Intent.EXTRA_TEXT, texte);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -315,6 +318,21 @@ static Spanned fromHtml(String source) {
         } else {
             if (BuildConfig.DEBUG){
             Log.i("SECUSERV"," appli mail pas disponible");}
+        }
+    }
+
+// seule méthode possible pour Mail Orange. Mais avec ça Gmail n'accepte ni sujet ni texte
+        protected static void sendEmail(String listeAdresses, String sujet, String texte) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:"+listeAdresses)); // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_SUBJECT, sujet);
+        intent.putExtra(Intent.EXTRA_TEXT, texte);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (intent.resolveActivity(MyHelper.getInstance().recupPackageManager()) != null) {
+            MyHelper.getInstance().launchActivity(intent);
+        } else {
+            if (BuildConfig.DEBUG){
+                Log.i("SECUSERV"," appli mail pas disponible");}
         }
     }
 

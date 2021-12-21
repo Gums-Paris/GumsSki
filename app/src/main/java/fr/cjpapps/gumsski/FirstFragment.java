@@ -43,6 +43,7 @@ public class FirstFragment extends DialogFragment {
     private Button emailGroupe;
     private Boolean okPhone = false;
     private final ArrayList<String> groupeEmail = new ArrayList<>();
+    private String listeAdresses = "";
 
     public FirstFragment(){}
 
@@ -87,6 +88,7 @@ public class FirstFragment extends DialogFragment {
         String title = getArguments().getString("titre", "Nom groupe");
         affichage.setText(title);
         final String numGroupe = getArguments().getString("numG", "1");
+        StringBuilder addressList = new StringBuilder();
 
         final Observer<ArrayList<HashMap<String,String>>> participObserver = items -> {
             if (items != null) {
@@ -107,11 +109,14 @@ public class FirstFragment extends DialogFragment {
                             unMembre.setPeage(temp.get("peage"));
                             membresGroupe.add(unMembre);
                             groupeEmail.add(temp.get("email"));
+                            addressList.append(temp.get("email"));
+                            addressList.append(",");
                         } catch (NullPointerException e) {
                             e.printStackTrace();
                         }
                     }
                 }
+                listeAdresses = addressList.deleteCharAt(addressList.length()-1).toString();
                 if (BuildConfig.DEBUG){
                 Log.i("SECUSERV frag 1", "récup de la liste");}
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -135,18 +140,20 @@ public class FirstFragment extends DialogFragment {
                         }
                     }
                     if (view1.getId() == R.id.email_button) {
-                        String[] adresses = {unP.getEmail()};
+/*  composeEmail utilise le schéma GoogleMail de String[] en extra pour passer les adresses tandis que sendEmail
+    utilise le schéma du mailto de HTML mailto:+String, la chaîne contenant les adresses séparées par une virgule.
+    MailOrange n'accepte que ce dernier.  Avec ce schéma GMail n'accepte pas de sujet ni de texte en extra */
+/*                        String[] adresses = {unP.getEmail()};
+                        Aux.composeEmail(adresses, subject, texte); */
                         String subject = "";
-                        String texte = "";
-                        Aux.composeEmail(adresses, subject, texte);
+                        String text = "";
+                        String adresse = unP.getEmail();
+                        Aux.sendEmail(adresse, subject, text);
                     }
                     if (view1.getId() == R.id.sms_button) {
                         Aux.envoiSMS(unP);
                     }
-//                  dismiss(); // finalement on garde le fragment ouvert ; il faudra l'éliminer
-//  avec le backbutton ou en touchant à côté du fragment
                 };
-
                 ParticipantsAdapter mAdapter = new ParticipantsAdapter(getActivity(), membresGroupe, listener);
                 mRecyclerView.setAdapter(mAdapter);
             }
@@ -155,12 +162,17 @@ public class FirstFragment extends DialogFragment {
 
         emailGroupe.setOnClickListener(view12 -> {
             if (BuildConfig.DEBUG){
-            Log.i("SECUSERV frag 1 onclick emailGroupe", groupeEmail.toString());}
+            Log.i("SECUSERV frag 1 onclick emailGroupe", groupeEmail.toString());
+            Log.i("SECUSERV frag 1 onclick liste adresses", listeAdresses);};
             String[] adresses = new String[groupeEmail.size()];
             adresses = groupeEmail.toArray(adresses);
-            String subject = "J'te cause";
-            String texte = "Je sais pas quoi te dire";
-            Aux.composeEmail(adresses, subject, texte);
+            String subject = "";
+            String texte = "";
+/*  composeEmail utilise le schéma GoogleMail de String[] en extra pour passer les adresses tandis que sendEmail
+    utilise le schéma du mailto de HTML mailto:+String, la chaîne contenant les adresses séparées par une virgule.
+    MailOrange n'accepte que ce dernier. Avec ce schéma GMail n'accepte pas de sujet ni de texte en extra */
+//            Aux.composeEmail(adresses, subject, texte);
+            Aux.sendEmail(listeAdresses, subject, texte);
         });
 
 // pas d'envoi sms au groupe ; ce bouton ouvre Signal

@@ -266,10 +266,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             emailResCar.setOnClickListener(view -> {
-                String[] adresses = {resCar.getEmail()};
+/*  composeEmail utilise le schéma GoogleMail de String[] en extra pour passer les adresses tandis que sendEmail
+    utilise le schéma du mailto de HTML mailto:+String, la chaîne contenant les adresses séparées par une virgule.
+    MailOrange n'accepte que ce dernier. Avec ce schéma GMail n'accepte pas de sujet ni de texte en extra */
+//                String[] adresses = {resCar.getEmail()};
                 String subject = "";
-                String texte = "";
-                Aux.composeEmail(adresses, subject, texte);
+                String text = "";
+//                Aux.composeEmail(adresses, subject, texte);
+                String adresse = resCar.getEmail();
+                Aux.sendEmail(adresse, subject, text);
             });
             smsResCar.setOnClickListener(view -> {
                 Aux.envoiSMS(resCar);

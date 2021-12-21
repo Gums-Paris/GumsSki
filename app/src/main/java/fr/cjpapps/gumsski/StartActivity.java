@@ -96,8 +96,8 @@ public class StartActivity extends AppCompatActivity {
 
 // pour indiquer le site auquel l'appli va s'adresser
 //        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
-//        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
-        Variables.urlActive = urlsApiApp.API_GUMS.getUrl();
+        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
+//        Variables.urlActive = urlsApiApp.API_GUMS.getUrl();
 
 // trouver la date du jour
         final Calendar c = Calendar.getInstance();
@@ -114,22 +114,6 @@ public class StartActivity extends AppCompatActivity {
 //        editeur.putBoolean("authOK", false);
         editeur.apply();
 
-// Faut patienter un peu jusqu'à ce que le réseau soit disponible au retour de Main
-//        Handler handler =new Handler(Looper.getMainLooper());
-/*        handler.postDelayed(() -> {
-            if (BuildConfig.DEBUG){
-                Log.i("SECUSERV", "post delayed");}
-        }, 2000); // délai 0.2 sec
-        StartActivity.this.runOnUiThread(new Runnable() {
-                                             @Override
-                                             public void run() {
-                                                 handler.postDelayed(() -> {
-                                                     if (BuildConfig.DEBUG){
-                                                         Log.i("SECUSERV", "post delayed");}
-                                                 }, 2000); // délai 0.2 sec
-                                             }
-                                         }
-        ); */
 // vérif disponibilité réseau
         if (!Variables.isNetworkConnected) {
             Variables.isNetworkConnected = AuxReseau.isInternetOK();
@@ -141,9 +125,6 @@ public class StartActivity extends AppCompatActivity {
 
         methodesAux = new Aux();
         patience.setVisibility(View.VISIBLE);
-// Faut patienter un peu jusqu'à ce que le réseau soit disponible (ici 15 secondes max)
-//        patience.setVisibility(View.VISIBLE);
-
 
 // création ou récupération du modèle ; ne pas oublier que le constructeur du model s'exécute immédiatement
         if (BuildConfig.DEBUG){

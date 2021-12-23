@@ -96,8 +96,8 @@ public class StartActivity extends AppCompatActivity {
 
 // pour indiquer le site auquel l'appli va s'adresser
 //        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
-        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
-//        Variables.urlActive = urlsApiApp.API_GUMS.getUrl();
+//        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
+        Variables.urlActive = urlsApiApp.API_GUMS.getUrl();
 
 // trouver la date du jour
         final Calendar c = Calendar.getInstance();

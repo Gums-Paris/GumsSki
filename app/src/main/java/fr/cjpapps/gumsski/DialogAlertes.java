@@ -1,7 +1,6 @@
 package fr.cjpapps.gumsski;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -38,12 +37,7 @@ public class DialogAlertes extends DialogFragment {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireActivity());
         alertDialogBuilder.setMessage(message);
 
-        alertDialogBuilder.setPositiveButton("OK",  new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        alertDialogBuilder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
 
         return alertDialogBuilder.create();
 

@@ -1,7 +1,10 @@
 package fr.cjpapps.gumsski;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 
@@ -9,7 +12,7 @@ import androidx.annotation.NonNull;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
-import static fr.cjpapps.gumsski.MainActivity.PREF_FILE;
+import static fr.cjpapps.gumsski.StartActivity.PREF_FILE;
 
 public class MyHelper {
 
@@ -61,4 +64,10 @@ public class MyHelper {
         return (ConnectivityManager) mContext.getSystemService(CONNECTIVITY_SERVICE);
     }
 
+    // pour accéder au PackageManager
+    PackageManager recupPackageManager() {
+        return mContext.getPackageManager();
+    }
+
+    void launchActivity(Intent intent) {mContext.startActivity(intent);}
 }

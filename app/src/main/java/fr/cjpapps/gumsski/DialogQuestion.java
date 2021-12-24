@@ -2,12 +2,17 @@ package fr.cjpapps.gumsski;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import java.util.Objects;
 
 public class DialogQuestion extends DialogFragment {
 
@@ -39,28 +44,34 @@ public class DialogQuestion extends DialogFragment {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireActivity());
         alertDialogBuilder.setMessage(message);
 
-        alertDialogBuilder.setNegativeButton("Non",  new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        alertDialogBuilder.setNegativeButton("Non", (dialog, which) -> {
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "dialog NON ");}
+            dialog.dismiss();
         });
 
         alertDialogBuilder.setPositiveButton("Oui",  new DialogInterface.OnClickListener() {
             final SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
-            final SharedPreferences.Editor editeur = mesPrefs.edit();
             @Override
             public void onClick(DialogInterface dialog, int which) {
-//                getViewModelStore().clear();
+                if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "dialog OUI ");}
+                final SharedPreferences.Editor editeur = mesPrefs.edit();
                 editeur.putBoolean("authOK", false);
                 editeur.putString("auth", "");
                 editeur.apply();
-                requireActivity().finish();
+// on termine StartActivity et MainActivity à travers un BroadcastReceiver
+// pour celle qui n'a pas créé le fragment  on peut pas faire autrement parce qu'il ne faut pas
+// (memory leak == caca) en conserver une référence dans l'autre
+// pour celle qui a créé le fragment on aurait pu la fermer directement ou à travers une interface
+// qui permette de lui dire de se tuer
+                Intent intent = new Intent();
+                intent.setAction("finish_activity");
+                LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent);
                 dialog.dismiss();
             }
         });
 
         return alertDialogBuilder.create();
-
     }
 }

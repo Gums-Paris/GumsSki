@@ -2,9 +2,6 @@ package fr.cjpapps.gumsski;
 
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -24,7 +21,7 @@ public class Secours extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         affichage = findViewById(R.id.intro_secours);
-        affichage.setText(Html.fromHtml(getString(R.string.pas_fait), Html.FROM_HTML_MODE_LEGACY));
+        affichage.setText(Aux.fromHtml(getString(R.string.pas_fait)));
 
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

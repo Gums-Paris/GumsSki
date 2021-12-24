@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="fr.cjpapps.gumsski.Logistique">
+    <item
+        android:id="@+id/help"
+        android:orderInCategory="1"
+        android:title="@string/help"
+        android:icon="@drawable/ic_action_help_svg"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/meteo"
+        android:orderInCategory="4"
+        android:title="@string/meteo"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/secours"
+        android:orderInCategory="5"
+        android:title="@string/secours"
+        app:showAsAction="never" />
+</menu>

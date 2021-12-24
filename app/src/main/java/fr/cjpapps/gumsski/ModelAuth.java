@@ -15,6 +15,5 @@ public class ModelAuth extends AndroidViewModel {
 
     public ModelAuth(final Application application) {
         super(application);
-        Log.i("SECUSERV authmodel", "construct");
     }
 }

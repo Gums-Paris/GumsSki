@@ -13,11 +13,73 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="100dp"
+        android:layout_marginTop="80dp"
+        android:gravity="center_horizontal"
         android:id="@+id/affiche"
+        android:textSize="20sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center_horizontal"
+        android:id="@+id/affiche2"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/affiche" />
+
+    <ImageButton
+        android:id="@+id/phone_rescar"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/phone_vert_rond_36"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/email_rescar"
+        app:layout_constraintTop_toBottomOf="@id/affiche2"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:contentDescription="Phone" />
+
+    <ImageButton
+        android:id="@+id/email_rescar"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/mail_bleu_rond_36"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintStart_toEndOf="@id/phone_rescar"
+        app:layout_constraintEnd_toStartOf="@id/sms_rescar"
+        app:layout_constraintTop_toTopOf="@id/phone_rescar"
+        android:contentDescription="Email" />
+
+    <ImageButton
+        android:id="@+id/sms_rescar"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/message_jaune_rond_36"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintStart_toEndOf="@id/email_rescar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/email_rescar"
+        android:contentDescription="Message" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="100dp"
+        android:id="@+id/panique"
+        android:text=""
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/phone_rescar" />
 
     <ProgressBar
         android:id="@+id/indeterminateBar"
@@ -34,10 +96,10 @@
         android:scrollbars="vertical"
         android:layout_width="300dp"
         android:layout_height="match_parent"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="80dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/affiche"/>
+        app:layout_constraintTop_toBottomOf="@+id/affiche2"/>
 
 
  <!--   <Button

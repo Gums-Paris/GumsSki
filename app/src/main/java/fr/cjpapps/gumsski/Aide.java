@@ -20,7 +20,7 @@ public class Aide extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         affichage = findViewById(R.id.texthelp);
-        affichage.setText(Html.fromHtml(getString(R.string.helptext), Html.FROM_HTML_MODE_LEGACY));
+        affichage.setText(Aux.fromHtml(getString(R.string.helptext)));
         affichage.setMovementMethod(LinkMovementMethod.getInstance());
 
         if (getSupportActionBar() != null){

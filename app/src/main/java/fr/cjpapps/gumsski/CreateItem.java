@@ -18,12 +18,15 @@ import java.util.HashMap;
 
 public class CreateItem extends AppCompatActivity {
 
+// pas utilisé dans GumsSki
+
     SharedPreferences mesPrefs;
 
     private final HashMap<String, String> requestParams = new HashMap<>();
     private final HashMap<String, String> postParams = new HashMap<>();
     private final String[] taskParams = new String[6];
     ArrayList<String[]> fieldParams = new ArrayList<>();
+    TaskRunner taskRunner = new TaskRunner();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +47,7 @@ public class CreateItem extends AppCompatActivity {
         Button boutonSave = new Button(this);
         boutonSave.setId(idS);
         boutonSave.setLayoutParams(boutonParams);
-        boutonSave.setText("SAUVEGARDER");
+        boutonSave.setText(getString(R.string.save));
         boutonSave.setPadding(40, 5, 40, 0);
         parentLayout.addView(boutonSave);
         boutonSave.setOnClickListener(clickListenerSauv);
@@ -53,7 +56,7 @@ public class CreateItem extends AppCompatActivity {
         Button boutonAnnul = new Button(this);
         boutonAnnul.setId(idA);
         boutonAnnul.setLayoutParams(boutonParams);
-        boutonAnnul.setText("ANNULER");
+        boutonAnnul.setText(getString(R.string.cancel));
         boutonAnnul.setPadding(0, 5, 0, 0);
         parentLayout.addView(boutonAnnul);
         boutonAnnul.setOnClickListener(clickListenerCancel);
@@ -80,17 +83,19 @@ public class CreateItem extends AppCompatActivity {
             requestParams.put("app", Constantes.JOOMLA_APP);
             requestParams.put("resource", Constantes.JOOMLA_RESOURCE_1);
             requestParams.put("format", "json");
-            String stringRequest = Aux.buildRequest(requestParams);
+            String stringRequest = AuxReseau.buildRequest(requestParams);
             taskParams[0] = Variables.urlActive+stringRequest;
-            Log.i("SECUSERV", " modif post url "+taskParams[0]);
-            taskParams[1] = Aux.buildRequest(postParams);
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", " modif post url "+taskParams[0]);}
+            taskParams[1] = AuxReseau.buildRequest(postParams);
             taskParams[2] = "Content-Type";
             taskParams[3] = "application/x-www-form-urlencoded ; utf-8";
             taskParams[4] = "Authorization";
             taskParams[5] = "Bearer "+ mesPrefs.getString("auth", "");
 
             if (Variables.isNetworkConnected) {
-                new PostInfosItem().execute(taskParams);
+//                new PostInfosItem().execute(taskParams);
+                taskRunner.executeAsync(new EnvoiInfosGums(taskParams), AuxReseau::decodeRetourPostItem);
             }
 
             setResult(RESULT_OK, result);
@@ -98,12 +103,9 @@ public class CreateItem extends AppCompatActivity {
         }
     };
 
-    private final View.OnClickListener clickListenerCancel = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Intent result = new Intent();
-            setResult(RESULT_OK, result);
-            finish();
-        }
+    private final View.OnClickListener clickListenerCancel = view -> {
+        Intent result = new Intent();
+        setResult(RESULT_OK, result);
+        finish();
     };
 }

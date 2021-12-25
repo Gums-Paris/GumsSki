@@ -73,6 +73,8 @@ public class Aux {
                 unItem.put("publier_groupes",jsonData.optString("publier_groupes"));
                 unItem.put("responsable",jsonData.optString("responsable"));
                 unItem.put("id_responsable", jsonData.optString("id_responsable"));
+                unItem.put("email_rescar", jsonData.optString("email_rescar"));
+                unItem.put("tel_rescar", jsonData.optString("tel_rescar"));
                 listeSorties.add(unItem);
             }
             return  listeSorties;

@@ -55,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
     String infoSortie, responsable;
     String titreSortie;
     String idResCar;
-    MembreGroupe resCar;
+    String mailRescar, telResCar;
+    MembreGroupe resCar = new MembreGroupe();
     ImageButton phoneResCar = null;
     ImageButton emailResCar = null;
     ImageButton smsResCar = null;
@@ -153,7 +154,14 @@ public class MainActivity extends AppCompatActivity {
         emailResCar = findViewById(R.id.email_rescar);
         smsResCar = findViewById(R.id.sms_rescar);
         infoSortie = mesPrefs.getString("infoSortie", "");
+
         responsable = mesPrefs.getString("responsable", "");
+        mailRescar = mesPrefs.getString("email_rescar", "");
+        telResCar = mesPrefs.getString("tel_rescar", "");
+        resCar.setName(responsable);
+        resCar.setEmail(mailRescar);
+        resCar.setTel(Aux.numInter(telResCar));
+
         affichage.setText(infoSortie);
         affichageSuite.setText(responsable);
 // idSortie et infoSortie ont été fabriqués par StartActivity
@@ -168,6 +176,8 @@ public class MainActivity extends AppCompatActivity {
         editeur.apply();
 
         auxMethods = new Aux();
+
+        pourJoindreResCar();
 
 // si les groupes ne sont pas publiés on arrête
         if ("2".equals(mesPrefs.getString("publier_groupes",""))) {
@@ -208,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("SECUSERV Main", "taille = " + listeDesItems.size());}
 
         // Pour communiquer avec le responable du car :
-                        pourJoindreResCar();
+//                        pourJoindreResCar();
 
                         nomsItems = auxMethods.faitListeGroupes(listeDesItems);
                         if (BuildConfig.DEBUG){
@@ -248,13 +258,14 @@ public class MainActivity extends AppCompatActivity {
     }  // end onCreate
 
     private void pourJoindreResCar(){
-        resCar = auxMethods.getResCar(listeDesItems, idResCar);
+//        resCar = auxMethods.getResCar(listeDesItems, idResCar);
         if (resCar != null) {
             phoneResCar.setOnClickListener(view -> {
                 if (ContextCompat.checkSelfPermission(
                         MainActivity.this, Manifest.permission.CALL_PHONE) ==
                         PackageManager.PERMISSION_GRANTED) {
-                    Aux.phoneCall(resCar);
+                    if (BuildConfig.DEBUG){
+                        Log.i("SECUSERV Main", "telResCar = " + resCar.getTel());}                    Aux.phoneCall(resCar);
                 } else {
                     // You can directly ask for the permission.
                     // The registered ActivityResultCallback gets the result of this request.

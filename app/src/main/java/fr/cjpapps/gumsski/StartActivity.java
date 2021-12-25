@@ -177,6 +177,12 @@ public class StartActivity extends AppCompatActivity {
                             String responsable = listeDesItems.get(position).get("responsable");
                             editeur.putString("responsable", responsable);
                             editeur.putString("id_Res_Car", listeDesItems.get(position).get("id_responsable"));
+                            editeur.putString("email_rescar", listeDesItems.get(position).get("email_rescar"));
+                            editeur.putString("tel_rescar", listeDesItems.get(position).get("tel_rescar"));
+                            if (BuildConfig.DEBUG){
+                                Log.i("SECUSERV Start", "resCar = " + listeDesItems.get(position).get("responsable")+" "+
+                                                listeDesItems.get(position).get("email_rescar")+" "+
+                                                listeDesItems.get(position).get("tel_rescar"));}
                             String infos;
                             infos = listeDesItems.get(position).get("date_bdh") + "\n" +
                                     listeDesItems.get(position).get("titre");

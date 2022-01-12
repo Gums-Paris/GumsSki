@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
@@ -47,7 +48,7 @@ public class StartActivity extends AppCompatActivity {
     Aux methodesAux;
     Handler handler = new Handler(Looper.getMainLooper());
 
-/*  Le changement de site internet gumsparis se fait ligne 118
+/*  Le changement de site internet gumsparis se fait ligne 100
 *
 *   Dans les sharedPreferences :
 *       datelist == date à laquelle on a récupéré la liste des sorties
@@ -220,7 +221,7 @@ public class StartActivity extends AppCompatActivity {
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_start, menu);
         return true;

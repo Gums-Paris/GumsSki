@@ -33,7 +33,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="30dp"
             android:text="@string/hotel_chauffeurs"
-            android:textColor="@color/rougeGums"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/intro_logistic" />
 
@@ -46,6 +45,7 @@
             android:background="@drawable/item_liste_back"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/textColorSecondary"
             app:layout_constraintWidth_percent="0.75"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -58,7 +58,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
             android:text="@string/tph_chauffeurs"
-            android:textColor="@color/rougeGums"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/champ_hotel" />
 
@@ -71,6 +70,7 @@
             android:background="@drawable/item_liste_back"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/textColorSecondary"
             app:layout_constraintWidth_percent="0.75"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -83,7 +83,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
             android:text="@string/diner_retour"
-            android:textColor="@color/rougeGums"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/champ_tph" />
 
@@ -96,6 +95,7 @@
             android:background="@drawable/item_liste_back"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/textColorSecondary"
             app:layout_constraintWidth_percent="0.75"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -108,7 +108,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
             android:text="@string/deposes"
-            android:textColor="@color/rougeGums"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/champ_diner" />
 
@@ -121,6 +120,7 @@
             android:background="@drawable/item_liste_back"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/textColorSecondary"
             app:layout_constraintWidth_percent="0.75"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -133,7 +133,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
             android:text="@string/reprises"
-            android:textColor="@color/rougeGums"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/champ_deposes" />
 
@@ -146,6 +145,7 @@
             android:background="@drawable/item_liste_back"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/textColorSecondary"
             app:layout_constraintWidth_percent="0.75"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -158,7 +158,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
             android:text="@string/coursesprévues"
-            android:textColor="@color/rougeGums"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/champ_reprises" />
 
@@ -171,6 +170,7 @@
             android:background="@drawable/item_liste_back"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/textColorSecondary"
             app:layout_constraintWidth_percent="0.75"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -5,6 +5,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+       <item name="actionBarPopupTheme">@style/ActionModeOverflowMenu</item>
+    </style>
+    <style name="ActionModeOverflowMenu" parent="Widget.AppCompat.ListPopupWindow">
+        <item name="android:textColor">@color/textColorSecondary</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -12,8 +16,11 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    </style>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.DayNight.ActionBar">
+    </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 
 </resources>

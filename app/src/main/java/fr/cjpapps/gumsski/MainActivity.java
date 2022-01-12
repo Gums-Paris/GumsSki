@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private Boolean okPhone = false;
 
 /* TODO
-    Pour version publiable : Remettre la bonne url pour www
+    OK
     ---- reste
        météo et secours
        Background item_liste paramétrable ?

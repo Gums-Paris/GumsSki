@@ -63,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
     private Boolean okPhone = false;
 
 /* TODO
-    OK
+    vérifier l'URL de gumsparis StartActivity ligne 101
+    Couleur texte mode sombre boutonsAuth emailGroupe et Signal par xml au liet de code
     ---- reste
        météo et secours
        Background item_liste paramétrable ?

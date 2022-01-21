@@ -52,7 +52,7 @@ public class AuxAvecContext {
             TextView textView = new TextView(context);
             textView.setId(idT);
             textView.setText(params[1]);
-            textView.setTextColor(context.getColor(R.color.colorAccent));
+            textView.setTextColor(context.getColor(R.color.colorTitreChamp));
             textView.setGravity(Gravity.CENTER_HORIZONTAL);
             textView.setTypeface(null, Typeface.BOLD);
             parentLayout.addView(textView);

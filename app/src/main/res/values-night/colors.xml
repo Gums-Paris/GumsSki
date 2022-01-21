@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="textColorSecondary">@color/design_default_color_error</color>
-
+    <color name="textColorSecondary">@color/colorPrimaryDark</color>
+    <color name="colorFondSortie">#FAFAD2</color>
+    <color name="colorTitreChamp">@color/yellow</color>
+    <color name="colorEnvoi">@android:color/white</color>
 </resources>

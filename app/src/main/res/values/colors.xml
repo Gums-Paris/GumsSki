@@ -12,5 +12,9 @@
     <color name="marron_bouton">#D6721A</color>
     <color name="colorItiPark">#F7FFC4</color>
     <color name="colorItiRdV">#FFF2DE</color>
+    <color name="colorFondSortie">#FFF2DE</color>
     <color name="blanc">#FFFFFF</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="colorTitreChamp">@color/colorAccent</color>
+    <color name="colorEnvoi">@android:color/white</color>
 </resources>

@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class FirstFragment extends DialogFragment {
 
@@ -76,7 +77,9 @@ public class FirstFragment extends DialogFragment {
         View v = inflater.inflate(R.layout.fragment_first, container, false);
         affichage = v.findViewById(R.id.nom_groupe);
         emailGroupe = v.findViewById(R.id.groupe_mail_button);
+        emailGroupe.setTextColor(ContextCompat.getColor(Objects.requireNonNull(getContext()), R.color.blanc));
         smsGroupe = v.findViewById(R.id.groupe_sms_button);
+        smsGroupe.setTextColor(ContextCompat.getColor(Objects.requireNonNull(getContext()), R.color.blanc));
         mRecyclerView = v.findViewById(R.id.listeparticipants);
         return v;
     }
@@ -163,7 +166,7 @@ public class FirstFragment extends DialogFragment {
         emailGroupe.setOnClickListener(view12 -> {
             if (BuildConfig.DEBUG){
             Log.i("SECUSERV frag 1 onclick emailGroupe", groupeEmail.toString());
-            Log.i("SECUSERV frag 1 onclick liste adresses", listeAdresses);};
+            Log.i("SECUSERV frag 1 onclick liste adresses", listeAdresses);}
             String[] adresses = new String[groupeEmail.size()];
             adresses = groupeEmail.toArray(adresses);
             String subject = "";

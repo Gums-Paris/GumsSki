@@ -53,6 +53,7 @@ public class AuthActivity extends AppCompatActivity {
         ed1 = findViewById(R.id.username);
         ed2 = findViewById(R.id.password);
         envoyer = findViewById(R.id.envoi);
+        envoyer.setTextColor(getColor(R.color.blanc));
         model = new ViewModelProvider(this).get(ModelAuth.class);
 
         requestParams.put("app", Constantes.JOOMLA_USERS);

@@ -15,7 +15,7 @@
 
         <TextView
             android:id="@+id/intro_secours"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="64dp"
@@ -24,6 +24,187 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/europe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:text="@string/en_europe"
+            android:textColor="@color/rougeGums"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/intro_secours" />
+
+        <TextView
+            android:id="@+id/texte_europe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:text="@string/en_europe"
+            app:layout_constraintEnd_toStartOf="@+id/bouton_europe"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/europe" />
+
+        <Button
+            android:id="@+id/bouton_europe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/buttonshape"
+            android:color="#D6721A"
+            android:text="@string/texte_bouton_europe"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/texte_europe"
+            app:layout_constraintTop_toTopOf="@id/texte_europe" />
+
+        <TextView
+            android:id="@+id/france"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:text="@string/en_france"
+            android:textColor="@color/rougeGums"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/texte_europe" />
+
+        <TextView
+            android:id="@+id/texte_france"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/texte_france"
+            app:layout_constraintEnd_toStartOf="@+id/bouton_france"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/france" />
+
+        <Button
+            android:id="@+id/bouton_france"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/buttonshape"
+            android:color="#D6721A"
+            android:text="@string/texte_bouton_france"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/texte_france"
+            app:layout_constraintTop_toTopOf="@id/texte_france" />
+
+        <TextView
+            android:id="@+id/suisse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:text="@string/en_suisse"
+            android:textColor="@color/rougeGums"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/texte_france" />
+
+        <TextView
+            android:id="@+id/texte_suisse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/texte_suisse"
+            app:layout_constraintEnd_toStartOf="@+id/bouton_ocvs"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/suisse" />
+
+        <Button
+            android:id="@+id/bouton_ocvs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/buttonshape"
+            android:color="#D6721A"
+            android:text="@string/texte_bouton_ocvs"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/texte_suisse"
+            app:layout_constraintTop_toTopOf="@id/texte_suisse" />
+
+        <Button
+            android:id="@+id/bouton_rega"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/buttonshape"
+            android:color="#D6721A"
+            android:text="@string/texte_bouton_rega"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/texte_suisse"
+            app:layout_constraintTop_toBottomOf="@id/bouton_ocvs" />
+
+        <TextView
+            android:id="@+id/italie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:text="@string/en_italie"
+            android:textColor="@color/rougeGums"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bouton_rega" />
+
+        <TextView
+            android:id="@+id/texte_italie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/texte_italie"
+            app:layout_constraintEnd_toStartOf="@+id/bouton_ocvs"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/italie" />
+
+        <Button
+            android:id="@+id/bouton_italie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/buttonshape"
+            android:color="#D6721A"
+            android:text="@string/texte_bouton_italie"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/texte_italie"
+            app:layout_constraintTop_toTopOf="@id/texte_italie" />
+        <!--
+        <TextView
+            android:id="@+id/intro_secours"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="16dp"
+            android:text=""
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />  -->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

@@ -64,5 +64,29 @@
     <string name="diner_retour">Dîner au retour</string>
     <string name="coursesprévues">Courses prévues</string>
     <string name="leave_edit">On quitte cette page en utilisant l\'un des boutons "Sauvegarder" ou "Annuler"</string>
-
+    <string name="ta_position">Ta position GPS actuelle est<br /><b>%1$s °N,  %2$s °E</b></string>
+    <string name="en_europe">Dans toute l\'Europe appeler le 112</string>
+    <string name="texte_europe">À condition d’avoir un accès suffisant au réseau,ce qui n’est pas toujours
+        le cas en montagne, l’appel au 112 doit être privilégié.<br /><b>Le bouton lance un appel vers le
+        112</b><br />Bien indiquer qu’il s’agit d’un accident de montagne, donner le lieu (commune ou massif),
+        la position GPS, les blessés.</string>
+    <string name="texte_bouton_europe">Partout<br />Appel 112</string>
+    <string name="en_france">En France</string>
+    <string name="texte_france">Si on ne peut pas accéder au 112 on peut utiliser l’envoi d’un SMS au 114.
+        <br />Un SMS peut arriver à passer avec une qualité de réseau trop faible pour la parole.
+        <br /><b>Le bouton ouvre l’appli Messages sur un SMS prérempli avec les coordonnées GPS</b>.
+        <br /><b>Important :</b> si tu dois te déplacer pour chercher un accès au réseau, appuie sur
+        le bouton avant de bouger pour que ta position GPS actuelle soit enregistrée dans le projet de SMS.</string>
+    <string name="texte_bouton_france">France<br />SMSau 114</string>
+    <string name="en_suisse">En Suisse</string>
+    <string name="texte_suisse">Le 112 est recommandé.<br />Dans le Valais on peut appeler directement l’OCVS,
+        chargé du secours en montagne, au 144<br />	<b>Le bouton lance un appel vers le 144</b><br />Dans le
+        reste de la suisse on peut appeler la REGA, chargée du secours en montagne, au 1414<br /><b>Le bouton
+        lance un appel vers le 1414</b></string>
+    <string name="texte_bouton_ocvs">Valais<br />Appel 144</string>
+    <string name="texte_bouton_rega">"Reste Suisse<br />Appel1414</string>
+    <string name="en_italie">En Italie</string>
+    <string name="texte_italie">Le 112 est recommandé.<br  />On peut aussi appeler le 118<br /><b>Le bouton
+        lance un appel vers le 118</b></string>
+    <string name="texte_bouton_italie">Italie<br/>Appel 118</string>
 </resources>

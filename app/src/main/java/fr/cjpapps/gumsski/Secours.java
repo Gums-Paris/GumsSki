@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import android.text.Html;
 import android.view.View;
@@ -12,7 +13,8 @@ import android.widget.TextView;
 
 public class Secours extends AppCompatActivity {
 
-    TextView position = null;
+    TextView positionUn = null;
+    TextView positionDeux = null;
     TextView europe = null;
     TextView textEurope = null;
     Button boutonEurope = null;
@@ -38,18 +40,36 @@ public class Secours extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        position = findViewById(R.id.intro_secours);
+        positionDeux = findViewById(R.id.coordonnees);
+        textEurope = findViewById(R.id.texte_europe);
         boutonEurope = findViewById(R.id.bouton_europe);
+        textFrance = findViewById(R.id.texte_france);
         boutonFrance = findViewById(R.id.bouton_france);
+        textSuisse = findViewById(R.id.texte_suisse);
         boutonOCVS = findViewById(R.id.bouton_ocvs);
         boutonREGA = findViewById(R.id.bouton_rega);
+        textItalie = findViewById(R.id.texte_italie);
         boutonItalie = findViewById(R.id.bouton_italie);
 
         latitude = 44.97704;
         latitudeStr = String.format("%.4f", latitude);
         longitude = 2.50506;
         longitudeStr = String.format("%.4f", longitude);
-        position.setText(Aux.fromHtml(getString(R.string.ta_position,latitudeStr,longitudeStr)));
+        positionDeux.setText(getString(R.string.lat_lon, latitudeStr, longitudeStr));
+        textEurope.setText(Aux.fromHtml(getString(R.string.texte_europe)));
+        boutonEurope.setText(Aux.fromHtml(getString(R.string.texte_bouton_europe)));
+        boutonEurope.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.colorEnvoi));
+        textFrance.setText(Aux.fromHtml(getString(R.string.texte_france)));
+        boutonFrance.setText(Aux.fromHtml(getString(R.string.texte_bouton_france)));
+        boutonFrance.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.colorEnvoi));
+        textSuisse.setText(Aux.fromHtml(getString(R.string.texte_suisse)));
+        boutonOCVS.setText(Aux.fromHtml(getString(R.string.texte_bouton_ocvs)));
+        boutonOCVS.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.colorEnvoi));
+        boutonREGA.setText(Aux.fromHtml(getString(R.string.texte_bouton_rega)));
+        boutonREGA.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.colorEnvoi));
+        textItalie.setText(Aux.fromHtml(getString(R.string.texte_italie)));
+        boutonItalie.setText(Aux.fromHtml(getString(R.string.texte_bouton_italie)));
+        boutonItalie.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.colorEnvoi));
 
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

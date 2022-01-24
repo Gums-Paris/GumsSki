@@ -15,7 +15,7 @@
 
         <TextView
             android:id="@+id/intro_secours"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="64dp"
@@ -27,7 +27,7 @@
 
         <TextView
             android:id="@+id/coordonnees"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
@@ -42,7 +42,7 @@
             android:id="@+id/europe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="40dp"
             android:text="@string/en_europe"
             android:textColor="@color/rougeGums"
             android:textSize="20sp"
@@ -53,89 +53,88 @@
 
         <TextView
             android:id="@+id/texte_europe"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             android:text=""
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/bouton_europe"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/europe" />
 
         <Button
             android:id="@+id/bouton_europe"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/buttonshape"
             android:text=""
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/texte_europe" />
+            app:layout_constraintStart_toEndOf="@id/texte_europe"
+            app:layout_constraintTop_toTopOf="@id/texte_europe" />
 
         <TextView
             android:id="@+id/france"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="40dp"
             android:text="@string/en_france"
             android:textColor="@color/rougeGums"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bouton_europe" />
+            app:layout_constraintTop_toBottomOf="@id/texte_europe" />
 
         <TextView
             android:id="@+id/texte_france"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:text=""
-            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/bouton_france"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/france" />
 
         <Button
             android:id="@+id/bouton_france"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/buttonshape"
-            android:text="@string/texte_bouton_france"
+            android:text=""
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/texte_france" />
+            app:layout_constraintStart_toEndOf="@id/texte_france"
+            app:layout_constraintTop_toTopOf="@id/texte_france" />
 
         <TextView
             android:id="@+id/suisse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="40dp"
             android:text="@string/en_suisse"
             android:textColor="@color/rougeGums"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bouton_france" />
+            app:layout_constraintTop_toBottomOf="@id/texte_france" />
 
         <TextView
             android:id="@+id/texte_suisse"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:text=""
-            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/bouton_ocvs"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/suisse" />
 
@@ -148,9 +147,9 @@
             android:layout_marginEnd="16dp"
             android:background="@drawable/buttonshape"
             android:text=""
-            app:layout_constraintEnd_toStartOf="@id/bouton_rega"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/texte_suisse" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/texte_suisse"
+            app:layout_constraintTop_toTopOf="@id/texte_suisse" />
 
         <Button
             android:id="@+id/bouton_rega"
@@ -162,14 +161,14 @@
             android:background="@drawable/buttonshape"
             android:text=""
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/bouton_ocvs"
-            app:layout_constraintTop_toBottomOf="@id/texte_suisse" />
+            app:layout_constraintStart_toEndOf="@id/texte_suisse"
+            app:layout_constraintTop_toBottomOf="@id/bouton_ocvs" />
 
         <TextView
             android:id="@+id/italie"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="40dp"
             android:text="@string/en_italie"
             android:textColor="@color/rougeGums"
             android:textSize="20sp"
@@ -180,19 +179,19 @@
 
         <TextView
             android:id="@+id/texte_italie"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:text=""
-            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/bouton_ocvs"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/italie" />
 
         <Button
             android:id="@+id/bouton_italie"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
@@ -201,8 +200,8 @@
             android:background="@drawable/buttonshape"
             android:text=""
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/texte_italie"
+            app:layout_constraintStart_toEndOf="@id/texte_italie"
+            app:layout_constraintTop_toTopOf="@id/texte_italie"
             app:layout_constraintBottom_toBottomOf="parent"/>
         <!--
         <TextView

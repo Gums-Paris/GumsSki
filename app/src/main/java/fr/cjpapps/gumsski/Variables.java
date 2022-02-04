@@ -10,6 +10,9 @@ public class Variables {
     // url du backend
     public static String urlActive = "";
 
+    // requête de localisation en cours
+    public static boolean requestingLocationUpdates = false;
+
     // retours de connexion
     public static String errMsg = "";
     public static String errCode = "";

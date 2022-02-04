@@ -38,18 +38,29 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/intro_secours" />
+
+        <TextView
+            android:id="@+id/accuracy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/coordonnees" />
+
         <TextView
             android:id="@+id/europe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:text="@string/en_europe"
-            android:textColor="@color/rougeGums"
+            android:textColor="@color/colorTitreChamp"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/coordonnees" />
+            app:layout_constraintTop_toBottomOf="@id/accuracy" />
 
         <TextView
             android:id="@+id/texte_europe"
@@ -81,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:text="@string/en_france"
-            android:textColor="@color/rougeGums"
+            android:textColor="@color/colorTitreChamp"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -119,7 +130,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:text="@string/en_suisse"
-            android:textColor="@color/rougeGums"
+            android:textColor="@color/colorTitreChamp"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -170,7 +181,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:text="@string/en_italie"
-            android:textColor="@color/rougeGums"
+            android:textColor="@color/colorTitreChamp"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"

@@ -30,8 +30,6 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 

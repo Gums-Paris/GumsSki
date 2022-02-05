@@ -49,6 +49,7 @@
     <string name="title_activity_secours">Secours</string>
     <string name="title_activity_preferences">Preferences</string>
     <string name="title_activity_start">GumsSki</string>
+    <string name="title_activity_edit_SMS">Préparation SMS pour 114</string>
     <string name="titre_accueil">GUMS Paris\nListe des WE de ski de randonnée\n       en date du %1$s</string>
     <string name="action">Retour liste</string>
     <string name="modif">Modifier</string>
@@ -66,6 +67,7 @@
     <string name="leave_edit">On quitte cette page en utilisant l\'un des boutons "Sauvegarder" ou "Annuler"</string>
     <string name="ta_position">Ta position GPS actuelle est</string>
     <string name="lat_lon">%1$s °N"      "%2$s °E</string>
+    <string name="precision">Précision = %1$s</string>
     <string name="en_europe">Dans toute l\'Europe appeler le 112</string>
     <string name="texte_europe">A condition d\’avoir un accès suffisant au réseau,ce qui n’est pas toujours
         le cas en montagne, l\’appel au 112 doit être privilégié.&lt;br />&lt;b>Le bouton lance un appel vers le
@@ -78,7 +80,8 @@
         &lt;br />&lt;b>Le bouton ouvre l’appli Messages sur un SMS prérempli avec les coordonnées GPS&lt;/b>.
         &lt;br />&lt;b>Important :&lt;/b> si tu dois te déplacer pour chercher un accès au réseau, appuie sur
         le bouton avant de bouger pour que ta position GPS actuelle soit enregistrée dans le projet de SMS.</string>
-    <string name="texte_bouton_france">France&lt;br />SMS au 114</string>
+    <string name="bouton_redac_sms">Preparer&lt;br />SMS pour 114</string>
+    <string name="texte_bouton_france">Verif et&lt;br />envoi au 114</string>
     <string name="en_suisse">En Suisse</string>
     <string name="texte_suisse">Le 112 est recommandé.&lt;br />Dans le Valais on peut appeler directement l’OCVS,
         chargé du secours en montagne, au 144&lt;br />	&lt;b>Le bouton lance un appel vers le 144&lt;/b>&lt;br />Dans le
@@ -90,4 +93,10 @@
     <string name="texte_italie">Le 112 est recommandé. On peut aussi appeler le 118&lt;br />&lt;b>Le bouton
         lance un appel vers le 118&lt;/b></string>
     <string name="texte_bouton_italie">Italie&lt;br/>Appel 118</string>
+    <string name="title_activity_redaction_sms">Redaction SMS</string>
+    <string name="titre_partie_un">Première partie : Lieu de l\'accident\nDonner la commune ou le village le plus proche,
+        le massif, le but de la course, l\'altitude de l\'accident et autres renseignements utiles.</string>
+    <string name="titre_partie_deux">Deuxième partie : Type d\'accident, éventuellement blessés, disparus. </string>
+    <string name="texte_sms_114">Demande de secours en montagne\n\nCoordonnées de l\'accident = %1$s\n\nLieu de l\'accident :
+        \n%2$s\n\nType d\'accident :\n%3$s</string>
 </resources>

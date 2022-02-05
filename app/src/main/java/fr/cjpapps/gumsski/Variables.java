@@ -13,6 +13,10 @@ public class Variables {
     // requête de localisation en cours
     public static boolean requestingLocationUpdates = false;
 
+    //texte saisi pour compléter le SMS au 114
+    public static String texteSMSpart1 = "";
+    public static String texteSMSpart2 = "";
+
     // retours de connexion
     public static String errMsg = "";
     public static String errCode = "";

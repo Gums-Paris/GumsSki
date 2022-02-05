@@ -264,7 +264,8 @@ public class MainActivity extends AppCompatActivity {
                         MainActivity.this, Manifest.permission.CALL_PHONE) ==
                         PackageManager.PERMISSION_GRANTED) {
                     if (BuildConfig.DEBUG){
-                        Log.i("SECUSERV Main", "telResCar = " + resCar.getTel());}                    Aux.phoneCall(resCar);
+                        Log.i("SECUSERV Main", "telResCar = " + resCar.getTel());}
+                    Aux.phoneCall(resCar);
                 } else {
                     // You can directly ask for the permission.
                     // The registered ActivityResultCallback gets the result of this request.
@@ -363,6 +364,13 @@ public class MainActivity extends AppCompatActivity {
         }
         DialogAlertes infoMain = DialogAlertes.newInstance(message);
         infoMain.show(getSupportFragmentManager(), "infoMain");
+    }
+
+// on réinitialise le projet de SMS au 114 lorsqu'on quitte la page de la sortie
+    protected void onDestroy() {
+        super.onDestroy();
+        Variables.texteSMSpart1 = "";
+        Variables.texteSMSpart2 = "";
     }
 
 }

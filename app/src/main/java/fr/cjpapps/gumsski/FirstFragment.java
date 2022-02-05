@@ -77,9 +77,9 @@ public class FirstFragment extends DialogFragment {
         View v = inflater.inflate(R.layout.fragment_first, container, false);
         affichage = v.findViewById(R.id.nom_groupe);
         emailGroupe = v.findViewById(R.id.groupe_mail_button);
-        emailGroupe.setTextColor(ContextCompat.getColor(Objects.requireNonNull(getContext()), R.color.blanc));
+        emailGroupe.setTextColor(ContextCompat.getColor(requireContext(), R.color.blanc));
         smsGroupe = v.findViewById(R.id.groupe_sms_button);
-        smsGroupe.setTextColor(ContextCompat.getColor(Objects.requireNonNull(getContext()), R.color.blanc));
+        smsGroupe.setTextColor(ContextCompat.getColor(requireContext(), R.color.blanc));
         mRecyclerView = v.findViewById(R.id.listeparticipants);
         return v;
     }

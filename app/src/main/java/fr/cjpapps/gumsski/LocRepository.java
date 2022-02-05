@@ -21,9 +21,9 @@ import com.google.android.gms.tasks.Task;
 
 class LocRepository {
 
-    public static final int NBR_SECS_INI = 3;
+    public static final int NBR_SECS_INI = 2;
     public static final int NBR_SECS_FINAL = 20;
-    public static final int NBR_MINS_TRACKING = 2;
+    public static final int NBR_MINS_TRACKING = 1;
     private final MutableLiveData<Location> position = new MutableLiveData<>();
     private final FusedLocationProviderClient fusedLocationClient;
     private LocationRequest locationRequest;
@@ -35,6 +35,7 @@ class LocRepository {
                 return;
             }
             for (Location location : locationResult.getLocations()) {
+                Log.i("SECUSERV", "location OK");
                 position.setValue(location);
             }
         }
@@ -57,10 +58,10 @@ class LocRepository {
                         public void onSuccess(Location location) {
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
-                                Log.i("MA_LOCA", "last location OK");
+                                Log.i("SECUSERV", "last location OK");
                                 position.setValue(location);
                             } else {
-                                Log.i("MA_LOCA", "location est null");
+                                Log.i("SECUSERV", "location est null");
                             }
                         }
                     });
@@ -101,7 +102,7 @@ class LocRepository {
         //       if (Variables.gpsOK){
         startLocationUpdates();
         //       }
-        Log.i("MA_LOCA", "change intervalle");
+        Log.i("SECUSERV", "change intervalle");
     }
 
  }

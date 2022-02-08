@@ -22,16 +22,26 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="5dp"
+        android:id="@+id/organisateur"
+        android:textSize="15sp"
+        android:text="@string/organisateur"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/affiche" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
         android:gravity="center_horizontal"
         android:id="@+id/affiche2"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/affiche" />
+        app:layout_constraintTop_toBottomOf="@id/organisateur" />
 
     <ImageButton
         android:id="@+id/phone_rescar"
@@ -45,7 +55,7 @@
         app:layout_constraintEnd_toStartOf="@id/email_rescar"
         app:layout_constraintTop_toBottomOf="@id/affiche2"
         app:layout_constraintHorizontal_chainStyle="packed"
-        android:contentDescription="Phone" />
+        android:contentDescription="@string/email" />
 
     <ImageButton
         android:id="@+id/email_rescar"
@@ -57,7 +67,7 @@
         app:layout_constraintStart_toEndOf="@id/phone_rescar"
         app:layout_constraintEnd_toStartOf="@id/sms_rescar"
         app:layout_constraintTop_toTopOf="@id/phone_rescar"
-        android:contentDescription="Email" />
+        android:contentDescription="@string/phone" />
 
     <ImageButton
         android:id="@+id/sms_rescar"
@@ -69,7 +79,18 @@
         app:layout_constraintStart_toEndOf="@id/email_rescar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/email_rescar"
-        android:contentDescription="Message" />
+        android:contentDescription="@string/message" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:layout_marginStart="5dp"
+        android:id="@+id/liste_groupes"
+        android:textSize="15sp"
+        android:text="@string/liste_groupes"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/affiche2" />
 
     <TextView
         android:layout_width="match_parent"
@@ -96,10 +117,10 @@
         android:scrollbars="vertical"
         android:layout_width="300dp"
         android:layout_height="match_parent"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/affiche2"/>
+        app:layout_constraintTop_toBottomOf="@+id/liste_groupes"/>
 
 
  <!--   <Button

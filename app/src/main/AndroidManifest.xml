@@ -35,12 +35,21 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".APropos"
+            android:exported="false"
+            android:label="@string/title_apropos"
+            android:theme="@style/AppTheme.NoActionBar">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="fr.cjpapps.gumsski.StartActivity" />
+        </activity>
+        <activity
             android:name=".RedactionSMS"
             android:label="@string/title_activity_edit_SMS"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value="fr.cjpapps.gumsski.Secours" />
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fr.cjpapps.gumsski.Secours" />
         </activity>
         <activity
             android:name=".StartActivity"
@@ -67,7 +76,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="fr.cjpapps.gumsski.MainActivity" />
+                android:value="fr.cjpapps.gumsski.StartActivity" />
         </activity>
         <activity
             android:name=".Meteo"

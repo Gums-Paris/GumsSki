@@ -53,11 +53,13 @@ public class RedactionSMS extends AppCompatActivity {
         sauve.setOnClickListener(view -> {
             if (partie1 != null) {
                 Variables.texteSMSpart1 = partie1.getText().toString();
+                if (BuildConfig.DEBUG){
                 Log.i("SECUSERV"," sms1 = "+Variables.texteSMSpart1);
-            }
+            }}
             if (partie2 != null) {
                 Variables.texteSMSpart2 = partie2.getText().toString();
-            Log.i("SECUSERV"," sms2 = "+Variables.texteSMSpart2);
+                if (BuildConfig.DEBUG){
+            Log.i("SECUSERV"," sms2 = "+Variables.texteSMSpart2);}
             }
             finish();
         });

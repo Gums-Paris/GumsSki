@@ -247,17 +247,9 @@ public class MainActivity extends AppCompatActivity {
             panic.setText(R.string.no_groups);
         }
 
-//on utilise le FAB pour remonter à StartActivity parce que le retour arrière de Main sert à fermer l'appli
-/*        ExtendedFloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> {
-            Intent retourListeSorties = new Intent(MainActivity.this, StartActivity.class);
-            startActivity(retourListeSorties);
-            MainActivity.this.finish();
-        });  */
     }  // end onCreate
 
     private void pourJoindreResCar(){
-//        resCar = auxMethods.getResCar(listeDesItems, idResCar);
         if (resCar != null) {
             phoneResCar.setOnClickListener(view -> {
                 if (ContextCompat.checkSelfPermission(

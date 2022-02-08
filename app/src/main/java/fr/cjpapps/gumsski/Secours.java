@@ -17,9 +17,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Handler;
-import android.text.Html;
+import android.os.Looper;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,7 +53,9 @@ public class Secours extends AppCompatActivity {
     String positionStr;
     float precision;
     ModelLocation model;
+    private Boolean okPhone = false;
 
+// lanceur pour demander la permission de localisation
     ActivityResultLauncher<String[]> locationPermissionRequest =
             registerForActivityResult(new ActivityResultContracts
                             .RequestMultiplePermissions(), result -> {
@@ -64,7 +65,8 @@ public class Secours extends AppCompatActivity {
                                 Manifest.permission.ACCESS_COARSE_LOCATION);
                         if (fineLocationGranted != null && fineLocationGranted) {
                             // Precise location access granted.
-                            Log.i("SECUSERV", "on obtient la permission");
+                            if (BuildConfig.DEBUG){
+                            Log.i("SECUSERV", "on obtient la permission");}
                             model.updatePosition();
                             Variables.requestingLocationUpdates = true;
                         } else if (coarseLocationGranted != null && coarseLocationGranted) {
@@ -76,6 +78,18 @@ public class Secours extends AppCompatActivity {
                         }
                     }
             );
+
+// lanceur pour demande permission d'appeler qqun au tph directement
+    final private ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    // Permission is granted. Continue the action or workflow in your app
+                    okPhone = true;
+                } else {
+                    // Explain to the user that the feature is unavailable
+                    okPhone = false;
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,27 +116,30 @@ public class Secours extends AppCompatActivity {
         boutonItalie = findViewById(R.id.bouton_italie);
 
         positionUn.setText(getString(R.string.ta_position));
-        positionDeux.setText("En attente position");
+        positionDeux.setText(getString(R.string.attente_position));
 
         model = new ViewModelProvider(this).get(ModelLocation.class);
 
+// vérification de la permission de téléphoner
         if (ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // You can use the API that requires the permission.
-            Log.i("SECUSERV", "on a déja la permission");
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "on a déja la permission");}
             model.updatePosition();
             Variables.requestingLocationUpdates = true;
         } else {
             // You can directly ask for the permission.
             // The registered ActivityResultCallback gets the result of this request.
-            Log.i("SECUSERV", "demande permissions");
+            if (BuildConfig.DEBUG){
+            Log.i("SECUSERV", "demande permissions");}
             locationPermissionRequest.launch(new String[] {
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
             });
         }
 
-        // observateur de la position GPS
+// observateur de la position GPS
         final Observer<Location> positionObserver = new Observer<Location>() {
             @Override
             public void onChanged(Location location) {
@@ -138,17 +155,17 @@ public class Secours extends AppCompatActivity {
                         positionDeux.setText(positionStr);
                         accuracy.setText(getString(R.string.precision, String.valueOf((int) precision)));
                     }else{
-                        positionDeux.setText("Pas de position précise");
+                        positionDeux.setText(getText(R.string.pas_precis));
                     }
                 }else{
-                    positionDeux.setText("Pas de GPS");
+                    positionDeux.setText(getText(R.string.no_gps));
                 }
             }
         };
         model.getPositionActuelle().observe(this, positionObserver);
 
-// timer pour arrêter les mises à jour GPS après un délai
-        new Handler().postDelayed(new Runnable() {
+// timer pour arrêter les mises à jour GPS après un délai de DELAY secondes
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
 /*            public void run() {
                 changeLocationInterval();
@@ -156,10 +173,9 @@ public class Secours extends AppCompatActivity {
             public void run() {
                 Log.i("SECUSERV", "minute écoulée");
                 model.stopUpdatePosition();
-                positionUn.setText("Position de l'accident");
+                positionUn.setText(getText(R.string.posit_accident));
             }
         }, 1000*DELAY);
-
 
         textEurope.setText(Aux.fromHtml(getString(R.string.texte_europe)));
         boutonEurope.setText(Aux.fromHtml(getString(R.string.texte_bouton_europe)));
@@ -178,21 +194,105 @@ public class Secours extends AppCompatActivity {
         boutonItalie.setText(Aux.fromHtml(getString(R.string.texte_bouton_italie)));
         boutonItalie.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.colorEnvoi));
 
+// bouton appel 112
+        boutonEurope.setOnClickListener(view -> {
+            if (ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.CALL_PHONE) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                phoneSecours("112");
+            } else {
+                // You can directly ask for the permission.
+                // The registered ActivityResultCallback gets the result of this request.
+                requestPermissionLauncher.launch(
+                        Manifest.permission.CALL_PHONE);
+                if (okPhone) {
+                    phoneSecours("112");
+                }
+            }
+        });
+
+// bouton appel 144 (Valais)
+        boutonOCVS.setOnClickListener(view -> {
+            if (ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.CALL_PHONE) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                phoneSecours("144");
+            } else {
+                // You can directly ask for the permission.
+                // The registered ActivityResultCallback gets the result of this request.
+                requestPermissionLauncher.launch(
+                        Manifest.permission.CALL_PHONE);
+                if (okPhone) {
+                    phoneSecours("144");
+                }
+            }
+        });
+
+// bouton appel 1414 (reste de la Suisse)
+        boutonREGA.setOnClickListener(view -> {
+            if (ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.CALL_PHONE) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                phoneSecours("1414");
+            } else {
+                // You can directly ask for the permission.
+                // The registered ActivityResultCallback gets the result of this request.
+                requestPermissionLauncher.launch(
+                        Manifest.permission.CALL_PHONE);
+                if (okPhone) {
+                    phoneSecours("1414");
+                }
+            }
+        });
+
+// bouton appel Italie (118)
+        boutonItalie.setOnClickListener(view -> {
+            if (ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.CALL_PHONE) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                phoneSecours("118");
+            } else {
+                // You can directly ask for the permission.
+                // The registered ActivityResultCallback gets the result of this request.
+                requestPermissionLauncher.launch(
+                        Manifest.permission.CALL_PHONE);
+                if (okPhone) {
+                    phoneSecours("118");
+                }
+            }
+        });
+
+// bouton rédaction SMS pour 114
         redacFrance.setOnClickListener(view -> {
             Intent sms114 = new Intent(this, RedactionSMS.class);
             startActivity(sms114);
         });
 
+// bouton envoi SMS au 114
         boutonFrance.setOnClickListener(view -> {
             envoiSMSAu114();
         });
 
      }  // end onCreate
 
+// pour modifier la requête définissant l'intervalle entre positions GPS
     void changeLocationInterval () {
         model.changeRequest();
     }
 
+    private static void phoneSecours(String numero){
+        if (BuildConfig.DEBUG){
+            Log.i("SECUSERV secours click ", numero);}
+        Intent phone = new Intent(Intent.ACTION_CALL);
+        phone.setData(Uri.parse("tel:"+numero));
+        phone.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (phone.resolveActivity(MyHelper.getInstance().recupPackageManager()) != null) {
+            MyHelper.getInstance().launchActivity(phone);
+        } else {
+            if (BuildConfig.DEBUG) {
+            }            Log.i("SECUSERV"," appli téléphone pas disponible");
+        }
+    }
     protected void envoiSMSAu114(){
         Intent sms = new Intent(Intent.ACTION_SENDTO);
         sms.setData(Uri.parse("smsto: 114"));

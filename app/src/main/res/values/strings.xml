@@ -26,6 +26,13 @@
     <string name="title_activity_delete_item">DeleteItem</string>
     <string name="title_activity_groupe">Détails du Groupe</string>
     <string name="title_activity_help">Aide</string>
+    <string name="title_activity_logistique">Logistique</string>
+    <string name="title_activity_meteo">Meteo</string>
+    <string name="title_activity_secours">Secours</string>
+    <string name="title_activity_preferences">Preferences</string>
+    <string name="title_activity_start">GumsSki</string>
+    <string name="title_activity_edit_SMS">Préparation SMS pour 114</string>
+    <string name="titre_accueil">GUMS Paris\nListe des WE de ski de randonnée\n       en date du %1$s</string>
     <string name="helptext">L\'appli s\'ouvre sur la &lt;b&gt;liste des sorties de WE en ski de rando&lt;/b&gt; du GUMS-Paris.&lt;br /&gt;
         En cliquant un WE on ouvre &lt;b&gt;la liste des responsables des groupes&lt;/b&gt; du WE, après identification sur gumsparis.&lt;br /&gt;
         Noter que après la première identification, l\'appli conserve son jeton d\'authentification auprès de gumsparis.&lt;br /&gt;
@@ -39,21 +46,24 @@
         Le responsable du car et les RES de chaque groupe ont les autorisations nécessaires pour modifier la logistique de ce car.
         Pour quitter cette page, il vous est demandé d\'utiliser les boutons "Sauvegarder" ou "Annuler" de la page d\'édition
         sinon un verrouillage empêchera d\'autres utilisateurs de faire des modifications.&lt;br /&gt;&lt;br /&gt;
+        &lt;b&gt;Secours en montagne : &lt;/b&gt;La page "Secours" affiche la position GPS. Celle-ci fait partie des renseignements à donner lors
+        d\'un appel au 112. Si la qualité de réseau est insuffisante pour la communication, essayer l\'envoi d\'un SMS au 114.
+        Un bouton permet de saisir les informations concernant le lieu et l\'accident. Elles seront automatiquement insérées,
+        en même temps que la position GPS affichée, dans le SMS à envoyer.&lt;br /&gt;&lt;br /&gt;
         Bon Week-end.&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Pour toute question, remarque ou suggestion&lt;/b&gt; concernant cette appli,
         écrire à &lt;a href=\"mailto:appli.gumsski@gumsparis.asso.fr\"&gt;Appli GumsSki&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;</string>
     <string name="prefs">  Actuellement il n\'y a rien à choisir</string>
     <string name="pas_fait"> C\'est pas encore fait, patience …</string>
     <string name="details">  %1$s  %2$s</string>
-    <string name="title_activity_logistique">Logistique</string>
-    <string name="title_activity_meteo">Meteo</string>
-    <string name="title_activity_secours">Secours</string>
-    <string name="title_activity_preferences">Preferences</string>
-    <string name="title_activity_start">GumsSki</string>
-    <string name="title_activity_edit_SMS">Préparation SMS pour 114</string>
-    <string name="titre_accueil">GUMS Paris\nListe des WE de ski de randonnée\n       en date du %1$s</string>
     <string name="action">Retour liste</string>
     <string name="modif">Modifier</string>
+    <string name="organisateur">Organisée par :</string>
+    <string name="liste_groupes">Liste des groupes :</string>
+    <string name="email">Email</string>
+    <string name="phone">Phone</string>
+    <string name="message">Message</string>
     <string name="no_groups"> Les groupes n\'ont pas encore été faits pour cette sortie</string>
+    <string name="participant"></string>
     <string name="no_list"> La liste des sorties est vide</string>
     <string name="save">SAUVEGARDER</string>
     <string name="cancel">ANNULER</string>
@@ -67,7 +77,7 @@
     <string name="leave_edit">On quitte cette page en utilisant l\'un des boutons "Sauvegarder" ou "Annuler"</string>
     <string name="ta_position">Ta position GPS actuelle est</string>
     <string name="lat_lon">%1$s °N"      "%2$s °E</string>
-    <string name="precision">Précision = %1$s</string>
+    <string name="precision">Précision = %1$s m</string>
     <string name="en_europe">Dans toute l\'Europe appeler le 112</string>
     <string name="texte_europe">A condition d\’avoir un accès suffisant au réseau,ce qui n’est pas toujours
         le cas en montagne, l\’appel au 112 doit être privilégié.&lt;br />&lt;b>Le bouton lance un appel vers le
@@ -81,22 +91,54 @@
         &lt;br />&lt;b>Important :&lt;/b> si tu dois te déplacer pour chercher un accès au réseau, appuie sur
         le bouton avant de bouger pour que ta position GPS actuelle soit enregistrée dans le projet de SMS.</string>
     <string name="bouton_redac_sms">Preparer&lt;br />SMS pour 114</string>
-    <string name="texte_bouton_france">Verif et&lt;br />envoi au 114</string>
+    <string name="texte_bouton_france">Vérif et&lt;br />envoi au 114</string>
     <string name="en_suisse">En Suisse</string>
-    <string name="texte_suisse">Le 112 est recommandé.&lt;br />Dans le Valais on peut appeler directement l’OCVS,
-        chargé du secours en montagne, au 144&lt;br />	&lt;b>Le bouton lance un appel vers le 144&lt;/b>&lt;br />Dans le
-        reste de la suisse on peut appeler la REGA, chargée du secours en montagne, au 1414&lt;br />&lt;b>Le bouton
+    <string name="texte_suisse">Le 112 est recommandé.&lt;br />À condition de passer par un opérateur suisse, dans
+        le Valais on peut appeler directement l’OCVS, chargé du secours en montagne, au 144&lt;br />	&lt;b>
+        Le bouton lance un appel vers le 144&lt;/b>&lt;br />Dans le reste de la suisse, à condition de passer par un
+        opérateur suisse on peut appeler la REGA, chargée du secours en montagne, au 1414&lt;br />&lt;b>Le bouton
         lance un appel vers le 1414&lt;/b></string>
     <string name="texte_bouton_ocvs">Valais&lt;br />Appel 144</string>
     <string name="texte_bouton_rega">"Reste Suisse&lt;br />Appel1414</string>
     <string name="en_italie">En Italie</string>
-    <string name="texte_italie">Le 112 est recommandé. On peut aussi appeler le 118&lt;br />&lt;b>Le bouton
-        lance un appel vers le 118&lt;/b></string>
+    <string name="texte_italie">Le 112 est recommandé. À condition de passer par un opérateur italien, on peut
+        aussi appeler le 118&lt;br />&lt;b>Le bouton lance un appel vers le 118&lt;/b></string>
     <string name="texte_bouton_italie">Italie&lt;br/>Appel 118</string>
     <string name="title_activity_redaction_sms">Redaction SMS</string>
     <string name="titre_partie_un">Première partie : Lieu de l\'accident\nDonner la commune ou le village le plus proche,
         le massif, le but de la course, l\'altitude de l\'accident et autres renseignements utiles.</string>
     <string name="titre_partie_deux">Deuxième partie : Type d\'accident, éventuellement blessés, disparus. </string>
-    <string name="texte_sms_114">Demande de secours en montagne\n\nCoordonnées de l\'accident = %1$s\n\nLieu de l\'accident :
-        \n%2$s\n\nType d\'accident :\n%3$s</string>
+    <string name="texte_sms_114">Demande de secours en montagne\nSki de randonnée\n\nCoordonnées de l\'accident =
+        \n %1$s\n\nLieu de l\'accident :\n%2$s\n\nType d\'accident :\n%3$s</string>
+    <string name="aproposdugums">Pendant l’hiver et au printemps, le Groupe Universitaire de Montagne et de Ski (GUMS)
+        organise pour ses adhérents des sorties de ski de randonnée en cars-couchettes vers les montagnes. Ces sorties
+        sont réservées aux membres de l’association et sont conduites par des bénévoles diplômés pour la conduite en
+        sécurité de telles activités.&lt;br />&lt;br />Plus généralement, le GUMS propose à ses adhérents de découvrir le
+        milieu naturel et montagnard sous toutes ses formes, pour y pratiquer de multiples activités : &lt;b>alpinisme,
+        ski de montagne, escalade, randonnée pédestre, expéditions lointaines.&lt;/b> Il s\'adresse à toutes et à tous,
+        pour découvrir, ou affermir sa pratique, quelle que soit la discipline pratiquée. Les activités se déroulent
+        surtout en pleine nature (stages ou week-ends en montagne ou en falaise, rendez-vous le dimanche à Fontainebleau)
+        mais cela n\'exclut pas de se retrouver lors de séances d’entraînement sur des murs d\'escalade en ville.&lt;br />&lt;br />
+        Le GUMS tient à ce que ses adhérents aient une &lt;b&gt;pratique autonome et responsable de l\'activité&lt;/b&gt;.
+        L\'organisation des sorties et leur encadrement étant assuré par les cadres bénévoles du club, chacun se doit de
+        contribuer à leur préparation (nourriture, matériel,..).&lt;br /&gt;&lt;br /&gt;La formation, gage essentiel de sécurité dans
+        ces activités à risque que sont les sports de montagne, est un aspect très important au GUMS. Le club encourage ses
+        membres les plus actifs à devenir des &lt;b>cadres diplômés par les fédérations compétentes&lt;/b>, et finance en partie
+        leur participation aux stages de formation nécessaires.&lt;br /&gt;&lt;br /&gt;Le GUMS souhaite aussi pratiquer une
+        &lt;b>solidarité active vis-à-vis des jeunes&lt;/b>, dont les revenus faibles ou irréguliers constituent souvent une
+        limitation importante à la pratique de la montagne. C\'est ainsi que les jeunes bénéficient de réductions de prix
+        très substantielles sur les cotisations et sur les activités organisées par l\'association.&lt;br /&gt;&lt;br /&gt;Enfin, le
+        GUMS entend défendre &lt;b>le respect et la préservation du milieu naturel&lt;/b> qui sert de cadre à ses activités et
+        qui est trop souvent menacé par des projets d\'aménagements excessifs ou par l\'intrusion des loisirs motorisés.&lt;br /&gt;&lt;br /&gt;
+        Tout savoir sur le GUMS : &lt;a href="https://www.gumsparis.asso.fr/">https://www.gumsparis.asso.fr/&lt;/a>&lt;br /&gt;&lt;br /&gt;
+        &lt;b>Notification pour l\'utilisateur :&lt;/b> votre utilisation de l\'appli GumsSki se fait sous votre entière
+        responsabilité. L\'appli GumsSki est fournie en l\'état sans aucune garantie. Le GUMS n’accepte aucune responsabilité
+        pour toutes conséquences de son usage.&lt;br /&gt;&lt;br /&gt;</string>
+    <string name="title_apropos">À propos du GUMS</string>
+    <string name="item_apropos">À propos du GUMS</string>
+    <string name="item_secours">Secours</string>
+    <string name="attente_position">En attente position</string>
+    <string name="pas_precis">Pas de position précise</string>
+    <string name="no_gps">Pas de GPS</string>
+    <string name="posit_accident">Position de l\'accident</string>
 </resources>

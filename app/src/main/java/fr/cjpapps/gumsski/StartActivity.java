@@ -249,6 +249,16 @@ public class StartActivity extends AppCompatActivity {
            authNewUserResultLauncher.launch(newUser);
             return true;
         }
+        if (id == R.id.secours) {
+            Intent secours = new Intent(this, Secours.class);
+            startActivity(secours);
+            return true;
+        }
+        if (id == R.id.apropos) {
+            Intent lireAPropos = new Intent(this, APropos.class);
+            startActivity(lireAPropos);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
     //affichage dialogue d'alerte si problème de disponibilité des infos
@@ -273,6 +283,13 @@ public class StartActivity extends AppCompatActivity {
         }
         DialogAlertes infoStart = DialogAlertes.newInstance(message);
         infoStart.show(getSupportFragmentManager(), "infoStart");
+    }
+
+// on réinitialise le projet de SMS au 114 lorsqu'on quitte la page de la sortie
+    protected void onDestroy() {
+        super.onDestroy();
+        Variables.texteSMSpart1 = "";
+        Variables.texteSMSpart2 = "";
     }
 
 }

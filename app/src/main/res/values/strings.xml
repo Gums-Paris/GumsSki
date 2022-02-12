@@ -87,9 +87,9 @@
     <string name="en_france">En France</string>
     <string name="texte_france">Si on ne peut pas accéder au 112 on peut utiliser l’envoi d’un SMS au 114.
         &lt;br />Un SMS peut arriver à passer avec une qualité de réseau trop faible pour la parole.
-        &lt;br />&lt;b>Le bouton ouvre l’appli Messages sur un SMS prérempli avec les coordonnées GPS&lt;/b>.
-        &lt;br />&lt;b>Important :&lt;/b> si tu dois te déplacer pour chercher un accès au réseau, appuie sur
-        le bouton avant de bouger pour que ta position GPS actuelle soit enregistrée dans le projet de SMS.</string>
+        &lt;br />&lt;b>Le premier bouton permet de saisir les infos concernant le lieu et l\'accident&lt;/b>.
+        &lt;br />&lt;b>Le deuxième bouton ouvre l’appli Messages sur un SMS prérempli avec les coordonnées GPS
+        et les infos précédemment saisies&lt;/b>.</string>
     <string name="bouton_redac_sms">Preparer&lt;br />SMS pour 114</string>
     <string name="texte_bouton_france">Vérif et&lt;br />envoi au 114</string>
     <string name="en_suisse">En Suisse</string>

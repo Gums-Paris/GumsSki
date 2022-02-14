@@ -30,8 +30,6 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -249,24 +247,17 @@ public class MainActivity extends AppCompatActivity {
             panic.setText(R.string.no_groups);
         }
 
-//on utilise le FAB pour remonter à StartActivity parce que le retour arrière de Main sert à fermer l'appli
-/*        ExtendedFloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> {
-            Intent retourListeSorties = new Intent(MainActivity.this, StartActivity.class);
-            startActivity(retourListeSorties);
-            MainActivity.this.finish();
-        });  */
     }  // end onCreate
 
     private void pourJoindreResCar(){
-//        resCar = auxMethods.getResCar(listeDesItems, idResCar);
         if (resCar != null) {
             phoneResCar.setOnClickListener(view -> {
                 if (ContextCompat.checkSelfPermission(
                         MainActivity.this, Manifest.permission.CALL_PHONE) ==
                         PackageManager.PERMISSION_GRANTED) {
                     if (BuildConfig.DEBUG){
-                        Log.i("SECUSERV Main", "telResCar = " + resCar.getTel());}                    Aux.phoneCall(resCar);
+                        Log.i("SECUSERV Main", "telResCar = " + resCar.getTel());}
+                    Aux.phoneCall(resCar);
                 } else {
                     // You can directly ask for the permission.
                     // The registered ActivityResultCallback gets the result of this request.
@@ -365,6 +356,13 @@ public class MainActivity extends AppCompatActivity {
         }
         DialogAlertes infoMain = DialogAlertes.newInstance(message);
         infoMain.show(getSupportFragmentManager(), "infoMain");
+    }
+
+// on réinitialise le projet de SMS au 114 lorsqu'on quitte la page de la sortie
+    protected void onDestroy() {
+        super.onDestroy();
+        Variables.texteSMSpart1 = "";
+        Variables.texteSMSpart2 = "";
     }
 
 }

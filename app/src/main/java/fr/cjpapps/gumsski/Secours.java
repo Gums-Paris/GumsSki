@@ -150,7 +150,7 @@ public class Secours extends AppCompatActivity {
                     longitudeStr = String.format(Locale.getDefault(),"%.5f", longitude);
                     if (location.hasAccuracy()) { precision = location.getAccuracy(); }
                     positionStr = getString(R.string.lat_lon, latitudeStr, longitudeStr);
-                    Toast.makeText(Secours.this, positionStr, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(Secours.this, positionStr, Toast.LENGTH_SHORT).show();
                     if(precision <= 50f) {
                         positionDeux.setText(positionStr);
                         accuracy.setText(getString(R.string.precision, String.valueOf((int) precision)));
@@ -290,7 +290,7 @@ public class Secours extends AppCompatActivity {
             MyHelper.getInstance().launchActivity(phone);
         } else {
             if (BuildConfig.DEBUG) {
-            }            Log.i("SECUSERV"," appli téléphone pas disponible");
+                        Log.i("SECUSERV"," appli téléphone pas disponible");}
         }
     }
     protected void envoiSMSAu114(){

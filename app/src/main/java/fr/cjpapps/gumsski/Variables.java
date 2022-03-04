@@ -6,6 +6,7 @@ public class Variables {
 
     // Global variable used to store network state
     public static boolean isNetworkConnected = false;
+    public static boolean monitoringNetwork = false;
 
     // url du backend
     public static String urlActive = "";

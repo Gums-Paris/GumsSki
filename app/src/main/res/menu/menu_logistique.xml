@@ -9,11 +9,12 @@
         android:title="@string/help"
         android:icon="@drawable/ic_action_help_svg"
         app:showAsAction="ifRoom" />
+<!--
     <item
         android:id="@+id/meteo"
         android:orderInCategory="4"
         android:title="@string/meteo"
-        app:showAsAction="never" />
+        app:showAsAction="never" />  -->
     <item
         android:id="@+id/secours"
         android:orderInCategory="5"

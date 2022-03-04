@@ -30,6 +30,7 @@
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher_gs"
         android:label="@string/app_name"
+        android:name="MyApp"
         android:roundIcon="@mipmap/ic_launcher_gs_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
@@ -77,14 +78,6 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fr.cjpapps.gumsski.StartActivity" />
-        </activity>
-        <activity
-            android:name=".Meteo"
-            android:label="@string/title_activity_meteo"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="fr.cjpapps.gumsski.MainActivity" />
         </activity>
         <activity
             android:name=".Logistique"

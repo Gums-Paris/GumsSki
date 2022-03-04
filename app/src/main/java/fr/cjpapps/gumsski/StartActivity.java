@@ -3,6 +3,8 @@ package fr.cjpapps.gumsski;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.Network;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -46,7 +48,7 @@ public class StartActivity extends AppCompatActivity {
     SharedPreferences mesPrefs;
     SharedPreferences.Editor editeur;
     Aux methodesAux;
-    Handler handler = new Handler(Looper.getMainLooper());
+    ConnectivityManager conMan ;
 
 /*  Le changement de site internet gumsparis se fait ligne 100
 *
@@ -80,6 +82,23 @@ public class StartActivity extends AppCompatActivity {
                     startActivity(liste);
                 }
             });
+
+    final ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
+        @Override
+        public void onAvailable(@NonNull Network network) {
+            super.onAvailable(network);
+            if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "on available " );}
+            Variables.isNetworkConnected = true; // Global Static Variable
+        }
+        @Override
+        public void onLost(@NonNull Network network) {
+            super.onLost(network);
+            if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "on lost " );}
+            Variables.isNetworkConnected = false; // Global Static Variable
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +141,10 @@ public class StartActivity extends AppCompatActivity {
                 Log.i("SECUSERV", "internet = " + Variables.isNetworkConnected);
             }
         }
-        AuxReseau.watchNetwork();
+// surveille disponibilité réseau
+        conMan = (ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE);
+        conMan.registerDefaultNetworkCallback(networkCallback);
+        Variables.monitoringNetwork = true;
 
         methodesAux = new Aux();
         patience.setVisibility(View.VISIBLE);
@@ -285,11 +307,15 @@ public class StartActivity extends AppCompatActivity {
         infoStart.show(getSupportFragmentManager(), "infoStart");
     }
 
-// on réinitialise le projet de SMS au 114 lorsqu'on quitte la page de la sortie
+// on libère le network callback en partant
     protected void onDestroy() {
         super.onDestroy();
-        Variables.texteSMSpart1 = "";
-        Variables.texteSMSpart2 = "";
+        if (networkCallback != null) {
+            if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "unregister callback " );}
+            conMan.unregisterNetworkCallback(networkCallback);
+        }
+
     }
 
 }

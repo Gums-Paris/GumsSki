@@ -170,36 +170,6 @@ public class ModifItem extends AppCompatActivity {
         DialogAlertes endEdit = DialogAlertes.newInstance(message);
         endEdit.show(getSupportFragmentManager(), "quitterEdit");
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_logistique, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        if (id == R.id.help) {
-            Intent lireAide = new Intent(this, Aide.class);
-            startActivity(lireAide);
-            return true;
-        }
-        if (id == R.id.meteo) {
-            Intent meteo = new Intent(this, Meteo.class);
-            startActivity(meteo);
-            return true;
-        }
-        if (id == R.id.secours) {
-            Intent secours = new Intent(this, Secours.class);
-            startActivity(secours);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     protected void envoiAlerte(String message){
         DialogAlertes modifLogistique = DialogAlertes.newInstance(message);

@@ -62,11 +62,9 @@ public class MainActivity extends AppCompatActivity {
 
 /* TODO
     vérifier l'URL de gumsparis StartActivity ligne 101
-    Couleur texte mode sombre boutonsAuth emailGroupe et Signal par xml au liet de code
+    Couleur texte mode sombre boutonsAuth emailGroupe et Signal par xml au lieu de code
     ---- reste
-       météo et secours
        Background item_liste paramétrable ?
-       Clic long sur participant deb, deniv, nivA, nivS ?
     */
 
 /* Noter²
@@ -309,11 +307,6 @@ public class MainActivity extends AppCompatActivity {
             logistic.putExtra("sortieid", idSortie);
 //            logistic.putExtra("titreSortie", titreSortie);
             startActivity(logistic);
-            return true;
-        }
-        if (id == R.id.meteo) {
-            Intent meteo = new Intent(MainActivity.this, Meteo.class);
-            startActivity(meteo);
             return true;
         }
         if (id == R.id.secours) {

@@ -20,6 +20,7 @@ public class RecupInfosGums implements Callable<String> {
     @Override
     public String call() throws Exception {
         HttpURLConnection conn = null;
+        BufferedReader reader =null;
         String resultat;
         StringBuilder result = new StringBuilder();
         if (Variables.isNetworkConnected) {
@@ -39,13 +40,13 @@ public class RecupInfosGums implements Callable<String> {
                     Log.i("SECUSERV", "ouvre InputStream ");}
                 InputStream in = new BufferedInputStream(conn.getInputStream());
                 String line;
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                reader = new BufferedReader(new InputStreamReader(in));
                 if (BuildConfig.DEBUG){
                 Log.i("SECUSERV", "buffered reader ");}
                 while ((line = reader.readLine()) != null) {
                     result.append(line);
                 }
-                reader.close();
+//                reader.close();
 
             } catch (ConnectException e) {
                 if (BuildConfig.DEBUG){
@@ -65,6 +66,11 @@ public class RecupInfosGums implements Callable<String> {
             } finally {
                 if (conn != null) {
                     conn.disconnect();
+                }
+                if (reader != null) {
+                    if (BuildConfig.DEBUG){
+                        Log.i("SECUSERV","close reader");}
+                    reader.close();
                 }
             }
         }else{

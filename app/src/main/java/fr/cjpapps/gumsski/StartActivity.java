@@ -1,10 +1,10 @@
 package fr.cjpapps.gumsski;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -49,7 +49,6 @@ public class StartActivity extends AppCompatActivity {
     SharedPreferences.Editor editeur;
     Aux methodesAux;
     ConnectivityManager conMan ;
-    NetworkConnectionMonitor connectionMonitor;
 
 /*  Le changement de site internet gumsparis se fait ligne 100
 *
@@ -84,6 +83,23 @@ public class StartActivity extends AppCompatActivity {
                 }
             });
 
+    final ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
+        @Override
+        public void onAvailable(@NonNull Network network) {
+            super.onAvailable(network);
+            if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "on available " );}
+            Variables.isNetworkConnected = true; // Global Static Variable
+        }
+        @Override
+        public void onLost(@NonNull Network network) {
+            super.onLost(network);
+            if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "on lost " );}
+            Variables.isNetworkConnected = false; // Global Static Variable
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,20 +119,6 @@ public class StartActivity extends AppCompatActivity {
 //        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
         Variables.urlActive = urlsApiApp.API_GUMS.getUrl();
 
-// verif internet OK et mise en place de la surveillance réseau qui sera activée dans onResume
-// avec la bidouille "conman" pour avoir l'état du réseau avant la création du modèle (qui va charger les données)
-// sinon la vérif n'a lieu que dans onResume
-        connectionMonitor = NetworkConnectionMonitor.getInstance(getApplicationContext());
-        ConnectivityManager conMan = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        Variables.isNetworkConnected = connectionMonitor.checkConnection(conMan);
-        connectionMonitor.observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean isConnected) {
-                if (BuildConfig.DEBUG) Log.i("SECUSERV", "start conMan observe "+isConnected);
-                Variables.isNetworkConnected = isConnected;
-            }
-        });
-
 // trouver la date du jour
         final Calendar c = Calendar.getInstance();
         Date dateJour = c.getTime();
@@ -131,6 +133,18 @@ public class StartActivity extends AppCompatActivity {
 // ceci force auth pour les essais :
 //        editeur.putBoolean("authOK", false);
         editeur.apply();
+
+// vérif disponibilité réseau
+        if (!Variables.isNetworkConnected) {
+            Variables.isNetworkConnected = AuxReseau.isInternetOK();
+            if (BuildConfig.DEBUG) {
+                Log.i("SECUSERV", "internet = " + Variables.isNetworkConnected);
+            }
+        }
+// surveille disponibilité réseau
+        conMan = (ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE);
+        conMan.registerDefaultNetworkCallback(networkCallback);
+        Variables.monitoringNetwork = true;
 
         methodesAux = new Aux();
         patience.setVisibility(View.VISIBLE);
@@ -227,23 +241,6 @@ public class StartActivity extends AppCompatActivity {
     }
 // end onCreate
 
-    @Override
-    protected void onPause(){
-        if (Variables.isRegistered){
-            if (BuildConfig.DEBUG) Log.i("SECUSERV", "start onpause unregister");
-            connectionMonitor.unregisterDefaultNetworkCallback();
-            Variables.isRegistered=false;
-        }
-        super.onPause();
-    }
-    // à partir de là on surveille la disponibilité d'Internet
-    @Override
-    protected void onResume(){
-        super.onResume();
-        if (BuildConfig.DEBUG) Log.i("SECUSERV", "start onresume register");
-        connectionMonitor.registerDefaultNetworkCallback();
-        Variables.isRegistered=true;
-    }
 
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
@@ -308,6 +305,17 @@ public class StartActivity extends AppCompatActivity {
         }
         DialogAlertes infoStart = DialogAlertes.newInstance(message);
         infoStart.show(getSupportFragmentManager(), "infoStart");
+    }
+
+// on libère le network callback en partant
+    protected void onDestroy() {
+        super.onDestroy();
+        if (networkCallback != null) {
+            if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "unregister callback " );}
+            conMan.unregisterNetworkCallback(networkCallback);
+        }
+
     }
 
 }

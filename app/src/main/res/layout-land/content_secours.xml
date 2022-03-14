@@ -28,7 +28,7 @@
 
         <TextView
             android:id="@+id/coordonnees"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
@@ -82,8 +82,8 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:background="@drawable/buttonshape"
             android:text=""
+            app:materialThemeOverlay="@style/ThemeOverlay.App.PrimarySecondary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/texte_europe"
             app:layout_constraintTop_toTopOf="@id/texte_europe" />
@@ -120,8 +120,8 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:background="@drawable/buttonshape"
             android:text="@string/bouton_redac_sms"
+            app:materialThemeOverlay="@style/ThemeOverlay.App.PrimarySecondary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/texte_france"
             app:layout_constraintTop_toTopOf="@id/texte_france" />
@@ -133,8 +133,8 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="16dp"
-            android:background="@drawable/buttonshape"
             android:text=""
+            app:materialThemeOverlay="@style/ThemeOverlay.App.PrimarySecondary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/texte_france"
             app:layout_constraintTop_toBottomOf="@id/redac_sms" />
@@ -171,8 +171,8 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:background="@drawable/buttonshape"
             android:text=""
+            app:materialThemeOverlay="@style/ThemeOverlay.App.PrimarySecondary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/texte_suisse"
             app:layout_constraintTop_toTopOf="@id/texte_suisse" />
@@ -184,8 +184,8 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="16dp"
-            android:background="@drawable/buttonshape"
             android:text=""
+            app:materialThemeOverlay="@style/ThemeOverlay.App.PrimarySecondary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/texte_suisse"
             app:layout_constraintTop_toBottomOf="@id/bouton_ocvs" />
@@ -223,8 +223,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="24dp"
-            android:background="@drawable/buttonshape"
             android:text=""
+            app:materialThemeOverlay="@style/ThemeOverlay.App.PrimarySecondary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/texte_italie"
             app:layout_constraintTop_toTopOf="@id/texte_italie"

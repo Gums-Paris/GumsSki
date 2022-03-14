@@ -34,6 +34,7 @@ public class ModifItem extends AppCompatActivity {
     ModelItem model;
     Intent result = new Intent();
     ArrayList<String[]> fieldParams = new ArrayList<>();
+    NetworkConnectionMonitor connectionMonitor;
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
@@ -50,7 +51,17 @@ public class ModifItem extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }   */
 
-// fabrication du formulaire d'édition
+// mise en place de la surveillance réseau qui sera activée dans onResume
+        connectionMonitor = NetworkConnectionMonitor.getInstance();
+        connectionMonitor.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isConnected) {
+                if (BuildConfig.DEBUG) Log.i("SECUSERV", "modif log conMan observe "+isConnected);
+                Variables.isNetworkConnected = isConnected;
+            }
+        });
+
+        // fabrication du formulaire d'édition
         LinearLayout parentLayout = findViewById(R.id.parent);
         LinearLayout lesBoutons = new LinearLayout(this);
         lesBoutons.setOrientation(LinearLayout.HORIZONTAL);
@@ -108,7 +119,7 @@ public class ModifItem extends AppCompatActivity {
         final Observer<HashMap<String, String>> monItemObserver = itemTravail -> {
             if(itemTravail != null) {
                 if (BuildConfig.DEBUG){
-                Log.i("SECUSERV", " hashmap "+itemTravail.toString());}
+                Log.i("SECUSERV", " hashmap "+itemTravail);}
                 for (String[] params : fieldParams) {
                     if (BuildConfig.DEBUG){
                     Log.i("SECUSERV", "champ, id "+params[0]+", "+params[3]);}
@@ -125,7 +136,25 @@ public class ModifItem extends AppCompatActivity {
         model.getMonItem().observe(this, monItemObserver);
     }  //fin de onCreate
 
-// click listener pour SAUVEGARDER (fait checkout + save + checkin à travers com_api)
+    @Override
+    protected void onPause(){
+        if (Variables.isRegistered){
+            if (BuildConfig.DEBUG) Log.i("SECUSERV", "modif log onpause unregister");
+            connectionMonitor.unregisterDefaultNetworkCallback();
+            Variables.isRegistered=false;
+        }
+        super.onPause();
+    }
+    // à partir de là on surveille la disponibilité d'Internet
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if (BuildConfig.DEBUG) Log.i("SECUSERV", "modif log onresume register");
+        connectionMonitor.registerDefaultNetworkCallback();
+        Variables.isRegistered=true;
+    }
+
+    // click listener pour SAUVEGARDER (fait checkout + save + checkin à travers com_api)
     private final View.OnClickListener clickListenerSauv = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -169,36 +198,6 @@ public class ModifItem extends AppCompatActivity {
         String message = getString(R.string.leave_edit);
         DialogAlertes endEdit = DialogAlertes.newInstance(message);
         endEdit.show(getSupportFragmentManager(), "quitterEdit");
-    }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_logistique, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        if (id == R.id.help) {
-            Intent lireAide = new Intent(this, Aide.class);
-            startActivity(lireAide);
-            return true;
-        }
-        if (id == R.id.meteo) {
-            Intent meteo = new Intent(this, Meteo.class);
-            startActivity(meteo);
-            return true;
-        }
-        if (id == R.id.secours) {
-            Intent secours = new Intent(this, Secours.class);
-            startActivity(secours);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     protected void envoiAlerte(String message){

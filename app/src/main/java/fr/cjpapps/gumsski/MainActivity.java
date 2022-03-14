@@ -2,9 +2,11 @@ package fr.cjpapps.gumsski;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -59,14 +61,14 @@ public class MainActivity extends AppCompatActivity {
     ImageButton emailResCar = null;
     ImageButton smsResCar = null;
     private Boolean okPhone = false;
+    NetworkConnectionMonitor connectionMonitor;
 
 /* TODO
+    modif gradle et faire aab pour publier version 18(1.5.2)
     vérifier l'URL de gumsparis StartActivity ligne 101
-    Couleur texte mode sombre boutonsAuth emailGroupe et Signal par xml au liet de code
+    Couleur texte mode sombre boutonsAuth emailGroupe et Signal par xml au lieu de code
     ---- reste
-       météo et secours
        Background item_liste paramétrable ?
-       Clic long sur participant deb, deniv, nivA, nivS ?
     */
 
 /* Noter²
@@ -140,6 +142,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+// mise en place de la surveillance réseau qui sera activée dans onResume
+        connectionMonitor = NetworkConnectionMonitor.getInstance();
+        connectionMonitor.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isConnected) {
+                if (BuildConfig.DEBUG) Log.i("SECUSERV", "main conMan observe "+isConnected);
+                Variables.isNetworkConnected = isConnected;
+            }
+        });
 
         mesPrefs = MyHelper.getInstance().recupPrefs();
         editeur = mesPrefs.edit();
@@ -249,6 +261,24 @@ public class MainActivity extends AppCompatActivity {
 
     }  // end onCreate
 
+    @Override
+    protected void onPause(){
+        if (Variables.isRegistered){
+            if (BuildConfig.DEBUG) Log.i("SECUSERV", "main onpause unregister");
+            connectionMonitor.unregisterDefaultNetworkCallback();
+            Variables.isRegistered=false;
+        }
+        super.onPause();
+    }
+    // à partir de là on surveille la disponibilité d'Internet
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if (BuildConfig.DEBUG) Log.i("SECUSERV", "main onresume register");
+        connectionMonitor.registerDefaultNetworkCallback();
+        Variables.isRegistered=true;
+    }
+
     private void pourJoindreResCar(){
         if (resCar != null) {
             phoneResCar.setOnClickListener(view -> {
@@ -309,11 +339,6 @@ public class MainActivity extends AppCompatActivity {
             logistic.putExtra("sortieid", idSortie);
 //            logistic.putExtra("titreSortie", titreSortie);
             startActivity(logistic);
-            return true;
-        }
-        if (id == R.id.meteo) {
-            Intent meteo = new Intent(MainActivity.this, Meteo.class);
-            startActivity(meteo);
             return true;
         }
         if (id == R.id.secours) {

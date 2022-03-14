@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
@@ -249,7 +250,7 @@ public class Logistique extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_logistique, menu);
         return true;
@@ -264,11 +265,6 @@ public class Logistique extends AppCompatActivity {
         if (id == R.id.help) {
             Intent lireAide = new Intent(this, Aide.class);
             startActivity(lireAide);
-            return true;
-        }
-        if (id == R.id.meteo) {
-            Intent meteo = new Intent(this, Meteo.class);
-            startActivity(meteo);
             return true;
         }
         if (id == R.id.secours) {

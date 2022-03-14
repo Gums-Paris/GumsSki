@@ -13,11 +13,11 @@
         android:orderInCategory="3"
         android:title="@string/logistique"
         app:showAsAction="never" />
-    <item
+<!--    <item
         android:id="@+id/meteo"
         android:orderInCategory="4"
         android:title="@string/meteo"
-        app:showAsAction="never" />
+        app:showAsAction="never" />  -->
     <item
         android:id="@+id/secours"
         android:orderInCategory="5"

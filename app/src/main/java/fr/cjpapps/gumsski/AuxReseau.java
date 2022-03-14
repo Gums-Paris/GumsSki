@@ -1,88 +1,18 @@
 package fr.cjpapps.gumsski;
 
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
-import android.net.NetworkRequest;
-import android.os.Build;
 import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
+
 
 public class AuxReseau {
-
-/* Ceci ne marche que pour API > 23. Si c'était pas le cas faudrait faire un truc comme dans
-* watchNetwork ci-dessous. Voir pour cela
-* https://medium.com/dsc-alexandria/implementing-internet-connectivity-checker-in-android-apps-bf28230c4e86 */
-    public static boolean isInternetOK() {
-        ConnectivityManager cm = MyHelper.getInstance().conMan();
-        if (cm == null) return false;
-            Network[] networks = cm.getAllNetworks();
-            for (Network n: networks) {
-                NetworkCapabilities cap = cm.getNetworkCapabilities(n);
-                return cap.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
-            }
-            return false;
-        }
-
-    /*  la méthode de détection de l'accès réseau change à partir de Android M (API 23) qui trouve que activeNetworkIfo c'est
-     *   très caca. Il faut alors mettre en place un NetworkCallback qui intervient lorsque la connectivité change.
-     *   La méthode est inspirée de PasanBhanu :
-     *   https://gist.github.com/PasanBhanu/730a32a9eeb180ec2950c172d54bb06a
-     *   Il apparait qu'il faut un registerDefaultNetworkCallback plutôt qu'un registerNetworkCallback parce que les téléphones
-     *   modernes ont souvent plusieurs connexions indépendantes actives ce qui fait que les onAvailable et onLost peuvent
-     *   s'emmeler les pinceaux. Ou alors je suppose qu'il faut se choisir un réseau par le logiciel, vive le progrès
-     *   Network est OK que ce soit par WIFI ou tph cellulaire*/
-    public static void watchNetwork() {
-        ConnectivityManager connectivityManager = MyHelper.getInstance().conMan();
-        NetworkRequest request = new NetworkRequest.Builder()
-                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                .addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_RESTRICTED)
-                .build();
-/*   Cette version de GumsSki fonctionne avec version min = 24, donc pas besoin de ceci :
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            Log.i("SECUSERV", "version < Q");
-            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            Log.i("SECUSERV", "network info ="+activeNetworkInfo);
-            Variables.isNetworkConnected = activeNetworkInfo != null && activeNetworkInfo.isConnected();
-        }else {  */
-            try {
-                connectivityManager.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback() {
-                    @Override
-                       public void onAvailable(@NonNull Network network) {
-                           super.onAvailable(network);
-                        if (BuildConfig.DEBUG){
-                           Log.i("SECUSERV", "on available " );}
-                           Variables.isNetworkConnected = true; // Global Static Variable
-                       }
-                       @Override
-                       public void onLost(@NonNull Network network) {
-                           super.onLost(network);
-                           if (BuildConfig.DEBUG){
-                           Log.i("SECUSERV", "on lost " );}
-                           Variables.isNetworkConnected = false; // Global Static Variable
-                       }
-                    }
-                );
-            } catch (Exception e) {
-                Variables.isNetworkConnected = false;
-            }
-//        }
-    }
 
     //   void recupListe () {  // devenu recupInfo pour généraliser à plusieurs resources
     // lance les requêtes auprès de gumsparis
@@ -173,7 +103,7 @@ public class AuxReseau {
             i++;
         }
         if (BuildConfig.DEBUG){
-        Log.i("SECUSERV", "build request = "+sbParams.toString());}
+        Log.i("SECUSERV", "build request = "+sbParams);}
         return sbParams.toString();
     }
 

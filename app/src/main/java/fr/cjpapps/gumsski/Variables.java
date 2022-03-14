@@ -8,6 +8,9 @@ public class Variables {
     public static boolean isNetworkConnected = false;
     public static boolean monitoringNetwork = false;
 
+    // statut de networkCallback
+    public static boolean isRegistered = false;
+
     // url du backend
     public static String urlActive = "";
 

@@ -14,8 +14,6 @@ import java.util.HashMap;
 
 public class AuxReseau {
 
-    static boolean isInternetOK(){return false;};
-
     //   void recupListe () {  // devenu recupInfo pour généraliser à plusieurs resources
     // lance les requêtes auprès de gumsparis
     // task = "" pour un GET normal, task = edit pour un GET avec checkout. C'est com_api qui relaye

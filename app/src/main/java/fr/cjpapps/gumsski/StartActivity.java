@@ -1,6 +1,7 @@
 package fr.cjpapps.gumsski;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -49,29 +50,30 @@ public class StartActivity extends AppCompatActivity {
     SharedPreferences.Editor editeur;
     Aux methodesAux;
     ConnectivityManager conMan ;
+    NetworkConnectionMonitor connectionMonitor;
 
-/*  Le changement de site internet gumsparis se fait ligne 100
-*
-*   Dans les sharedPreferences :
-*       datelist == date à laquelle on a récupéré la liste des sorties
-*       date == date de la sortie choisie dans la liste des sorties
-*       datedata == date de la sortie à laquelle correspond la liste de participants disponible dans les prefs
-*       today == date du jour
-*       dateRecupData == date où on a récupéré la liste des participants */
+    /*  Le changement de site internet gumsparis se fait ligne 100
+     *
+     *   Dans les sharedPreferences :
+     *       datelist == date à laquelle on a récupéré la liste des sorties
+     *       date == date de la sortie choisie dans la liste des sorties
+     *       datedata == date de la sortie à laquelle correspond la liste de participants disponible dans les prefs
+     *       today == date du jour
+     *       dateRecupData == date où on a récupéré la liste des participants */
 
-// servira à lancer AuthActivity puis MainActivity si RESULT_OK
+    // servira à lancer AuthActivity puis MainActivity si RESULT_OK
     final private ActivityResultLauncher<Intent> authActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-        result -> {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-                // There are no request codes
-                Intent data = result.getData();
-                Intent groupes =new Intent(StartActivity.this, MainActivity.class);
-                startActivity(groupes);
-            }
-        });
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    // There are no request codes
+                    Intent data = result.getData();
+                    Intent groupes =new Intent(StartActivity.this, MainActivity.class);
+                    startActivity(groupes);
+                }
+            });
 
-// servira à lancer AuthActivity pour changer d'utilisateur puis startActivity si RESULT_OK
+    // servira à lancer AuthActivity pour changer d'utilisateur puis startActivity si RESULT_OK
     final private ActivityResultLauncher<Intent> authNewUserResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -82,23 +84,6 @@ public class StartActivity extends AppCompatActivity {
                     startActivity(liste);
                 }
             });
-
-    final ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
-        @Override
-        public void onAvailable(@NonNull Network network) {
-            super.onAvailable(network);
-            if (BuildConfig.DEBUG){
-                Log.i("SECUSERV", "on available " );}
-            Variables.isNetworkConnected = true; // Global Static Variable
-        }
-        @Override
-        public void onLost(@NonNull Network network) {
-            super.onLost(network);
-            if (BuildConfig.DEBUG){
-                Log.i("SECUSERV", "on lost " );}
-            Variables.isNetworkConnected = false; // Global Static Variable
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +104,20 @@ public class StartActivity extends AppCompatActivity {
 //        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
         Variables.urlActive = urlsApiApp.API_GUMS.getUrl();
 
+// verif internet OK et mise en place de la surveillance réseau qui sera activée dans onResume
+// avec la bidouille "conman" pour avoir l'état du réseau avant la création du modèle (qui va charger les données)
+// sinon la vérif n'a lieu que dans onResume
+        connectionMonitor = NetworkConnectionMonitor.getInstance(getApplicationContext());
+        ConnectivityManager conMan = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        Variables.isNetworkConnected = connectionMonitor.checkConnection(conMan);
+        connectionMonitor.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isConnected) {
+                if (BuildConfig.DEBUG) Log.i("SECUSERV", "start conMan observe "+isConnected);
+                Variables.isNetworkConnected = isConnected;
+            }
+        });
+
 // trouver la date du jour
         final Calendar c = Calendar.getInstance();
         Date dateJour = c.getTime();
@@ -134,24 +133,12 @@ public class StartActivity extends AppCompatActivity {
 //        editeur.putBoolean("authOK", false);
         editeur.apply();
 
-// vérif disponibilité réseau
-        if (!Variables.isNetworkConnected) {
-            Variables.isNetworkConnected = AuxReseau.isInternetOK();
-            if (BuildConfig.DEBUG) {
-                Log.i("SECUSERV", "internet = " + Variables.isNetworkConnected);
-            }
-        }
-// surveille disponibilité réseau
-        conMan = (ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE);
-        conMan.registerDefaultNetworkCallback(networkCallback);
-        Variables.monitoringNetwork = true;
-
         methodesAux = new Aux();
         patience.setVisibility(View.VISIBLE);
 
 // création ou récupération du modèle ; ne pas oublier que le constructeur du model s'exécute immédiatement
         if (BuildConfig.DEBUG){
-        Log.i("SECUSERV start", "lance model Sorties ");}
+            Log.i("SECUSERV start", "lance model Sorties ");}
         modelSorties = new ViewModelProvider(this).get(ModelListeSorties.class);
         recyclerView = findViewById(R.id.liste_we);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -192,7 +179,7 @@ public class StartActivity extends AppCompatActivity {
                             editeur.putString("date_bdh", listeDesItems.get(position).get("date_bdh"));
                             editeur.putString("id", listeDesItems.get(position).get("id"));
                             if (BuildConfig.DEBUG){
-                            Log.i("SECUSERV", "Start sortieId = "+listeDesItems.get(position).get("id"));}
+                                Log.i("SECUSERV", "Start sortieId = "+listeDesItems.get(position).get("id"));}
                             editeur.putString("titre", listeDesItems.get(position).get("titre"));
                             editeur.putString("date", listeDesItems.get(position).get("date"));
                             editeur.putString("jours", listeDesItems.get(position).get("jours"));
@@ -204,8 +191,8 @@ public class StartActivity extends AppCompatActivity {
                             editeur.putString("tel_rescar", listeDesItems.get(position).get("tel_rescar"));
                             if (BuildConfig.DEBUG){
                                 Log.i("SECUSERV Start", "resCar = " + listeDesItems.get(position).get("responsable")+" "+
-                                                listeDesItems.get(position).get("email_rescar")+" "+
-                                                listeDesItems.get(position).get("tel_rescar"));}
+                                        listeDesItems.get(position).get("email_rescar")+" "+
+                                        listeDesItems.get(position).get("tel_rescar"));}
                             String infos;
                             infos = listeDesItems.get(position).get("date_bdh") + "\n" +
                                     listeDesItems.get(position).get("titre");
@@ -241,6 +228,23 @@ public class StartActivity extends AppCompatActivity {
     }
 // end onCreate
 
+    @Override
+    protected void onPause(){
+        if (Variables.isRegistered){
+            if (BuildConfig.DEBUG) Log.i("SECUSERV", "start onpause unregister");
+            connectionMonitor.unregisterDefaultNetworkCallback();
+            Variables.isRegistered=false;
+        }
+        super.onPause();
+    }
+    // à partir de là on surveille la disponibilité d'Internet
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if (BuildConfig.DEBUG) Log.i("SECUSERV", "start onresume register");
+        connectionMonitor.registerDefaultNetworkCallback();
+        Variables.isRegistered=true;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
@@ -266,9 +270,9 @@ public class StartActivity extends AppCompatActivity {
             startActivity(choixPrefs);
             return true;
         }
-       if (id == R.id.new_user) {
+        if (id == R.id.new_user) {
             Intent newUser = new Intent(this, AuthActivity.class);
-           authNewUserResultLauncher.launch(newUser);
+            authNewUserResultLauncher.launch(newUser);
             return true;
         }
         if (id == R.id.secours) {
@@ -305,17 +309,6 @@ public class StartActivity extends AppCompatActivity {
         }
         DialogAlertes infoStart = DialogAlertes.newInstance(message);
         infoStart.show(getSupportFragmentManager(), "infoStart");
-    }
-
-// on libère le network callback en partant
-    protected void onDestroy() {
-        super.onDestroy();
-        if (networkCallback != null) {
-            if (BuildConfig.DEBUG){
-                Log.i("SECUSERV", "unregister callback " );}
-            conMan.unregisterNetworkCallback(networkCallback);
-        }
-
     }
 
 }

@@ -2,11 +2,9 @@ package fr.cjpapps.gumsski;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -64,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
     NetworkConnectionMonitor connectionMonitor;
 
 /* TODO
-    modif gradle et faire aab pour publier version 18(1.5.2)
     vérifier l'URL de gumsparis StartActivity ligne 101
     Couleur texte mode sombre boutonsAuth emailGroupe et Signal par xml au lieu de code
     ---- reste

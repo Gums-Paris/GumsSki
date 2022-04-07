@@ -101,6 +101,7 @@ public class StartActivity extends AppCompatActivity {
 // pour indiquer le site auquel l'appli va s'adresser
 //        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
 //        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
+//        Variables.urlActive = urlsApiApp.API_GUMS_v2.getUrl();
         Variables.urlActive = urlsApiApp.API_GUMS.getUrl();
 
 // verif internet OK et mise en place de la surveillance réseau qui sera activée dans onResume

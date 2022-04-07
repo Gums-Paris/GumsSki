@@ -14,6 +14,9 @@ public class Variables {
     // url du backend
     public static String urlActive = "";
 
+    // statut du GPS
+    public static boolean isGPSAvailable = false;
+
     // requête de localisation en cours
     public static boolean requestingLocationUpdates = false;
 

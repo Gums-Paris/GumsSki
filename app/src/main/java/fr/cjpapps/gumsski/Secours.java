@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -22,6 +23,13 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.Locale;
 
@@ -118,9 +126,11 @@ public class Secours extends AppCompatActivity {
         positionUn.setText(getString(R.string.ta_position));
         positionDeux.setText(getString(R.string.attente_position));
 
+        checkGPSEnabled(); // ceci informe l'utilisateur si ce n'est pas le cas
+
         model = new ViewModelProvider(this).get(ModelLocation.class);
 
-// vérification de la permission de téléphoner
+// vérification de la permission de localisation
         if (ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // You can use the API that requires the permission.
@@ -171,7 +181,8 @@ public class Secours extends AppCompatActivity {
                 changeLocationInterval();
             }*/
             public void run() {
-                Log.i("SECUSERV", "minute écoulée");
+                if (BuildConfig.DEBUG){
+                    Log.i("SECUSERV", "minute écoulée");}
                 model.stopUpdatePosition();
                 positionUn.setText(getText(R.string.posit_accident));
             }
@@ -274,6 +285,53 @@ public class Secours extends AppCompatActivity {
         });
 
      }  // end onCreate
+
+/*    private boolean isLocationEnabled()
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+// This is new method provided in API 28
+            LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            return lm.isLocationEnabled();
+        } else {
+// This is Deprecated in API 28
+            int mode = Settings.Secure.getInt(this.getContentResolver(), Settings.Secure.LOCATION_MODE,
+                    Settings.Secure.LOCATION_MODE_OFF);
+            return  (mode != Settings.Secure.LOCATION_MODE_OFF);
+        }
+    } */
+
+/*  mix de https://developer.android.com/training/location/change-location-settings  et de
+* https://stackoverflow.com/questions/32423157/android-check-if-location-services-enabled-using-fused-location-provider
+* sauf que on simplifie : dans le cas de onFailure, au lieu d'envoyer l'utilisateur changer les paramètres on se contente
+* de lui signaler que son GPS n'est pas activé. A lui d'y aller s'il ouhaite avoir une position*/
+    private void checkGPSEnabled() {
+        LocationRequest request = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        LocationSettingsRequest settingsRequest = new LocationSettingsRequest.Builder()
+                .addLocationRequest(request).build();
+        LocationServices.getSettingsClient(this)
+                .checkLocationSettings(settingsRequest)
+                .addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>(){
+                    @Override
+                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                        if (BuildConfig.DEBUG){
+                            Log.i("SECUSERV", "GPS success");}
+//                        Variables.isGPSAvailable = true;
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                        if (BuildConfig.DEBUG) {
+                                            Log.i("SECUSERV", "GPS failure");
+                                        }
+//                                    Variables.isGPSAvailable = false;
+                                        String message = "Attention, le GPS n'est pas activé.";
+                                        DialogAlertes infoGPS = DialogAlertes.newInstance(message);
+                                        infoGPS.show(getSupportFragmentManager(), "infoGPS");
+                                }
+                           });
+    }
 
 // pour modifier la requête définissant l'intervalle entre positions GPS
     void changeLocationInterval () {

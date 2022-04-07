@@ -14,6 +14,8 @@ public class ModelLocation extends AndroidViewModel {
 
     public ModelLocation(Application application) {
         super (application);
+        if (BuildConfig.DEBUG){
+        Log.i("SECUSERV", "constructeur du model");}
         repository = new LocRepository(application);
         positionActuelle = repository.getPosition();
     }
@@ -21,10 +23,13 @@ public class ModelLocation extends AndroidViewModel {
     MutableLiveData<Location> getPositionActuelle() { return positionActuelle; }
 
     void trouvePosition() {
-        Log.i("SECUSERV", "model dans trouveposition");
+        if (BuildConfig.DEBUG){
+        Log.i("SECUSERV", "model dans trouveposition");}
         repository.findPosition(); }
+
     void updatePosition() {
-        Log.i("SECUSERV", "model dans updateposition");
+        if (BuildConfig.DEBUG){
+        Log.i("SECUSERV", "model dans updateposition");}
 //        if (Variables.gpsOK){
         repository.startLocationUpdates();
 //        }

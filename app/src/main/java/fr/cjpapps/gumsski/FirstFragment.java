@@ -191,10 +191,22 @@ public class FirstFragment extends DialogFragment {
             sendIntent.setData(Uri.parse("sgnl://signal.group?group_id=dqRJDMbLnldYWhKD3d9pxlHVhn3QkCk2P62xCCmYcPs="));
             sendIntent.setPackage("org.thoughtcrime.securesms");
             if (sendIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
+                if (BuildConfig.DEBUG){
+                    Log.i("SECUSERV", "demande signal");}
                 startActivity(sendIntent);
             } else {
                 Toast.makeText(getActivity(), "Appli Signal pas disponible", Toast.LENGTH_LONG).show();
-            } */
+            }  */
+/*            Intent sms = new Intent(Intent.ACTION_SENDTO);
+            sms.setData(Uri.parse("smsto:"+"+33688998191, +33621061583"));
+            sms.putExtra("sms_body", "salut à tous!");
+            sms.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if(sms.resolveActivity(MyHelper.getInstance().recupPackageManager()) != null) {
+                MyHelper.getInstance().launchActivity(sms);
+            } else {
+                if (BuildConfig.DEBUG){
+                    Log.i("SECUSERV"," appli message pas disponible");}
+            }  */
         });
     }
 

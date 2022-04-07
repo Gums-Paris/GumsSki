@@ -5,6 +5,7 @@ import android.app.Application;
 import android.location.Location;
 import android.util.Log;
 
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -26,7 +27,7 @@ class LocRepository {
     public static final int NBR_MINS_TRACKING = 1;
     private final MutableLiveData<Location> position = new MutableLiveData<>();
     private final FusedLocationProviderClient fusedLocationClient;
-    private LocationRequest locationRequest;
+    LocationRequest locationRequest;
 
     LocationCallback locationCallback = new LocationCallback() {
         @Override
@@ -42,9 +43,10 @@ class LocRepository {
     };
 
     LocRepository(Application application) {
+        if (BuildConfig.DEBUG){
+        Log.i("SECUSERV", "constructeur du repository");}
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(application);
         createLocationRequest();
-//        checkGPS();
     }
 
     MutableLiveData<Location> getPosition() { return position; }
@@ -58,10 +60,12 @@ class LocRepository {
                         public void onSuccess(Location location) {
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
-                                Log.i("SECUSERV", "last location OK");
+                                if (BuildConfig.DEBUG){
+                                    Log.i("SECUSERV", "last location OK");}
                                 position.setValue(location);
                             } else {
-                                Log.i("SECUSERV", "location est null");
+                                if (BuildConfig.DEBUG){
+                                    Log.i("SECUSERV", "location est null");}
                             }
                         }
                     });
@@ -70,7 +74,7 @@ class LocRepository {
         }
     }
 
-    private void createLocationRequest() {
+    void createLocationRequest() {
         locationRequest = LocationRequest.create();
         locationRequest.setInterval(1000*NBR_SECS_INI);
         locationRequest.setFastestInterval(2000);

@@ -364,6 +364,7 @@ public class Secours extends AppCompatActivity {
                 Log.i("SECUSERV"," appli message pas disponible");}
         }
     }
+
     @Override
     protected void onPause() {
         super.onPause();

@@ -141,4 +141,5 @@
     <string name="pas_precis">Pas de position précise</string>
     <string name="no_gps">Pas de GPS</string>
     <string name="posit_accident">Position de l\'accident</string>
+    <string name="email_groupe">Email au \n Groupe</string>
 </resources>

@@ -1,5 +1,7 @@
 package fr.cjpapps.gumsski;
 
+import static com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -306,7 +308,7 @@ public class Secours extends AppCompatActivity {
 * de lui signaler que son GPS n'est pas activé. A lui d'y aller s'il ouhaite avoir une position*/
     private void checkGPSEnabled() {
         LocationRequest request = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                .setPriority(PRIORITY_HIGH_ACCURACY);
         LocationSettingsRequest settingsRequest = new LocationSettingsRequest.Builder()
                 .addLocationRequest(request).build();
         LocationServices.getSettingsClient(this)

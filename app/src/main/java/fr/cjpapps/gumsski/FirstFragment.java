@@ -40,7 +40,7 @@ public class FirstFragment extends DialogFragment {
     private ArrayList<HashMap<String,String>> lesItems;
     private RecyclerView mRecyclerView;
     private TextView affichage;
-    private Button smsGroupe;
+//    private Button smsGroupe;
     private Button emailGroupe;
     private Boolean okPhone = false;
     private final ArrayList<String> groupeEmail = new ArrayList<>();
@@ -78,8 +78,8 @@ public class FirstFragment extends DialogFragment {
         affichage = v.findViewById(R.id.nom_groupe);
         emailGroupe = v.findViewById(R.id.groupe_mail_button);
         emailGroupe.setTextColor(ContextCompat.getColor(requireContext(), R.color.blanc));
-        smsGroupe = v.findViewById(R.id.groupe_sms_button);
-        smsGroupe.setTextColor(ContextCompat.getColor(requireContext(), R.color.blanc));
+//        smsGroupe = v.findViewById(R.id.groupe_sms_button);
+//        smsGroupe.setTextColor(ContextCompat.getColor(requireContext(), R.color.blanc));
         mRecyclerView = v.findViewById(R.id.listeparticipants);
         return v;
     }
@@ -107,7 +107,7 @@ public class FirstFragment extends DialogFragment {
                             unMembre.setTel(numTel);
                             unMembre.setEmail(temp.get("email"));
 // pour les essais
-//                                unMembre.setEmail("claude_pastre@yahoo.fr");
+//                                unMembre.setEmail("claude.pastre@free.fr");
                             unMembre.setAutonome(temp.get("autonome"));
                             unMembre.setPeage(temp.get("peage"));
                             membresGroupe.add(unMembre);
@@ -179,13 +179,13 @@ public class FirstFragment extends DialogFragment {
         });
 
 // pas d'envoi sms au groupe ; ce bouton ouvre Signal
-        smsGroupe.setOnClickListener(view13 -> {
-            Intent launchIntent = requireContext().getPackageManager().getLaunchIntentForPackage("org.thoughtcrime.securesms");
+//        smsGroupe.setOnClickListener(view13 -> {
+/*            Intent launchIntent = requireContext().getPackageManager().getLaunchIntentForPackage("org.thoughtcrime.securesms");
             if (launchIntent != null) {
                 startActivity(launchIntent);
             } else {
                 Toast.makeText(requireActivity(), "L'appli Signal n'est pas disponible", Toast.LENGTH_LONG).show();
-            }
+            }  */
 /*             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_VIEW);
             sendIntent.setData(Uri.parse("sgnl://signal.group?group_id=dqRJDMbLnldYWhKD3d9pxlHVhn3QkCk2P62xCCmYcPs="));
@@ -207,7 +207,7 @@ public class FirstFragment extends DialogFragment {
                 if (BuildConfig.DEBUG){
                     Log.i("SECUSERV"," appli message pas disponible");}
             }  */
-        });
+ //       });
     }
 
 }

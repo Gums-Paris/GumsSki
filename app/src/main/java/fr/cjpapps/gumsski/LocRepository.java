@@ -1,5 +1,7 @@
 package fr.cjpapps.gumsski;
 
+import static com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY;
+
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.location.Location;
@@ -80,8 +82,8 @@ class LocRepository {
         locationRequest.setFastestInterval(2000);
         locationRequest.setExpirationDuration(60000*NBR_MINS_TRACKING);
 //        locationRequest.setNumUpdates(1);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        locationRequest.setPriority(PRIORITY_HIGH_ACCURACY);
+//        locationRequest.setPriority(PRIORITY_BALANCED_POWER_ACCURACY);
     }
 
     @SuppressLint("MissingPermission")

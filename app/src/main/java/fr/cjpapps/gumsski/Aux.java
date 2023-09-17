@@ -32,10 +32,9 @@ public class Aux {
         ArrayList<HashMap<String,String>> listeItems = new ArrayList<>();
         try {
             JSONObject jsonGums = new JSONObject(jsListe);
-            JSONArray arrayGums = jsonGums.getJSONArray("data");
-            for (int i = 0; i < arrayGums.length(); i++) {
-//                JSONArray unArray = arrayGums.getJSONArray(i);
-                JSONObject unObjet = arrayGums.getJSONObject(i);
+            JSONObject resultat = jsonGums.getJSONObject("data").getJSONObject("result");
+            for (int i = 0; i < resultat.length(); i++) {
+                JSONObject unObjet = resultat.getJSONObject(String.valueOf(i));
                 if (!("3".equals(unObjet.optString("statut")))) { continue;}
                 HashMap<String,String> unItem = new HashMap<>();
                 unItem.put("groupe", unObjet.optString("groupe"));
@@ -61,9 +60,9 @@ public class Aux {
         ArrayList<HashMap<String,String>> listeSorties = new ArrayList<>();
         try {
             JSONObject jsonGums = new JSONObject(jsListe);
-            JSONArray arrayGums = jsonGums.getJSONArray("data");
-            for (int i = 0; i < arrayGums.length(); i++) {
-                JSONObject jsonData = arrayGums.getJSONObject(i);
+            JSONObject resultat = jsonGums.getJSONObject("data").getJSONObject("result");
+              for (int i = 0; i < resultat.length(); i++) {
+                JSONObject jsonData = resultat.getJSONObject(String.valueOf(i));
                 HashMap<String,String> unItem = new HashMap<>();
                 unItem.put("date_bdh",jsonData.optString("date_bdh"));
                 unItem.put("id",jsonData.optString("id"));
@@ -77,6 +76,7 @@ public class Aux {
                 unItem.put("tel_rescar", jsonData.optString("tel_rescar"));
                 listeSorties.add(unItem);
             }
+            Log.i("SECUSERV", "entree decodage json =  "+ listeSorties);
             return  listeSorties;
         } catch (JSONException e) {
             e.printStackTrace();

@@ -70,4 +70,7 @@ public class MyHelper {
     }
 
     void launchActivity(Intent intent) {mContext.startActivity(intent);}
+
+    //pour enlever les saletés qui précèdent parfois le json dans les réponses de com_api
+    String cleanResult(String result) { return result.substring(result.indexOf("{")); }
 }

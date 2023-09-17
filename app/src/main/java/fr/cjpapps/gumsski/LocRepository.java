@@ -17,6 +17,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.Priority;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -77,13 +78,19 @@ class LocRepository {
     }
 
     void createLocationRequest() {
-        locationRequest = LocationRequest.create();
+        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY)
+                .setIntervalMillis(1000*NBR_SECS_INI)
+                .setMinUpdateIntervalMillis(2000)
+                .setDurationMillis(60000*NBR_MINS_TRACKING)
+                .setPriority(Priority.PRIORITY_HIGH_ACCURACY).build();
+
+ /*       locationRequest = LocationRequest.create();
         locationRequest.setInterval(1000*NBR_SECS_INI);
         locationRequest.setFastestInterval(2000);
         locationRequest.setExpirationDuration(60000*NBR_MINS_TRACKING);
 //        locationRequest.setNumUpdates(1);
         locationRequest.setPriority(PRIORITY_HIGH_ACCURACY);
-//        locationRequest.setPriority(PRIORITY_BALANCED_POWER_ACCURACY);
+//        locationRequest.setPriority(PRIORITY_BALANCED_POWER_ACCURACY);  */
     }
 
     @SuppressLint("MissingPermission")
@@ -104,7 +111,9 @@ class LocRepository {
     void changeRequestInterval() {
         stopLocationUpdates();
         findPosition();
-        locationRequest.setInterval(1000*NBR_SECS_FINAL);
+//        locationRequest.setInterval(1000*NBR_SECS_FINAL);  deprecated
+        locationRequest = new LocationRequest.Builder(1000*NBR_SECS_FINAL).build();
+
         //       if (Variables.gpsOK){
         startLocationUpdates();
         //       }

@@ -113,6 +113,8 @@ public class AuxReseau {
         SharedPreferences.Editor  editeur = mesPrefs.edit();
         ArrayList<HashMap<String,String>> params;
         if (!"netOUT".equals(result)) {
+            result = MyHelper.getInstance().cleanResult(result);
+            Log.i("SECUSERV", "clean retour =  "+result);
             try {
                 JSONObject jsonGums = new JSONObject(result);
                 String errMsg = jsonGums.optString("err_msg");
@@ -157,6 +159,8 @@ public class AuxReseau {
         SharedPreferences.Editor  editeur = mesPrefs.edit();
         ArrayList<HashMap<String,String>> listeBidule;
         if (!"netOUT".equals(result)) {
+            result = MyHelper.getInstance().cleanResult(result);
+            Log.i("SECUSERV", "clean retour =  "+result);
         try {
             JSONObject jsonGums = new JSONObject(result);
             String errMsg = jsonGums.optString("err_msg");
@@ -196,6 +200,8 @@ public class AuxReseau {
         SharedPreferences.Editor  editeur = mesPrefs.edit();
         HashMap<String, String> monItem = new HashMap<>();
         if (!"netOUT".equals(result)) {
+            result = MyHelper.getInstance().cleanResult(result);
+            Log.i("SECUSERV", "clean retour =  "+result);
             try {
                 JSONObject jsonGums = new JSONObject(result);
                 String errMsg = jsonGums.optString("err_msg");
@@ -206,8 +212,8 @@ public class AuxReseau {
                     monItem = Aux.getParamsItem(result);
                     ModelItem.monItem.setValue(monItem);
                     ModelItem.flagItem.setValue(true);
-                    if (BuildConfig.DEBUG){
-                        Log.i("SECUSERV", "monItem = " + monItem.toString());}
+ //                   if (BuildConfig.DEBUG){
+ //                       Log.i("SECUSERV", "monItem = " + monItem.toString());}
                 } else {
                     ModelItem.flagItem.setValue(false);
                     editeur.putString("errMsg", errMsg);
@@ -229,6 +235,8 @@ public class AuxReseau {
     static void decodeInfosAuth(String resultat) {
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
         SharedPreferences.Editor editeur = mesPrefs.edit();
+        resultat = MyHelper.getInstance().cleanResult(resultat);
+        Log.i("SECUSERV", "clean retour =  "+resultat);
         try {
             JSONObject jsonGums = new JSONObject(resultat);
             String errMsg = jsonGums.optString("err_msg");
@@ -268,8 +276,11 @@ public class AuxReseau {
 
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
         SharedPreferences.Editor  editeur = mesPrefs.edit();
+
         if (BuildConfig.DEBUG){
         Log.i("SECUSERV", " onpostexec  "+resultat);}
+        resultat = MyHelper.getInstance().cleanResult(resultat);
+        Log.i("SECUSERV", "clean retour =  "+resultat);
         try {
             JSONObject jsonGums = new JSONObject(resultat);
             String errMsg = jsonGums.optString("err_msg");
@@ -293,6 +304,8 @@ public class AuxReseau {
 // se charge de gérer les erreurs et de positionner flagSuppress
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
         SharedPreferences.Editor  editeur = mesPrefs.edit();
+        result = MyHelper.getInstance().cleanResult(result);
+        Log.i("SECUSERV", "clean retour =  "+result);
         try {
             JSONObject jsonGums = new JSONObject(result);
             String errMsg = jsonGums.optString("err_msg");

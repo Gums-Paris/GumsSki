@@ -73,7 +73,7 @@ public class EnvoiInfosGums implements Callable<String> {
                 conn.disconnect();
             }
         }
-        resultat = String.valueOf(result);
+        resultat = (String.valueOf(result));
         return resultat;
     }
 }

@@ -51,7 +51,8 @@ public class StartActivity extends AppCompatActivity {
     ConnectivityManager conMan ;
     NetworkConnectionMonitor connectionMonitor;
 
-    /*  Le changement de site internet gumsparis se fait ligne 100
+    /*  Le changement de site internet gumsparis se fait ligne 102+
+     *  Le forçage pourr authentification se fait ligne 134
      *
      *   Dans les sharedPreferences :
      *       datelist == date à laquelle on a récupéré la liste des sorties
@@ -100,9 +101,10 @@ public class StartActivity extends AppCompatActivity {
 
 // pour indiquer le site auquel l'appli va s'adresser
 //        Variables.urlActive = urlsApiApp.API_LOCAL.getUrl();
+//        Variables.urlActive = urlsApiApp.API_GUMS_v4.getUrl();
 //        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
 //        Variables.urlActive = urlsApiApp.API_GUMS_v2.getUrl();
-        Variables.urlActive = urlsApiApp.API_GUMS.getUrl();
+        Variables.urlActive = urlsApiApp.API_GUMS_v4.getUrl();
 
 // verif internet OK et mise en place de la surveillance réseau qui sera activée dans onResume
 // avec la bidouille "conman" pour avoir l'état du réseau avant la création du modèle (qui va charger les données)

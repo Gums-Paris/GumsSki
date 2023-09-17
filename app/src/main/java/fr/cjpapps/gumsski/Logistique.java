@@ -239,7 +239,7 @@ public class Logistique extends AppCompatActivity {
         Log.i("SECUSERV", "dates check_out et now-délai= "+dateCheckedOut+"  "+nowMoinsDelai);}
         if (nowMoinsDelai.after(dateCheckedOut)) {
                 checkedOut = 0;
-                checkedOutTime = "0000-00-00 00:00:00";
+                checkedOutTime = "1970-01-01 00:00:00";
                 verrou = "";
         }
     }

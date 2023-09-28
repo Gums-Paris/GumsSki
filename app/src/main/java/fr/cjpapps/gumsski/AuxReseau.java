@@ -212,8 +212,8 @@ public class AuxReseau {
                     monItem = Aux.getParamsItem(result);
                     ModelItem.monItem.setValue(monItem);
                     ModelItem.flagItem.setValue(true);
- //                   if (BuildConfig.DEBUG){
- //                       Log.i("SECUSERV", "monItem = " + monItem.toString());}
+//                    if (BuildConfig.DEBUG){
+//                        Log.i("SECUSERV", "monItem = " + monItem.toString());}
                 } else {
                     ModelItem.flagItem.setValue(false);
                     editeur.putString("errMsg", errMsg);
@@ -265,38 +265,52 @@ public class AuxReseau {
     }
 
     static void decodeRetourPostItem(String resultat) {
-/* si on essaye de modifier un item qui n'existe pas il n'y a pas d'erreur apparente mais il ne se
- * passe rien en fait, sauf que la liste étant alors rechargée on voit l'item disparaître. Ceci pourrait
- * arriver si un autre usager sur une autre machine a réussi à supprimer l'item depuis qu'on l'a chargé
- * (normalement c'est pas possible parce que l'item dont on demande l'édition dans l'appli est aussitôt
- * checked-out dans Joomla de gumsparis)
- *
- * Noter aussi qu'il n'y a pas de différence de requête entre modifier et créer. La seule différence est
- * que dans les paramètres de l'item on met id = 0 pour créer et id = l'id de l'item pour modifier. */
+        /* si on essaye de modifier un item qui n'existe pas il n'y a pas d'erreur apparente mais il ne se
+         * passe rien en fait, sauf que la liste étant alors rechargée on voit l'item disparaître. Ceci pourrait
+         * arriver si un autre usager sur une autre machine a réussi à supprimer l'item depuis qu'on l'a chargé
+         * (normalement c'est pas possible parce que l'item dont on demande l'édition dans l'appli est aussitôt
+         * checked-out dans Joomla de gumsparis)
+         *
+         * Noter aussi qu'il n'y a pas de différence de requête entre modifier et créer. La seule différence est
+         * que dans les paramètres de l'item on met id = 0 pour créer et id = l'id de l'item pour modifier. */
 
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
-        SharedPreferences.Editor  editeur = mesPrefs.edit();
+        SharedPreferences.Editor editeur = mesPrefs.edit();
 
-        if (BuildConfig.DEBUG){
-        Log.i("SECUSERV", " onpostexec  "+resultat);}
-        resultat = MyHelper.getInstance().cleanResult(resultat);
-        Log.i("SECUSERV", "clean retour =  "+resultat);
-        try {
-            JSONObject jsonGums = new JSONObject(resultat);
-            String errMsg = jsonGums.optString("err_msg");
-            String errCode = jsonGums.optString("err_code");
-            if ("".equals(errCode)) {
-                ModelItem.flagModif.setValue(true);
-                int idItem = jsonGums.optInt("data");
-            }else{
-                ModelItem.flagModif.setValue(false);
-                editeur.putString("errMsg", errMsg);
-                editeur.putString("errCode", errCode);
-                editeur.apply();
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (BuildConfig.DEBUG) {
+            Log.i("SECUSERV", " onpostexec save " + resultat);
+        }
+//        resultat = MyHelper.getInstance().cleanResult(resultat);
+//        Log.i("SECUSERV", "clean retour =  "+resultat);
+        if ("".equals(resultat) || "pb_retour".equals(resultat)) {
+            editeur.putString("errMsg", "erreur réseau");
+            editeur.apply();
             ModelItem.flagModif.setValue(false);
+            if (BuildConfig.DEBUG) {
+                Log.i("SECUSERV", " onpostexec save retour vide");
+            }
+        } else {
+            try {
+                JSONObject jsonGums = new JSONObject(resultat);
+                String errMsg = jsonGums.optString("err_msg");
+                String errCode = jsonGums.optString("err_code");
+                if ("".equals(errCode)) {
+                    ModelItem.flagModif.setValue(true);
+                    int idItem = jsonGums.optInt("data");
+                } else {
+                    ModelItem.flagModif.setValue(false);
+                    editeur.putString("errMsg", errMsg);
+                    editeur.putString("errCode", errCode);
+                    editeur.apply();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                editeur.putString("errMsg", "erreur JSON");
+                editeur.apply();
+                ModelItem.flagModif.setValue(false);
+                if (BuildConfig.DEBUG) {
+                    Log.i("SECUSERV", " json exception ");}
+            }
         }
     }
 

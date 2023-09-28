@@ -59,6 +59,7 @@ public class Logistique extends AppCompatActivity {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     if (BuildConfig.DEBUG){
                     Log.i("SECUSERV", "retour de ModifItem OK ");}
+                    AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1,sortieId, "");
                 }
             });
 
@@ -130,6 +131,7 @@ public class Logistique extends AppCompatActivity {
         };
         model.getFlagItem().observe(this, flagItemObserver);
 
+        /*
 // flagModif est géré par AuxReseau.decodeRetourPostItem()
 // si true on recharge la logistique modifiée
 // flagModif passe à false en cas d'erreur dans la transaction avec gumsparis
@@ -140,11 +142,12 @@ public class Logistique extends AppCompatActivity {
                 }, 200); // délai 0.2 sec
                  String message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
                  envoiAlerte(message);
-             }else{
-                 AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1,sortieId, "");
              }
-        };
-        model.getFlagModif().observe(this, flagModifObserver);
+ /*            else{
+                 AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1,sortieId, "");
+             } */
+//        };
+//        model.getFlagModif().observe(this, flagModifObserver);
 
 // l'observer de Item - on teste pour logistique absente et selon le cas afficher alerte
         final Observer<HashMap<String, String>> ItemObserver = item -> {

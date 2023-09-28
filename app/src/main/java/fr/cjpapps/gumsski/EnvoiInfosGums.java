@@ -52,22 +52,31 @@ public class EnvoiInfosGums implements Callable<String> {
             writer.close();
 
             int code = conn.getResponseCode();
+            if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "response code envoi info = "+code);}
 /*            if (code != 200){
                 throw new IOException("Invalid response from server : "+code);
-            }  */
+            }
+             // pas de traitement explicite des réponses invalides, mais cela semble traité par l'IOException (77)*/
 
+            if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "ouvre InputStream retour post");}
             InputStream in = new BufferedInputStream(conn.getInputStream());
             String line;
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            if (BuildConfig.DEBUG){
+                Log.i("SECUSERV", "buffered reader retour post");}
             while ((line = reader.readLine()) != null) {
                 result.append(line);
             }
             reader.close();
+
             if (BuildConfig.DEBUG){
             Log.i("SECUSERV", "retour de post "+result.toString());}
 
         }catch(IOException e){
             e.printStackTrace();
+            result.append("pb_retour");
         }finally{
             if (conn != null) {
                 conn.disconnect();

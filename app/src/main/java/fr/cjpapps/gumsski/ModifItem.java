@@ -10,6 +10,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -132,6 +134,27 @@ public class ModifItem extends AppCompatActivity {
             }
         };
         model.getMonItem().observe(this, monItemObserver);
+
+// flagModif est géré par AuxReseau.decodeRetourPostItem()
+// si true on recharge la logistique modifiée
+// flagModif passe à false en cas d'erreur dans la transaction avec gumsparis
+// dans tous les cas on retourne vers Logistique avec RESULT_OK pour réafficher la logistique en l'état
+        final Observer<Boolean> flagModifObserver = retour -> {
+            if (!retour) {
+// Il faut freiner un peu pour laisser le temps au message d'erreur d'être rangé dans les prefs
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                }, 200); // délai 0.2 sec
+                String message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
+                envoiAlerte(message);
+            }
+ /*            else{
+                 AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1,sortieId, "");
+             } */
+            setResult(RESULT_OK, result);
+            finish();
+        };
+        model.getFlagModif().observe(this, flagModifObserver);
+
     }  //fin de onCreate
 
     @Override
@@ -170,9 +193,7 @@ public class ModifItem extends AppCompatActivity {
             Log.i("SECUSERV edit", postParams.toString());}
             AuxReseau.envoiInfo(Constantes.JOOMLA_RESOURCE_1,postParams, "","");
 
-            setResult(RESULT_OK, result);
-            finish();
-        }
+       }
     };
 
 // click listener pour ANNULER (fait un checkin  à travers com_api)

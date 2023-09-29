@@ -131,24 +131,6 @@ public class Logistique extends AppCompatActivity {
         };
         model.getFlagItem().observe(this, flagItemObserver);
 
-        /*
-// flagModif est géré par AuxReseau.decodeRetourPostItem()
-// si true on recharge la logistique modifiée
-// flagModif passe à false en cas d'erreur dans la transaction avec gumsparis
-        final Observer<Boolean> flagModifObserver = retour -> {
-             if (!retour) {
-// Il faut freiner un peu pour laisser le temps au message d'erreur d'être rangé dans les prefs
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                }, 200); // délai 0.2 sec
-                 String message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
-                 envoiAlerte(message);
-             }
- /*            else{
-                 AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1,sortieId, "");
-             } */
-//        };
-//        model.getFlagModif().observe(this, flagModifObserver);
-
 // l'observer de Item - on teste pour logistique absente et selon le cas afficher alerte
         final Observer<HashMap<String, String>> ItemObserver = item -> {
             if (item != null){

@@ -57,7 +57,7 @@ public class EnvoiInfosGums implements Callable<String> {
 /*            if (code != 200){
                 throw new IOException("Invalid response from server : "+code);
             }
-             // pas de traitement explicite des réponses invalides, mais cela semble traité par l'IOException (77)*/
+             // pas de traitement explicite des réponses invalides, mais cela semble traité par l'IOException (ligne 77)*/
 
             if (BuildConfig.DEBUG){
                 Log.i("SECUSERV", "ouvre InputStream retour post");}
@@ -72,7 +72,7 @@ public class EnvoiInfosGums implements Callable<String> {
             reader.close();
 
             if (BuildConfig.DEBUG){
-            Log.i("SECUSERV", "retour de post "+result.toString());}
+            Log.i("SECUSERV", "retour de post "+result);}
 
         }catch(IOException e){
             e.printStackTrace();

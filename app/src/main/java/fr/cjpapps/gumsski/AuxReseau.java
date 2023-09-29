@@ -16,8 +16,8 @@ public class AuxReseau {
 
     //   void recupListe () {  // devenu recupInfo pour généraliser à plusieurs resources
     // lance les requêtes auprès de gumsparis
-    // task = "" pour un GET normal, task = edit pour un GET avec checkout. C'est com_api qui relaye
-    // le test sur isNetworkConnected sert à rien car internet est testé avant tout appel à recupInfo; laissé au cas où
+    // task = "" pour un GET normal, task = edit pour un GET avec checkout. C'est com_api qui relaye.
+    // Le test sur isNetworkConnected sert à rien car internet est testé avant tout appel à recupInfo; laissé au cas où
     static void recupInfo (String uneResource, String uneSortie, String uneTask) {
         TaskRunner taskRunner = TaskRunner.getInstance();
         SharedPreferences mesPrefs = MyHelper.getInstance().recupPrefs();
@@ -57,7 +57,7 @@ public class AuxReseau {
         }else{ModelListeSorties.flagReseau.setValue(false);}
     }
 
-//Pour envoyer les requêtes de type POST à gumsparis. C'est fait à travers com_api
+// Pour envoyer les requêtes de type POST à gumsparis. C'est fait à travers com_api
 // task = '' pour sauvegarder, task = checkin pour annuler
 // le paramètre uneSortie sert pour vérifier une fois de plus si le user est autorisé
     static void envoiInfo (String uneResource, HashMap<String, String> postParams, String uneSortie, String uneTask) {
@@ -280,6 +280,8 @@ public class AuxReseau {
         if (BuildConfig.DEBUG) {
             Log.i("SECUSERV", " onpostexec save " + resultat);
         }
+
+//  clean result pas nécessaire et même gênant pour le retour de POST
 //        resultat = MyHelper.getInstance().cleanResult(resultat);
 //        Log.i("SECUSERV", "clean retour =  "+resultat);
         if ("".equals(resultat) || "pb_retour".equals(resultat)) {

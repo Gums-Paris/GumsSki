@@ -5,13 +5,10 @@ import static android.content.Intent.EXTRA_EMAIL;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
-import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -303,8 +300,7 @@ static Spanned fromHtml(String source) {
         if (phone.resolveActivity(MyHelper.getInstance().recupPackageManager()) != null) {
             MyHelper.getInstance().launchActivity(phone);
         } else {
-            if (BuildConfig.DEBUG) {
-            }            Log.i("SECUSERV"," appli téléphone pas disponible");
+            if (BuildConfig.DEBUG) {Log.i("SECUSERV"," appli téléphone pas disponible");}
         }
     }
 

@@ -10,13 +10,13 @@ import androidx.lifecycle.MutableLiveData;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import static fr.cjpapps.gumsski.Aux.egaliteChaines;
 
 public class ModelItem extends AndroidViewModel {
 
-/* utilisé par Logistique et ModifItem
+/* utilisé par Logistique et ModifItem (il paraît que c'est caca mais j'ai pas compris pourquoi,
+ car les usages ne sont pas concurrents)
  du coup on ne met pas la récup des données dans le constructeur du modèle avec recours aux Prefs
  si réseau absent parce que pour éditer on tient à avoir les valeurs les plus fraîches des paramètres
  (et de toutes manières, pour éditer il faut avoir le réseau)  */

@@ -147,9 +147,6 @@ public class ModifItem extends AppCompatActivity {
                 String message = mesPrefs.getString("errMsg", "")+" \ncode "+mesPrefs.getString("errCode", "");
                 envoiAlerte(message);
             }
- /*            else{
-                 AuxReseau.recupInfo(Constantes.JOOMLA_RESOURCE_1,sortieId, "");
-             } */
             setResult(RESULT_OK, result);
             finish();
         };

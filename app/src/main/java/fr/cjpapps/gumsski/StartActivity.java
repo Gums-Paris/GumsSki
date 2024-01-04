@@ -104,7 +104,7 @@ public class StartActivity extends AppCompatActivity {
 //        Variables.urlActive = urlsApiApp.API_GUMS_v4.getUrl();
 //        Variables.urlActive = urlsApiApp.API_GUMS_v3.getUrl();
 //        Variables.urlActive = urlsApiApp.API_GUMS_v2.getUrl();
-        Variables.urlActive = urlsApiApp.API_GUMS_v4.getUrl();
+//        Variables.urlActive = urlsApiApp.API_GUMS_v4.getUrl();
 
 // verif internet OK et mise en place de la surveillance réseau qui sera activée dans onResume
 // avec la bidouille "conman" pour avoir l'état du réseau avant la création du modèle (qui va charger les données)

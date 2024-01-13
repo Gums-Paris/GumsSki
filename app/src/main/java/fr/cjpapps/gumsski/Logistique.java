@@ -32,6 +32,7 @@ import java.util.TimeZone;
 public class Logistique extends AppCompatActivity {
 
     TextView affichage = null;
+    TextView rdvDepart = null;
     TextView hotelChauffeurs = null;
     TextView tphChauffeurs = null;
     TextView dinerRetour = null;
@@ -89,6 +90,7 @@ public class Logistique extends AppCompatActivity {
         affichage = findViewById(R.id.intro_logistic);
  //       String titreComplet = Aux.fromHtml(getString(R.string.titre_logistique))+infoSortie;
         affichage.setText(getResources().getString(R.string.titre_logistique, titreSortie));
+        rdvDepart = findViewById(R.id.champ_rdv);
         hotelChauffeurs = findViewById(R.id.champ_hotel);
         tphChauffeurs = findViewById(R.id.champ_tph);
         dinerRetour = findViewById(R.id.champ_diner);
@@ -162,6 +164,7 @@ public class Logistique extends AppCompatActivity {
                     logistiqueSortieId = item.get("sortieid");
                     editeur.putString("logistiqueDispo", logistiqueSortieId);
                     editeur.apply();
+                    rdvDepart.setText(item.get("rdv_depart"));
                     hotelChauffeurs.setText(item.get("hotelchauffeurs"));
                     tphChauffeurs.setText(item.get("tphchauffeurs"));
                     dinerRetour.setText(item.get("dinerretour"));
@@ -276,6 +279,7 @@ public class Logistique extends AppCompatActivity {
     }
 
     protected void  cleanupTextviews(){
+        rdvDepart.setText("");
         hotelChauffeurs.setText("");
         tphChauffeurs.setText("");
         dinerRetour.setText("");

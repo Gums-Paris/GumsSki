@@ -166,8 +166,6 @@ public class ModifItem extends AppCompatActivity {
                     postParams.put(params[0], luChamp.getText().toString());
                 }
             }
-            if (BuildConfig.DEBUG){
-            Log.i("SECUSERV edit", postParams.toString());}
             AuxReseau.envoiInfo(Constantes.JOOMLA_RESOURCE_1,postParams, "","");
 
             setResult(RESULT_OK, result);

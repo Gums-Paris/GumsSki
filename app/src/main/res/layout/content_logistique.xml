@@ -27,14 +27,39 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/hotel"
+            android:id="@+id/rdv_depart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="30dp"
-            android:text="@string/hotel_chauffeurs"
+            android:text="@string/rdv_depart"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/intro_logistic" />
+
+        <TextView
+            android:id="@+id/champ_rdv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/item_liste_back"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/textColorSecondary"
+            app:layout_constraintWidth_percent="0.75"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rdv_depart" />
+
+        <TextView
+            android:id="@+id/hotel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/hotel_chauffeurs"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/champ_rdv" />
 
         <TextView
             android:id="@+id/champ_hotel"
@@ -181,7 +206,6 @@
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:textSize="18sp"
-            android:text="  "
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/champ_courses" />

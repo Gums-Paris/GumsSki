@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkV 33
+    compileSdk 33
 
     defaultConfig {
         applicationId 'fr.cjpapps.gumski'

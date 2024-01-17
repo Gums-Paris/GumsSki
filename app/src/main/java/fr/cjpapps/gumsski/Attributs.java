@@ -8,18 +8,20 @@ public enum Attributs {
 *   et ModifItem.*/
 
     ATTR01("id", "Id logistique", "123"),
-    ATTR02("hotelchauffeurs", "Hotel des chauffeurs", ""),
-    ATTR03("tphchauffeurs", "Téléphone Chauffeurs", "+33612345678"),
-    ATTR04("dinerretour", "Dîner au retour", "Resto de la Plage, Chamonix"),
-    ATTR05("deposes", "Lieux de déposes", ""),
-    ATTR06("reprises", "Lieux et heures de reprise", ""),
-    ATTR07("coursesprevues", "Courses prévues", ""),
-    ATTR08("meteo", "Météo", ""),
-    ATTR09("secours", "Secours", "112"),
-    ATTR10("checked_out", "checked_out", "" ),
-    ATTR11("checked_out_time","checked_out_time", ""),
-    ATTR12("verrou", "verrou", ""),
-    ATTR13("canedit", "canedit", "");
+    ATTR02("rdv_depart", "Rendez-vous départ", "Denfert"),
+    ATTR03("hotelchauffeurs", "Hotel des chauffeurs", ""),
+    ATTR04("tphchauffeurs", "Téléphone Chauffeurs", "+33612345678"),
+    ATTR05("dinerretour", "Dîner au retour", "Resto de la Plage, Chamonix"),
+    ATTR06("deposes", "Lieux de déposes", ""),
+    ATTR07("reprises", "Lieux et heures de reprise", ""),
+    ATTR08("coursesprevues", "Courses prévues", ""),
+    ATTR09("meteo", "Météo", ""),
+    ATTR10("secours", "Secours", "112"),
+    ATTR11("checked_out", "checked_out", "" ),
+    ATTR12("checked_out_time","checked_out_time", ""),
+    ATTR13("verrou", "verrou", ""),
+    ATTR14("canedit", "canedit", "");
+
 
     private String champ = "";
     private String nomChamp = "";

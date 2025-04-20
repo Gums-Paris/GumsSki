@@ -152,17 +152,20 @@ public class Aux {
     ArrayList<String> faitListeGroupes(ArrayList<HashMap<String,String>> items) {
         ArrayList<String> liste = new ArrayList<>();
         int numGroupe = 0;
+        String titreGroupe = "";
         for (HashMap<String,String> temp :items) {
             try {
                  if (parseInt(Objects.requireNonNull(temp.get("groupe"))) != numGroupe) {
                     numGroupe = parseInt(Objects.requireNonNull(temp.get("groupe")));
                     if ("Res".equals(temp.get("responsabilite"))) {
-                        String titreGroupe = numGroupe + ":  " + temp.get("name");
-                        liste.add(titreGroupe);
+                        titreGroupe = numGroupe + ":  " + temp.get("name");}
+                    else{
+                        titreGroupe = numGroupe + ": XXXX";}
+                    liste.add(titreGroupe);
                     }
-                }
-            }catch(NullPointerException e) {
-                e.printStackTrace();
+
+                }catch(NullPointerException e) {
+                 e.printStackTrace();
             }
         }
         if (liste.isEmpty()){

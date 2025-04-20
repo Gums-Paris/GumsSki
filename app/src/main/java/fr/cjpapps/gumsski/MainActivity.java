@@ -197,7 +197,8 @@ public class MainActivity extends AppCompatActivity {
             recyclerView = findViewById(R.id.listechoix);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-// flagListe est false si on n'a pas récupéré de réponse du serveur ou si on n'a pas décodé le json
+// flagListe est false si on n'a pas récupéré de réponse du serveur ou si on n'ramètre &fleur=bleuet. Ça ne marche évidemment que si
+//  on peut coder le traitement des requêtes sur le sa pas décodé le json
 // ou si le décodage du json donne un résultat null. Dans ce cas il n'y a plus rien à faire parce que
 // modelListe a déjà essayé d'utiliser les Prefs avant d'aller chercher sur le réseau.
 // flagliste est géré par AuxReseau.decodeInfosItems
@@ -226,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("SECUSERV Main", "taille = " + listeDesItems.size());}
 
         // Pour communiquer avec le responable du car :
-//                        pourJoindreResCar();
+        //  pourJoindreResCar();
 
                         nomsItems = auxMethods.faitListeGroupes(listeDesItems);
                         if (BuildConfig.DEBUG){

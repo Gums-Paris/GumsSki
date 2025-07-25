@@ -3,8 +3,10 @@ package fr.cjpapps.gumsski;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -18,6 +20,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
@@ -52,6 +55,7 @@ public class Logistique extends AppCompatActivity {
     String verrou = "";
     String canEdit = "";
     boolean canEditBool = false;
+    View conteneur = null;
 
 // launcher pour ModifItem.
     final private ActivityResultLauncher<Intent> modifItemResultLauncher = registerForActivityResult(
@@ -69,6 +73,13 @@ public class Logistique extends AppCompatActivity {
         setContentView(R.layout.activity_logistique);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //Adaptation au fonctionnement EdgeToEdge
+        conteneur = findViewById(R.id.logistic);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            EdgeToEdge.enable(this);
+            //     statusBarColor(conteneur,R.color.colorPrimaryDark);
+            HandleInsets.placeInsets(this, conteneur);
+        }
 
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

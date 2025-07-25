@@ -1,10 +1,12 @@
 package fr.cjpapps.gumsski;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
@@ -29,6 +31,7 @@ public class RedactionSMS extends AppCompatActivity {
     TextView titre1, titre2;
     EditText partie1, partie2;
     Button sauve;
+    View conteneur = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,13 @@ public class RedactionSMS extends AppCompatActivity {
         setContentView(R.layout.activity_redaction_sms);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //Adaptation au fonctionnement EdgeToEdge
+        conteneur = findViewById(R.id.sms);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            EdgeToEdge.enable(this);
+            //     statusBarColor(conteneur,R.color.colorPrimaryDark);
+            HandleInsets.placeInsets(this, conteneur);
+        }
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }

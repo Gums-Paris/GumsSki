@@ -5,8 +5,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     ImageButton smsResCar = null;
     private Boolean okPhone = false;
     NetworkConnectionMonitor connectionMonitor;
+    View conteneur = null;
 
 /* TODO
     vérifier l'URL de gumsparis StartActivity ligne 101
@@ -139,6 +142,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //Adaptation au fonctionnement EdgeToEdge
+        conteneur = findViewById(R.id.home);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            EdgeToEdge.enable(this);
+            //     statusBarColor(conteneur,R.color.colorPrimaryDark);
+            HandleInsets.placeInsets(this, conteneur);
+        }
 
 // mise en place de la surveillance réseau qui sera activée dans onResume
         connectionMonitor = NetworkConnectionMonitor.getInstance();

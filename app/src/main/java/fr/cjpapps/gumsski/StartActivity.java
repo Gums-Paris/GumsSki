@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -50,6 +52,7 @@ public class StartActivity extends AppCompatActivity {
     Aux methodesAux;
     ConnectivityManager conMan ;
     NetworkConnectionMonitor connectionMonitor;
+    View conteneur = null;
 
     /*  Le changement de site internet gumsparis se fait ligne 100
      *
@@ -90,6 +93,13 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //Adaptation au fonctionnement EdgeToEdge
+        conteneur = findViewById(R.id.start);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            EdgeToEdge.enable(this);
+            //     statusBarColor(conteneur,R.color.colorPrimaryDark);
+            HandleInsets.placeInsets(this, conteneur);
+        }
 
         affichageTitre = findViewById(R.id.affiche_titre);
         affichageTitre.setText(R.string.white_screen);

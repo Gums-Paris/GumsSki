@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -22,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,6 +67,7 @@ public class Secours extends AppCompatActivity {
     float precision;
     ModelLocation model;
     private Boolean okPhone = false;
+    View conteneur = null;
 
 // lanceur pour demander la permission de localisation
     ActivityResultLauncher<String[]> locationPermissionRequest =
@@ -107,6 +111,13 @@ public class Secours extends AppCompatActivity {
         setContentView(R.layout.activity_secours);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //Adaptation au fonctionnement EdgeToEdge
+        conteneur = findViewById(R.id.secours);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            EdgeToEdge.enable(this);
+            //     statusBarColor(conteneur,R.color.colorPrimaryDark);
+            HandleInsets.placeInsets(this, conteneur);
+        }
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }

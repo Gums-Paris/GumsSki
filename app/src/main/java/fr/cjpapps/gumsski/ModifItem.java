@@ -3,8 +3,10 @@ package fr.cjpapps.gumsski;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
@@ -33,6 +35,7 @@ public class ModifItem extends AppCompatActivity {
     Intent result = new Intent();
     ArrayList<String[]> fieldParams = new ArrayList<>();
     NetworkConnectionMonitor connectionMonitor;
+    View conteneur = null;
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
@@ -41,6 +44,13 @@ public class ModifItem extends AppCompatActivity {
         setContentView(R.layout.activity_modif_item);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //Adaptation au fonctionnement EdgeToEdge
+        conteneur = findViewById(R.id.modif);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            EdgeToEdge.enable(this);
+            //     statusBarColor(conteneur,R.color.colorPrimaryDark);
+            HandleInsets.placeInsets(this, conteneur);
+        }
         fieldParams.clear();
         postParams.clear();
  /* on ne met pas la flèche de retour arrière dans la barre supérieure. On expliquera au client qu'il ne

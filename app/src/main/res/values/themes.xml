@@ -10,7 +10,6 @@
         <item name="colorOnSecondary">@color/colorOnSecondary</item>
         <item name="actionBarPopupTheme">@style/ActionModeOverflowMenu</item>
         <item name="materialButtonStyle">@style/MyApp.Button</item>
-        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
     </style>
     <style name="ActionModeOverflowMenu" parent="Widget.AppCompat.ListPopupWindow">
         <item name="android:textColor">@color/textColorSecondary</item>

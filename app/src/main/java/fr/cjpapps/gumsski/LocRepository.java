@@ -5,6 +5,7 @@ import static com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.location.Location;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
@@ -48,7 +49,8 @@ class LocRepository {
         if (BuildConfig.DEBUG){
         Log.i("SECUSERV", "constructeur du repository");}
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(application);
-        createLocationRequest();
+            doLocationRequest();
+ //       createLocationRequest();
     }
 
     MutableLiveData<Location> getPosition() { return position; }
@@ -76,6 +78,7 @@ class LocRepository {
         }
     }
 
+/*   deprecated
     void createLocationRequest() {
         locationRequest = LocationRequest.create();
         locationRequest.setInterval(1000*NBR_SECS_INI);
@@ -84,8 +87,18 @@ class LocRepository {
 //        locationRequest.setNumUpdates(1);
         locationRequest.setPriority(PRIORITY_HIGH_ACCURACY);
 //        locationRequest.setPriority(PRIORITY_BALANCED_POWER_ACCURACY);
-    }
+    }   */
 
+    void doLocationRequest() {
+        locationRequest = new LocationRequest.Builder(
+                1000L * NBR_SECS_INI // interval
+        )
+                .setPriority(PRIORITY_HIGH_ACCURACY)
+                .setMinUpdateIntervalMillis(2000L) // replaces setFastestInterval
+                .setDurationMillis(60000L * NBR_MINS_TRACKING) // replaces setExpirationDuration
+//  .setMaxUpdates(1) // uncomment if needed, replaces setNumUpdates
+                .build();
+    }
     @SuppressLint("MissingPermission")
     void startLocationUpdates() {
         try {

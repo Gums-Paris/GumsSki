@@ -19,8 +19,7 @@ public final class HandleInsets {
     private HandleInsets() {};
     public static void placeInsets(Activity activity, View conteneur) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            Window window = activity.getWindow();
-            window.setDecorFitsSystemWindows(false);
+//            Window window = activity.getWindow();window.setDecorFitsSystemWindows(false);
             ViewCompat.setOnApplyWindowInsetsListener(conteneur, new OnApplyWindowInsetsListener() {
                 @NonNull
                 @Override

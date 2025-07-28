@@ -2,6 +2,8 @@ package fr.cjpapps.gumsski;
 
 import static com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY;
 
+import static fr.cjpapps.gumsski.LocRepository.NBR_SECS_INI;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -318,8 +320,10 @@ public class Secours extends AppCompatActivity {
 * sauf que on simplifie : dans le cas de onFailure, au lieu d'envoyer l'utilisateur changer les paramètres on se contente
 * de lui signaler que son GPS n'est pas activé. A lui d'y aller s'il ouhaite avoir une position*/
     private void checkGPSEnabled() {
-        LocationRequest request = LocationRequest.create()
-                .setPriority(PRIORITY_HIGH_ACCURACY);
+        LocationRequest request = new LocationRequest.Builder(1000L * NBR_SECS_INI)
+                .setPriority(PRIORITY_HIGH_ACCURACY).build();
+ //       LocationRequest request = LocationRequest.create()
+ //               .setPriority(PRIORITY_HIGH_ACCURACY);
         LocationSettingsRequest settingsRequest = new LocationSettingsRequest.Builder()
                 .addLocationRequest(request).build();
         LocationServices.getSettingsClient(this)

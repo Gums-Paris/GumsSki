@@ -8,9 +8,14 @@ android {
         minSdkVersion 24
         targetSdkVersion 35
         versionCode 26
-        versionName "1.5.9"
+        versionName "1.5.10"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
 
     buildTypes {
@@ -20,6 +25,7 @@ android {
         }
     }
     buildFeatures {
+        android.buildFeatures.buildConfig = true
         viewBinding true
     }
     namespace 'fr.cjpapps.gumsski'

@@ -117,7 +117,8 @@ class LocRepository {
     void changeRequestInterval() {
         stopLocationUpdates();
         findPosition();
-        locationRequest.setInterval(1000*NBR_SECS_FINAL);
+        LocationRequest.Builder builder = new LocationRequest.Builder(1000*NBR_SECS_FINAL);
+ //       locationRequest.setInterval(1000*NBR_SECS_FINAL);
         //       if (Variables.gpsOK){
         startLocationUpdates();
         //       }
